@@ -13,11 +13,10 @@ import dev.nextftc.hardware.impl.MotorEx;
 
 public class TurretSubsystem implements Subsystem {
     public final static TurretSubsystem INSTANCE = new TurretSubsystem();
-    public TurretSubsystem(){}
+    public TurretSubsystem() {}
     public double RelativeAngle = 0;
     public double RealAngle = 0;
     private final MotorEx TurretMotor = new MotorEx("turretMotor");
-
 
     private final ControlSystem controlSystem = ControlSystem.builder()
             .posPid(0.005, 0, 0)
@@ -43,10 +42,7 @@ public class TurretSubsystem implements Subsystem {
         ActiveOpMode.telemetry().addLine("STarted");
     }
 
-    public Command MoveAngle(double angle){
+    public Command MoveAngle(double angle) {
         return new RunToPosition(controlSystem, angle + RelativeAngle, 0.1).requires(this);
     }
-
-
-
 }
