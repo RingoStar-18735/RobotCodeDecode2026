@@ -12,10 +12,12 @@ import dev.nextftc.hardware.impl.MotorEx;
 @Configurable
 
 public class TurretSubsystem implements Subsystem {
-    public final static TurretSubsystem INSTANCE = new TurretSubsystem();
+        public final static TurretSubsystem INSTANCE = new TurretSubsystem();
     public TurretSubsystem() {}
+
     public double RelativeAngle = 0;
     public double RealAngle = 0;
+
     private final MotorEx TurretMotor = new MotorEx("turretMotor");
 
     private final ControlSystem controlSystem = ControlSystem.builder()
@@ -26,8 +28,8 @@ public class TurretSubsystem implements Subsystem {
     @Override
     public void periodic() {
         double TURRET_GEAR_RATIO = 50.9;
-        RealAngle = (TurretMotor.getCurrentPosition() / TURRET_GEAR_RATIO *360  / 27.82)%360 ;
-        RelativeAngle = ((TurretMotor.getCurrentPosition() / TURRET_GEAR_RATIO ) / 27.82)*360;
+        RealAngle = (TurretMotor.getCurrentPosition() / TURRET_GEAR_RATIO * 360  / 27.82) % 360 ;
+        RelativeAngle = ((TurretMotor.getCurrentPosition() / TURRET_GEAR_RATIO ) / 27.82) * 360;
 
         ActiveOpMode.telemetry().addData("Real Angle: ", RealAngle);
         ActiveOpMode.telemetry().addData("Relative Angle: ", RelativeAngle);
