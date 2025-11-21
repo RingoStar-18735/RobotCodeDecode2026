@@ -1,41 +1,34 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.ftc.Gamepads;
+import dev.nextftc.hardware.driving.FieldCentric;
 import dev.nextftc.hardware.driving.MecanumDriverControlled;
 import dev.nextftc.hardware.impl.Direction;
 import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.powerable.SetPower;
 
-public class DriveSubsystem implements Subsystem {
+public class DriveSubsystem implements Subsystem{
     public static final DriveSubsystem INSTANCE = new DriveSubsystem();
     private DriveSubsystem() {}
 
-    private MotorEx frontLeft;
-    private MotorEx backLeft;
-    private MotorEx frontRight;
-    private MotorEx backRight;
+    private MotorEx frontLeftMotor = new MotorEx("0C").brakeMode().reversed();
+    private MotorEx frontRightMotor = new MotorEx("1C").brakeMode();
+    private MotorEx backLeftMotor = new MotorEx("2C").brakeMode().reversed();
+    private MotorEx backRightMotor = new MotorEx("3C").brakeMode();
+    private IMUEx imu = new IMUEx("imu", Direction.UP, Direction.FORWARD).zeroed();
 
-    private IMUEx imu;
 
-    @Override
-    public void periodic() {
+    public Command driverControlled = new MecanumDriverControlled(
+            frontLeftMotor,
+            frontRightMotor,
+            backLeftMotor,
+            backRightMotor,
+            Gamepads.gamepad1().leftStickY().negate(),
+            Gamepads.gamepad1().leftStickX(),
+            Gamepads.gamepad1().rightStickX(),
+            new FieldCentric(imu)
+    );
 
-    }
-
-    @Override
-    public void initialize() {
-        frontLeft = new MotorEx("FrontLeft");
-        backLeft = new MotorEx("BackLeft");
-        frontRight = new MotorEx("FrontRight");
-        backRight = new MotorEx("BackRight");
-        imu = new IMUEx("imu", Direction.UP, Direction.FORWARD).zeroed();
-    }
-
-    public void move(double frontLeftPow, double backLeftPow, double frontRightPow, double backRightPow) {
-        frontLeft.setPower(frontLeftPow);
-        backLeft.setPower(backLeftPow);
-        frontRight.setPower(frontRightPow);
-        backRight.setPower(backRightPow);
-    }
 }
