@@ -23,7 +23,7 @@ public class TeleopTest extends NextFTCOpMode {
 
     @Override
     public void onStartButtonPressed() {
-        /*Gamepads.gamepad1().dpadUp()
+        Gamepads.gamepad1().dpadUp()
                 .whenBecomesTrue(TurretSubsystem.INSTANCE.MoveAngle(90));
         Gamepads.gamepad1().dpadLeft()
                 .whenBecomesTrue(TurretSubsystem.INSTANCE.MoveAngle(0));
@@ -34,6 +34,6 @@ public class TeleopTest extends NextFTCOpMode {
         Gamepads.gamepad1().a()
                 .whenBecomesTrue(TurretSubsystem.INSTANCE.DCPower(1));
         Gamepads.gamepad1().b()
-                .whenBecomesTrue(TurretSubsystem.INSTANCE.DcPower(0.8));*/
+                .whenBecomesTrue(TurretSubsystem.INSTANCE.DcPower(0.8));
     }
 }

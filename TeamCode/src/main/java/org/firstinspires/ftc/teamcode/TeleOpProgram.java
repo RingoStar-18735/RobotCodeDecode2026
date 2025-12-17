@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.ServoSubsystem;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.components.BindingsComponent;
@@ -15,7 +17,7 @@ import dev.nextftc.ftc.components.BulkReadComponent;
     public class TeleOpProgram extends NextFTCOpMode {
         public TeleOpProgram() {
             addComponents(
-                    new SubsystemComponent(DriveSubsystem.INSTANCE),
+                    new SubsystemComponent(DriveSubsystem.INSTANCE, IntakeSubsystem.INSTANCE),
                     BulkReadComponent.INSTANCE,
                     BindingsComponent.INSTANCE
             );
@@ -23,17 +25,14 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 
     @Override
     public void onStartButtonPressed() {
-
-        // -------------------------DRIVE-------------------------
-        Command driverControlled = DriveSubsystem.INSTANCE.driverControlled;
-        driverControlled.schedule();
-
-        // -------------------------INTAKE-------------------------
-        /*Gamepads.gamepad1().a()
+        Gamepads.gamepad1().a()
                 .whenBecomesTrue(IntakeSubsystem.INSTANCE.intakePow(0));
 
         Gamepads.gamepad1().b()
-                .whenBecomesTrue(IntakeSubsystem.INSTANCE.intakePow(1));*/
+                .whenBecomesTrue(IntakeSubsystem.INSTANCE.intakePow(1));
+
+        Command driverControlled = DriveSubsystem.INSTANCE.driverControlled;
+        driverControlled.schedule();
     }
 
 }
