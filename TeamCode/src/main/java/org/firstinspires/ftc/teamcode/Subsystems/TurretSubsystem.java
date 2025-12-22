@@ -56,7 +56,4 @@ public class TurretSubsystem implements Subsystem {
     public Command DcPower(double power){
         return new SetPower(TurretMotor, 0.8);
     }
-
-
-
 }
