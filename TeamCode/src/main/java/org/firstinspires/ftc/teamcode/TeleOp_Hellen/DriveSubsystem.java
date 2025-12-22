@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode.TeleOp_Hellen;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -14,8 +14,8 @@ public class DriveSubsystem implements Subsystem{
     private DriveSubsystem() {}
 
     private MotorEx frontLeftMotor = new MotorEx("0C").brakeMode().reversed();
-    private MotorEx frontRightMotor = new MotorEx("1C").brakeMode();
-    private MotorEx backLeftMotor = new MotorEx("2C").brakeMode().reversed();
+    private MotorEx frontRightMotor = new MotorEx("1C").brakeMode(); // להרחיק מהעץ
+    private MotorEx backLeftMotor = new MotorEx("2C").brakeMode().reversed(); // להרחיק מהעץ
     private MotorEx backRightMotor = new MotorEx("3C").brakeMode();
     private IMUEx imu = new IMUEx("imu", Direction.UP, Direction.FORWARD).zeroed();
 

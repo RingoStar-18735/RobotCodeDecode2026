@@ -25,11 +25,11 @@ public class IntakeSubsystem implements Subsystem {
         new SetPower(intakeRight, pow);
     }
 
-    public Command intakePow(double pow){
+    /*public Command intakePow(double pow){
         return new
     }
 
-    /*public Command intakePowLeft(double pow) {
+    public Command intakePowLeft(double pow) {
         return new SetPower(intakeLeft, pow).requires(this);
     }
 
@@ -51,9 +51,9 @@ public class IntakeSubsystem implements Subsystem {
 //        );
 //    }
 
-    crServoEx.setPower(0.0); // To turn off
+ /*   crServoEx.setPower(0.0); // To turn off
 crServoEx.setPower(-1.0); // To spin in reverse fully
-crServoEx.setPower(0.5); // To spin forward partially
+crServoEx.setPower(0.5); // To spin forward partially*/
 
 
 }

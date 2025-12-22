@@ -5,9 +5,9 @@ import dev.nextftc.hardware.impl.Direction;
 import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
 
-public class DriveSubsystemOld implements Subsystem {
-    public static final DriveSubsystemOld INSTANCE = new DriveSubsystemOld();
-    private DriveSubsystemOld() {}
+public class Drive implements Subsystem {
+    public static final Drive INSTANCE = new Drive();
+    private Drive() {}
 
     private MotorEx frontLeft;
     private MotorEx backLeft;

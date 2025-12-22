@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode.TeleOp_Hellen;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -13,7 +13,7 @@ public class ServoSubsystem implements Subsystem {
     public ServoEx leftServo = new ServoEx("02C");
 
     public Command ServoMovement(double angle){
-        return new SetPositions(rightServo.to(angle), leftServo.to(1-angle));
+        return new SetPositions(rightServo.to(angle), leftServo.to(1 -angle));
     }
 
 }
