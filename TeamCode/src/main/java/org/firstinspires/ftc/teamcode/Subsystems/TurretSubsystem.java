@@ -9,6 +9,8 @@ import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.controllable.RunToPosition;
 import dev.nextftc.hardware.impl.MotorEx;
+import dev.nextftc.hardware.powerable.SetPower;
+
 @Configurable
 
 public class TurretSubsystem implements Subsystem {
@@ -49,4 +51,11 @@ public class TurretSubsystem implements Subsystem {
 
 
 
+    public Command DCPower(double power){
+        return new SetPower(TurretMotor, 1);
+    }
+
+    public Command DcPower(double power){
+        return new SetPower(TurretMotor, 0.8);
+    }
 }
