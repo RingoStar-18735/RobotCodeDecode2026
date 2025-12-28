@@ -18,7 +18,7 @@ public class TurretSubsystem implements Subsystem {
     public TurretSubsystem(){}
     public double RelativeAngle = 0;
     public double RealAngle = 0;
-    public final MotorEx TurretMotor = new MotorEx("turretMotor");
+    private final MotorEx TurretMotor = new MotorEx("turretMotor");
 
 
     private final ControlSystem controlSystem = ControlSystem.builder()
@@ -48,6 +48,8 @@ public class TurretSubsystem implements Subsystem {
     public Command MoveAngle(double angle){
         return new RunToPosition(controlSystem, angle + RelativeAngle, 0.1).requires(this);
     }
+
+
 
     public Command DCPower(double power){
         return new SetPower(TurretMotor, 1);
