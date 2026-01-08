@@ -49,5 +49,16 @@ public class Constants {
                 .mecanumDrivetrain(driveConstants)
                 .build();
     }
+<<<<<<< Updated upstream
 
+=======
+    public static PinpointConstants localizerConstants = new PinpointConstants()
+            .forwardPodY(-8.681)
+            .strafePodX(-7.792)
+            .distanceUnit(DistanceUnit.CM)
+            .hardwareMapName("pinpoint")
+            .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+>>>>>>> Stashed changes
 }
