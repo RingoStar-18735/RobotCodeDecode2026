@@ -22,9 +22,6 @@ import dev.nextftc.hardware.powerable.SetPower;
 public class ShooterSubsystem implements Subsystem {
     public final static ShooterSubsystem INSTANCE = new ShooterSubsystem();
 
-    public static  double SHOOTER_kv = 0.1;
-    public static  double SHOOTER_ka = 0.1;
-
     private boolean CommandStarted = true;
     private TelemetryManager panels = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -54,6 +51,7 @@ public class ShooterSubsystem implements Subsystem {
                 ()->  PID.setTarget(v)
         );
     }
+
 
     public Command RunFullSpeed () {
         return new LambdaCommand()
@@ -121,9 +119,9 @@ public class ShooterSubsystem implements Subsystem {
         panels.addData("Robot Velocity: ", Shooter.getState().getVelocity());
         panels.addData("Robot Target: ", PID.getTarget());
 
-
-        ActiveOpMode.telemetry().addData("Shooter Velocity: ", -Shooter.getState().getVelocity());
-        ActiveOpMode.telemetry().addData("Shooter Target: ", PID.getTarget());
+//
+//        ActiveOpMode.telemetry().addData("Shooter Velocity: ", -Shooter.getState().getVelocity());
+//        ActiveOpMode.telemetry().addData("Shooter Target: ", PID.getTarget());
         double PIDPower = PID.calculateOutput(-Shooter.getVelocity(), ActiveOpMode.getRuntime());
 
 
@@ -132,7 +130,7 @@ public class ShooterSubsystem implements Subsystem {
         Shooter.setPower(PIDPower);
         ActiveOpMode.resetRuntime();
 
-        ActiveOpMode.telemetry().update();
+//        ActiveOpMode.telemetry().update();
         panels.update();
 
     }

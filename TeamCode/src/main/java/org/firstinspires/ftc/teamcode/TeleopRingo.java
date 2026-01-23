@@ -7,12 +7,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
-import dev.nextftc.core.commands.utility.PerpetualCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
@@ -27,11 +27,15 @@ import dev.nextftc.hardware.driving.DriverControlledCommand;
 public class TeleopRingo extends NextFTCOpMode {
 
 
+
     public TeleopRingo(){
         addComponents(
                 new SubsystemComponent(
                         ShooterSubsystem.INSTANCE,
-                        IntakeSubSystem.INSTANCE),
+                        IntakeSubSystem.INSTANCE,
+                        TurretSubsystem.INSTANCE
+                        ),
+
                 new PedroComponent(Constants::createFollower),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
@@ -40,11 +44,11 @@ public class TeleopRingo extends NextFTCOpMode {
 
     Command Shoot = new SequentialGroup(
             ShooterSubsystem.INSTANCE.RunFullSpeed(),
-            IntakeSubSystem.INSTANCE.IntakeFully().endAfter(RobotMap.INTAKE_FULLY_TIME)
+            IntakeSubSystem.INSTANCE.IntakeFullyTransfer().endAfter(RobotMap.INTAKE_FULLY_TIME)
     );
 
 
-    Command ShootFromFar = new PerpetualCommand(
+    Command ShootFromFar =
             new SequentialGroup(
                     new ParallelDeadlineGroup(
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
@@ -53,10 +57,10 @@ public class TeleopRingo extends NextFTCOpMode {
                     Shoot,
                     Shoot,
                     Shoot
-            )
+
     );
 
-    Command ShootFromMid = new PerpetualCommand(
+    Command ShootFromMid =
             new SequentialGroup(
                     new ParallelDeadlineGroup(
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
@@ -65,10 +69,10 @@ public class TeleopRingo extends NextFTCOpMode {
                     Shoot,
                     Shoot,
                     Shoot
-            )
+
     );
 
-    Command ShootFromClose = new PerpetualCommand(
+    Command ShootFromClose =
             new SequentialGroup(
                     new ParallelDeadlineGroup(
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
@@ -77,12 +81,15 @@ public class TeleopRingo extends NextFTCOpMode {
                     Shoot,
                     Shoot,
                     Shoot
-            )
+
     );
 
 
-
-
+    @Override
+    public void onInit() {
+        TurretSubsystem.INSTANCE.ResetAngle().schedule();
+        ShooterSubsystem.INSTANCE.StopSpeed().schedule();
+    }
 
     @Override
     public void onStartButtonPressed() {
@@ -97,12 +104,27 @@ public class TeleopRingo extends NextFTCOpMode {
                 Gamepads.gamepad1().rightStickX(),
                 false
         );
+        driverControlled.schedule();
+
+
 
         Gamepads.gamepad2().leftBumper().toggleOnBecomesTrue()
-                        .whenBecomesTrue(IntakeSubSystem.INSTANCE.IntakeFully())
-                        .whenBecomesFalse(IntakeSubSystem.INSTANCE.IntakeStop());
+                        .whenBecomesTrue(IntakeSubSystem.INSTANCE.IntakeFullyNotTransfer())
+                        .whenBecomesFalse(IntakeSubSystem.INSTANCE.IntakeStop()); //
 
-        driverControlled.schedule();
+        Gamepads.gamepad1().leftBumper().toggleOnBecomesTrue()
+                .whenBecomesTrue(TurretSubsystem.INSTANCE.MoveAngle(90))
+                .whenBecomesFalse(TurretSubsystem.INSTANCE.MoveAngle(-90));
+
+
+        Gamepads.gamepad1().dpadLeft().whenTrue(
+                new SequentialGroup(
+                        ShooterSubsystem.INSTANCE.RunFullSpeed(),
+                        ShooterSubsystem.INSTANCE.StopSpeed(),
+                        ShooterSubsystem.INSTANCE.RunFullSpeed()
+                )
+                );
+
 
         Gamepads.gamepad2().y()
                 .whenBecomesTrue(

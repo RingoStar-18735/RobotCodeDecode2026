@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Teleop;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
+import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.components.BindingsComponent;
@@ -16,7 +17,7 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 public class TeleopTest extends NextFTCOpMode {
     public TeleopTest() {
         addComponents(
-                new SubsystemComponent(launch.INSTANCE, CRTest.INSTANCE, IntakeSubSystem.INSTANCE, turretSubsystem.INSTANCE, drive.INSTANCE),
+                new SubsystemComponent(launch.INSTANCE, CRTest.INSTANCE, IntakeSubSystem.INSTANCE, TurretSubsystem.INSTANCE, drive.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
         );
@@ -62,7 +63,7 @@ public class TeleopTest extends NextFTCOpMode {
         driverControlled.schedule();
 
         //turret
-        turretSubsystem.INSTANCE.turret_move(Gamepads.gamepad1().rightTrigger());
+        TurretSubsystem.INSTANCE.turret_move(Gamepads.gamepad1().rightTrigger());
         telemetry.addData("val_2: ", gamepad1.right_trigger);
         telemetry.update();
 

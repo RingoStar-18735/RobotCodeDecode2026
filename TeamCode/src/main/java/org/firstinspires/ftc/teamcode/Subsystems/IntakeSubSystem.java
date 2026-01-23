@@ -35,9 +35,15 @@ public class IntakeSubSystem implements Subsystem {
         return new SetPower(IntakeMotor, pow);
     }
 
-    public Command IntakeFully(){
+    public Command IntakeFullyTransfer(){
         return new ParallelGroup(
                 Transfer(RobotMap.TRANSFER_SERVO_POWER),
+                IntakePower(RobotMap.INTAKE_MOTOR_POWER)
+        );
+    }
+    public Command IntakeFullyNotTransfer(){
+        return new ParallelGroup(
+                Transfer(-RobotMap.TRANSFER_SERVO_POWER),
                 IntakePower(RobotMap.INTAKE_MOTOR_POWER)
         );
     }
