@@ -28,12 +28,13 @@ public class TurretSubsystem implements Subsystem {
     private DigitalChannel magnet;
     private MotorEx turretmotor = new MotorEx ("2E");
     PIDController PID = new PIDController(RobotMap.TURRET_P , RobotMap.TURRET_I, RobotMap.TURRET_D);
+    double offSet = 0.0;
 
 
     public TurretSubsystem(){}
 
     public double getAngle(){
-        return turretmotor.getCurrentPosition() * RobotMap.TURRET_GEAR_RATIO * 360;
+        return (turretmotor.getCurrentPosition() * RobotMap.TURRET_GEAR_RATIO * 360) - offSet;
     }
 
     public boolean isMagnetPressed(){
@@ -43,17 +44,18 @@ public class TurretSubsystem implements Subsystem {
     public Command ResetAngle(){
         return new LambdaCommand()
                 .setStart(() -> {
-                    turretmotor.setPower(RobotMap.RESET_TURRET_POWER);
+                    turretmotor.setPower(-RobotMap.RESET_TURRET_POWER);
                 })
                 .setUpdate(() -> {
-
+                    turretmotor.setPower(-RobotMap.RESET_TURRET_POWER);
                 })
                 .setStop(interrupted -> {
                     turretmotor.setPower(0.0);
                     turretmotor.setCurrentPosition(0.0);
                     isReset = true;
+                    offSet = getAngle();
                 })
-                .setIsDone(()-> isMagnetPressed()) // Returns if the command has finished
+                .setIsDone(()-> !isMagnetPressed()) // Returns if the command has finished
                 .requires(this)
                 .setInterruptible(true)
                 .named("ResetTurret"); // sets the name of the command; optional
@@ -84,6 +86,7 @@ public class TurretSubsystem implements Subsystem {
 
     @Override
     public void initialize() {
+        double offSet = 0.0;
         magnet = ActiveOpMode.hardwareMap().get(DigitalChannel.class , "magnet");
         magnet.setMode(DigitalChannel.Mode.INPUT);
         limelight = ActiveOpMode.hardwareMap().get(Limelight3A.class, "limelightapril");
@@ -128,16 +131,18 @@ public class TurretSubsystem implements Subsystem {
          ActiveOpMode.telemetry().addData("target X:" , getTX());
          ActiveOpMode.telemetry().addData("target Y:" , getTY());
 
-         ActiveOpMode.telemetry().addData("magnet state:" , magnet.getState());
+         ActiveOpMode.telemetry().addData("magnet state:" , !magnet.getState());
          ActiveOpMode.telemetry().addData("turret position:" , turretmotor.getCurrentPosition());
          ActiveOpMode.telemetry().addData("Turret angle:" , getAngle());
          ActiveOpMode.telemetry().addData("Is Reset:" , isReset);
+            magnet.setMode(DigitalChannel.Mode.INPUT);
 
-         ActiveOpMode.telemetry().update();
+
+        ActiveOpMode.telemetry().update();
 
 
          if(isReset){
-             turretmotor.setPower(PID.calculateOutput(getAngle(), ActiveOpMode.getRuntime()));
+             turretmotor.setPower(-PID.calculateOutput(getAngle(), ActiveOpMode.getRuntime()));
          }
     }
 

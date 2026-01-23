@@ -21,12 +21,12 @@ public class RobotMap {
     public static double TURRET_I = 0.0;
     public static double TURRET_D = 0.0;
 
-    public static  double TURRET_GEAR_RATIO = (41.0 / 128.0) / 3.7 / 103.8;
+    public static  double TURRET_GEAR_RATIO = -(41.0 / 128.0) / 3.7 / 103.8 * (90 / 25.22);
 
     public static Long INTAKE_FULLY_TIME = 450L;
 
 
-    public static double RESET_TURRET_POWER = 0.0;
+    public static double RESET_TURRET_POWER = 0.2;
 
     public static double MAX_TURRET_ANGLE = 0.0;
     public static double MIN_TURRET_ANGLE = 0.0;

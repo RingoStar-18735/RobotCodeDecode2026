@@ -67,7 +67,7 @@ public class ShooterSubsystem implements Subsystem {
                     CommandStarted = false;
 
                 })
-                .setIsDone(()-> Math.abs(RobotMap.SHOOTER_SPEED - getShooterVelocity()) < RobotMap.SHOOTER_SPEED_RANGE) // Returns if the command has finished
+                .setIsDone(()-> Math.abs(RobotMap.SHOOTER_SPEED + getShooterVelocity()) < RobotMap.SHOOTER_SPEED_RANGE) // Returns if the command has finished
                 .requires(this)
                 .setInterruptible(true)
                 .named("RunFullSpeed"); // sets the name of the command; optional
@@ -118,7 +118,9 @@ public class ShooterSubsystem implements Subsystem {
 
         panels.addData("Robot Velocity: ", Shooter.getState().getVelocity());
         panels.addData("Robot Target: ", PID.getTarget());
-
+        ActiveOpMode.telemetry().addData("ShooterStatus: ", Math.abs(RobotMap.SHOOTER_SPEED + getShooterVelocity()) < RobotMap.SHOOTER_SPEED_RANGE);
+        ActiveOpMode.telemetry().addData("ShooterSpeed: ", getShooterVelocity());
+        ActiveOpMode.telemetry().addData("ShooterTarget: ", RobotMap.SHOOTER_SPEED);
 //
 //        ActiveOpMode.telemetry().addData("Shooter Velocity: ", -Shooter.getState().getVelocity());
 //        ActiveOpMode.telemetry().addData("Shooter Target: ", PID.getTarget());
