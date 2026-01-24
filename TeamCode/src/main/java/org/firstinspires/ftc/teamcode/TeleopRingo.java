@@ -44,7 +44,19 @@ public class TeleopRingo extends NextFTCOpMode {
 
     Command Shoot = new SequentialGroup(
             ShooterSubsystem.INSTANCE.RunFullSpeed(),
-            IntakeSubSystem.INSTANCE.IntakeFullyTransfer().endAfter(RobotMap.INTAKE_FULLY_TIME)
+            IntakeSubSystem.INSTANCE.IntakeFullyTransfer().setInterruptible(Math.abs(RobotMap.SHOOTER_SPEED) <= RobotMap.SHOOTER_SPEED_RANGE));
+
+    @Override
+    public void onUpdate() {
+        telemetry.addData("ShootFinished: ", Shoot.isDone());
+        TurretSubsystem.INSTANCE.LimelightMove().schedule();
+    }
+
+    Command FinalShoot = new SequentialGroup(
+            IntakeSubSystem.INSTANCE.ReversedIntake(),
+            IntakeSubSystem.INSTANCE.IntakeFullyTransfer().endAfter(RobotMap.INTAKE_FULLY_TIME),
+            ShooterSubsystem.INSTANCE.RunFullSpeed(),
+            IntakeSubSystem.INSTANCE.IntakeStop()
     );
 
 
@@ -54,10 +66,9 @@ public class TeleopRingo extends NextFTCOpMode {
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
                             ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR)
                     ),
-                    Shoot,
-                    Shoot,
-                    Shoot
-
+                    Shoot.endAfter(RobotMap.SHOOT_TIME),
+                    Shoot.endAfter(RobotMap.SHOOT_TIME),
+                    FinalShoot.endAfter(RobotMap.SHOOT_TIME)
     );
 
     Command ShootFromMid =
@@ -66,10 +77,9 @@ public class TeleopRingo extends NextFTCOpMode {
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
                             ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID)
                     ),
-                    Shoot,
-                    Shoot,
-                    Shoot
-
+                    Shoot.endAfter(RobotMap.SHOOT_TIME),
+                    Shoot.endAfter(RobotMap.SHOOT_TIME),
+                    FinalShoot.endAfter(RobotMap.SHOOT_TIME)
     );
 
     Command ShootFromClose =
@@ -78,10 +88,9 @@ public class TeleopRingo extends NextFTCOpMode {
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
                             ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_CLOSE)
                     ),
-                    Shoot,
-                    Shoot,
-                    Shoot
-
+                    Shoot.endAfter(RobotMap.SHOOT_TIME),
+                    Shoot.endAfter(RobotMap.SHOOT_TIME),
+                    FinalShoot.endAfter(RobotMap.SHOOT_TIME)
     );
 
 
@@ -89,6 +98,7 @@ public class TeleopRingo extends NextFTCOpMode {
     public void onInit() {
         TurretSubsystem.INSTANCE.ResetAngle().schedule();
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
+        IntakeSubSystem.INSTANCE.IntakeStop().schedule();
     }
 
     @Override
@@ -106,15 +116,17 @@ public class TeleopRingo extends NextFTCOpMode {
         );
         driverControlled.schedule();
 
-
+        Gamepads.gamepad1().rightTrigger().greaterThan(0.1).whenTrue(
+                Shoot
+        );
 
         Gamepads.gamepad2().leftBumper().toggleOnBecomesTrue()
                         .whenBecomesTrue(IntakeSubSystem.INSTANCE.IntakeFullyNotTransfer())
                         .whenBecomesFalse(IntakeSubSystem.INSTANCE.IntakeStop()); //
 
-        Gamepads.gamepad1().leftBumper().toggleOnBecomesTrue()
-                .whenBecomesTrue(TurretSubsystem.INSTANCE.MoveAngle(90))
-                .whenBecomesFalse(TurretSubsystem.INSTANCE.MoveAngle(-90));
+//        Gamepads.gamepad1().leftBumper().toggleOnBecomesTrue()
+//                .whenBecomesTrue(TurretSubsystem.INSTANCE.MoveAngle(90))
+//                .whenBecomesFalse(TurretSubsystem.INSTANCE.MoveAngle(-90));
 
 
         Gamepads.gamepad1().dpadLeft().whenTrue(

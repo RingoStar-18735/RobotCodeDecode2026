@@ -4,15 +4,17 @@ import org.firstinspires.ftc.teamcode.RobotMap;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.CRServoEx;
 import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.powerable.SetPower;
 
 public class IntakeSubSystem implements Subsystem {
     public final static IntakeSubSystem INSTANCE = new IntakeSubSystem();
-
+    private  double Motorpower = 0.0;
+    private double Servopower = 0.0;
     public IntakeSubSystem() {}
 
     public MotorEx IntakeMotor = new MotorEx("1E");
@@ -25,27 +27,39 @@ public class IntakeSubSystem implements Subsystem {
         CR_right.setPower(-power);
     }
 
-    public Command Transfer(double pow) {
-        return new InstantCommand(
-                ()-> TransferPower(pow)
-        );
+    @Override
+    public void periodic() {
+        ActiveOpMode.telemetry().addData("IntakeMotor Power:" , Motorpower);
+        ActiveOpMode.telemetry().addData("IntakeServo Power:" , Servopower);
+        TransferPower(Servopower);
+        IntakeMotor.setPower(Motorpower);
+
     }
 
     public Command IntakePower(double pow) {
-        return new SetPower(IntakeMotor, pow);
+        return new InstantCommand(
+                ()-> Motorpower = pow
+        );
+    }
+
+
+    public Command Transfer(double pow) {
+        return new InstantCommand(
+                ()-> Servopower = pow
+        );
     }
 
     public Command IntakeFullyTransfer(){
         return new ParallelGroup(
                 Transfer(RobotMap.TRANSFER_SERVO_POWER),
                 IntakePower(RobotMap.INTAKE_MOTOR_POWER)
-        );
+        ).endAfter(RobotMap.INTAKE_FULLY_TIME);
     }
     public Command IntakeFullyNotTransfer(){
         return new ParallelGroup(
                 Transfer(-RobotMap.TRANSFER_SERVO_POWER),
                 IntakePower(RobotMap.INTAKE_MOTOR_POWER)
-        );
+        ).endAfter(RobotMap.INTAKE_FULLY_TIME);
     }
 
     public Command IntakeStop(){
@@ -53,5 +67,13 @@ public class IntakeSubSystem implements Subsystem {
                 Transfer(0.0),
                 IntakePower(0.0)
         );
+    }
+
+    public Command ReversedIntake(){
+        return new SequentialGroup(
+                Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+                IntakePower(RobotMap.INTAKE_REVERSED_POWER)
+
+        ).endAfter(RobotMap.INTAKE_REVERSED_TIME);
     }
 }

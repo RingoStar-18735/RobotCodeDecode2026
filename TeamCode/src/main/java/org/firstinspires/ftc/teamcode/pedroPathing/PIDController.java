@@ -28,6 +28,18 @@ public class PIDController {
         return target;
     }
 
+    public double getKp() {
+        return kp;
+    }
+
+    public double getKi() {
+        return ki;
+    }
+
+    public double getKd() {
+        return kd;
+    }
+
     public double calculateOutput(double currentValue, double deltaTime) {
         double error = this.target - currentValue;
 
