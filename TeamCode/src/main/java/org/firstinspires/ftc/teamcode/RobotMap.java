@@ -35,13 +35,13 @@ public class RobotMap {
 
     public static int LIMELIGHT_HZ = 100;
 
-    public static double INTAKE_REVERSED_TIME = 0.5;
+    public static double INTAKE_REVERSED_TIME = 1;
     public static double INTAKE_REVERSED_POWER = -0.5;
 
 
 
     public static int BLUE_PIPELINE = 0;
-    public static int SHOOT_TIME = 1;
+    public static double SHOOT_TIME = 0.5;
     public static int RED_PIPELINE = 1;
 
 }

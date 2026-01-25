@@ -10,9 +10,11 @@ import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
+import dev.nextftc.bindings.Button;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
@@ -44,20 +46,18 @@ public class TeleopRingo extends NextFTCOpMode {
 
     Command Shoot = new SequentialGroup(
             ShooterSubsystem.INSTANCE.RunFullSpeed(),
-            IntakeSubSystem.INSTANCE.IntakeFullyTransfer().setInterruptible(Math.abs(RobotMap.SHOOTER_SPEED) <= RobotMap.SHOOTER_SPEED_RANGE));
+            IntakeSubSystem.INSTANCE.IntakeFullyTransfer().setInterruptible(Math.abs(RobotMap.SHOOTER_SPEED) <= RobotMap.SHOOTER_SPEED_RANGE),
+            IntakeSubSystem.INSTANCE.IntakeStop().afterTime(RobotMap.SHOOT_TIME)
+    );
 
-    @Override
-    public void onUpdate() {
-        telemetry.addData("ShootFinished: ", Shoot.isDone());
-        TurretSubsystem.INSTANCE.LimelightMove().schedule();
-    }
+
 
     Command FinalShoot = new SequentialGroup(
             IntakeSubSystem.INSTANCE.ReversedIntake(),
-            IntakeSubSystem.INSTANCE.IntakeFullyTransfer().endAfter(RobotMap.INTAKE_FULLY_TIME),
+            IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
             ShooterSubsystem.INSTANCE.RunFullSpeed(),
             IntakeSubSystem.INSTANCE.IntakeStop()
-    );
+    ).afterTime(0.5);
 
 
     Command ShootFromFar =
@@ -66,9 +66,9 @@ public class TeleopRingo extends NextFTCOpMode {
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
                             ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR)
                     ),
-                    Shoot.endAfter(RobotMap.SHOOT_TIME),
-                    Shoot.endAfter(RobotMap.SHOOT_TIME),
-                    FinalShoot.endAfter(RobotMap.SHOOT_TIME)
+                    Shoot.afterTime(RobotMap.SHOOT_TIME),
+                    Shoot.afterTime(RobotMap.SHOOT_TIME),
+                    FinalShoot.afterTime(RobotMap.SHOOT_TIME)
     );
 
     Command ShootFromMid =
@@ -77,9 +77,9 @@ public class TeleopRingo extends NextFTCOpMode {
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
                             ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID)
                     ),
-                    Shoot.endAfter(RobotMap.SHOOT_TIME),
-                    Shoot.endAfter(RobotMap.SHOOT_TIME),
-                    FinalShoot.endAfter(RobotMap.SHOOT_TIME)
+                    Shoot.afterTime(RobotMap.SHOOT_TIME),
+                    Shoot.afterTime(RobotMap.SHOOT_TIME),
+                    FinalShoot.afterTime(RobotMap.SHOOT_TIME)
     );
 
     Command ShootFromClose =
@@ -88,74 +88,114 @@ public class TeleopRingo extends NextFTCOpMode {
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
                             ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_CLOSE)
                     ),
-                    Shoot.endAfter(RobotMap.SHOOT_TIME),
-                    Shoot.endAfter(RobotMap.SHOOT_TIME),
-                    FinalShoot.endAfter(RobotMap.SHOOT_TIME)
+                    Shoot,
+                    Shoot,
+                    FinalShoot
     );
 
 
+    private Button LBT;
+    private Button GP2A;
+
     @Override
     public void onInit() {
-        TurretSubsystem.INSTANCE.ResetAngle().schedule();
+        //TurretSubsystem.INSTANCE.ResetAngle().schedule();
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
+
+        LBT = Gamepads.gamepad2().leftBumper().toggleOnBecomesTrue();
+        GP2A = Gamepads.gamepad2().a();
+    }
+
+    @Override
+    public void onUpdate() {
+        telemetry.addData("ShootFinished: ", Shoot.isDone());
+        //TurretSubsystem.INSTANCE.LimelightMove().schedule();
+
+
+
     }
 
     @Override
     public void onStartButtonPressed() {
-
         Follower follower =  Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(0,0, 90));
-
+        follower.setStartingPose(new Pose(0,0, 135));
 
         DriverControlledCommand driverControlled = new PedroDriverControlled(
                 Gamepads.gamepad1().leftStickY(),
                 Gamepads.gamepad1().leftStickX(),
-                Gamepads.gamepad1().rightStickX(),
+                Gamepads.gamepad1().rightStickX().negate(),
                 false
         );
         driverControlled.schedule();
 
-        Gamepads.gamepad1().rightTrigger().greaterThan(0.1).whenTrue(
-                Shoot
-        );
 
-        Gamepads.gamepad2().leftBumper().toggleOnBecomesTrue()
-                        .whenBecomesTrue(IntakeSubSystem.INSTANCE.IntakeFullyNotTransfer())
-                        .whenBecomesFalse(IntakeSubSystem.INSTANCE.IntakeStop()); //
+
+        Gamepads.gamepad2().y()
+                .whenBecomesTrue(
+                        new SequentialGroup(
+                                new InstantCommand(() ->
+                                        ShooterSubsystem.INSTANCE.ShooterStopped = false
+                                ),
+                                ShootFromFar
+                        )
+                );
+
+
+        Gamepads.gamepad2().x()
+                .whenBecomesTrue(
+                        new SequentialGroup(
+                                new InstantCommand(() ->
+                                        ShooterSubsystem.INSTANCE.ShooterStopped = false
+                                ),
+                                ShootFromMid
+                        )
+                );
+
+        Gamepads.gamepad2().b()
+                .whenBecomesTrue(
+                        new SequentialGroup(
+                                new InstantCommand(() ->
+                                        ShooterSubsystem.INSTANCE.ShooterStopped = false
+                                ),
+                                ShootFromClose
+                        )
+                );
+
+        GP2A.whenBecomesTrue(IntakeSubSystem.INSTANCE.ReversedIntake())
+                .whenBecomesTrue(IntakeSubSystem.INSTANCE.IntakeStop().afterTime(RobotMap.INTAKE_REVERSED_TIME))
+                .whenBecomesTrue( ShooterSubsystem.INSTANCE.StopSpeed());
+
+
+
+        LBT.whenBecomesTrue(
+                        IntakeSubSystem.INSTANCE.IntakeFullyNotTransfer()
+                )
+                .whenBecomesFalse(
+                        IntakeSubSystem.INSTANCE.IntakeStop()
+                );
+
+
+//        Gamepads.gamepad1().rightTrigger().greaterThan(0.1).whenTrue(
+//                Shoot
+//        );
+
+
 
 //        Gamepads.gamepad1().leftBumper().toggleOnBecomesTrue()
 //                .whenBecomesTrue(TurretSubsystem.INSTANCE.MoveAngle(90))
 //                .whenBecomesFalse(TurretSubsystem.INSTANCE.MoveAngle(-90));
 
 
-        Gamepads.gamepad1().dpadLeft().whenTrue(
-                new SequentialGroup(
-                        ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                        ShooterSubsystem.INSTANCE.StopSpeed(),
-                        ShooterSubsystem.INSTANCE.RunFullSpeed()
-                )
-                );
+//        Gamepads.gamepad1().dpadLeft().whenTrue(
+//                new SequentialGroup(
+//                        ShooterSubsystem.INSTANCE.RunFullSpeed(),
+//                        ShooterSubsystem.INSTANCE.StopSpeed(),
+//                        ShooterSubsystem.INSTANCE.RunFullSpeed()
+//                )
+//        );
 
 
-        Gamepads.gamepad2().y()
-                .whenBecomesTrue(
-                        ShootFromFar
-                );
-
-        Gamepads.gamepad2().x()
-                .whenBecomesTrue(
-                        ShootFromMid
-                );
-
-        Gamepads.gamepad2().b()
-                .whenBecomesTrue(
-                        ShootFromClose
-                );
-        Gamepads.gamepad2().a()
-                .whenBecomesTrue(
-                        ShooterSubsystem.INSTANCE.StopSpeed()
-                );
 
 //        Gamepads.gamepad2().dpadUp()
 //                .whenBecomesTrue(ShooterSubsystem.INSTANCE.RunVelocity(RobotMap.SHOOTER_SPEED));

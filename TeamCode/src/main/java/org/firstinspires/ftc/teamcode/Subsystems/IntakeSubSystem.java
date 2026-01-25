@@ -4,10 +4,8 @@ import org.firstinspires.ftc.teamcode.RobotMap;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.ParallelGroup;
-import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.CRServoEx;
 import dev.nextftc.hardware.impl.MotorEx;
 
@@ -29,8 +27,8 @@ public class IntakeSubSystem implements Subsystem {
 
     @Override
     public void periodic() {
-        ActiveOpMode.telemetry().addData("IntakeMotor Power:" , Motorpower);
-        ActiveOpMode.telemetry().addData("IntakeServo Power:" , Servopower);
+//        ActiveOpMode.telemetry().addData("IntakeMotor Power:" , Motorpower);
+//        ActiveOpMode.telemetry().addData("IntakeServo Power:" , Servopower);
         TransferPower(Servopower);
         IntakeMotor.setPower(Motorpower);
 
@@ -53,13 +51,14 @@ public class IntakeSubSystem implements Subsystem {
         return new ParallelGroup(
                 Transfer(RobotMap.TRANSFER_SERVO_POWER),
                 IntakePower(RobotMap.INTAKE_MOTOR_POWER)
-        ).endAfter(RobotMap.INTAKE_FULLY_TIME);
+        ).afterTime(RobotMap.INTAKE_FULLY_TIME);
     }
+
     public Command IntakeFullyNotTransfer(){
         return new ParallelGroup(
                 Transfer(-RobotMap.TRANSFER_SERVO_POWER),
                 IntakePower(RobotMap.INTAKE_MOTOR_POWER)
-        ).endAfter(RobotMap.INTAKE_FULLY_TIME);
+        );
     }
 
     public Command IntakeStop(){
@@ -69,11 +68,10 @@ public class IntakeSubSystem implements Subsystem {
         );
     }
 
-    public Command ReversedIntake(){
-        return new SequentialGroup(
-                Transfer(-RobotMap.TRANSFER_SERVO_POWER),
-                IntakePower(RobotMap.INTAKE_REVERSED_POWER)
-
-        ).endAfter(RobotMap.INTAKE_REVERSED_TIME);
+    public Command ReversedIntake() {
+        return new ParallelGroup(
+            Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+            IntakePower(RobotMap.INTAKE_REVERSED_POWER)
+        ).afterTime(RobotMap.INTAKE_REVERSED_TIME);
     }
 }

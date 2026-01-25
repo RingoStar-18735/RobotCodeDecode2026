@@ -65,25 +65,25 @@ public class TurretSubsystem implements Subsystem {
     @Override
     public void periodic() {
         CurrentResult = limelight.getLatestResult();
-        ActiveOpMode.telemetry().addData("target area:" , getTa());
-        ActiveOpMode.telemetry().addData("target X:" , getTX());
-        ActiveOpMode.telemetry().addData("target Y:" , getTY());
-        ActiveOpMode.telemetry().addData("PTurret:" , PID.getKp());
-        ActiveOpMode.telemetry().addData("ITurret:" , PID.getKi());
-        ActiveOpMode.telemetry().addData("DTurret:" , PID.getKd());
-
-        ActiveOpMode.telemetry().addData("magnet state:" , !magnet.getState());
-        ActiveOpMode.telemetry().addData("turret position:" , turretmotor.getCurrentPosition());
-        ActiveOpMode.telemetry().addData("Turret angle:" , getAngle());
-        ActiveOpMode.telemetry().addData("Turret Target:" , PID.getTarget());
-        ActiveOpMode.telemetry().addData("Is Reset:" , isReset);
+//        ActiveOpMode.telemetry().addData("target area:" , getTa());
+//        ActiveOpMode.telemetry().addData("target X:" , getTX());
+//        ActiveOpMode.telemetry().addData("target Y:" , getTY());
+//        ActiveOpMode.telemetry().addData("PTurret:" , PID.getKp());
+//        ActiveOpMode.telemetry().addData("ITurret:" , PID.getKi());
+//        ActiveOpMode.telemetry().addData("DTurret:" , PID.getKd());
+//
+//        ActiveOpMode.telemetry().addData("magnet state:" , !magnet.getState());
+//        ActiveOpMode.telemetry().addData("turret position:" , turretmotor.getCurrentPosition());
+//        ActiveOpMode.telemetry().addData("Turret angle:" , getAngle());
+//        ActiveOpMode.telemetry().addData("Turret Target:" , PID.getTarget());
+//        ActiveOpMode.telemetry().addData("Is Reset:" , isReset);
         magnet.setMode(DigitalChannel.Mode.INPUT);
 
         double PIDPower = -PID.calculateOutput(getAngle(), ActiveOpMode.getRuntime());
         ActiveOpMode.telemetry().update();
-
-        ActiveOpMode.telemetry().addData("PIDPower:" , PIDPower);
-        ActiveOpMode.telemetry().addData("PIDPower:" , PIDPower);
+//
+//        ActiveOpMode.telemetry().addData("PIDPower:" , PIDPower);
+//        ActiveOpMode.telemetry().addData("PIDPower:" , PIDPower);
 
         if(isReset){
             turretmotor.setPower(PIDPower);

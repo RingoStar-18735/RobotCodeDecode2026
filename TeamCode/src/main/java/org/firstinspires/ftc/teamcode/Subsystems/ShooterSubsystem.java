@@ -22,6 +22,7 @@ import dev.nextftc.hardware.powerable.SetPower;
 public class ShooterSubsystem implements Subsystem {
     public final static ShooterSubsystem INSTANCE = new ShooterSubsystem();
 
+    public boolean ShooterStopped = false;
     private boolean CommandStarted = true;
     private TelemetryManager panels = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -79,7 +80,7 @@ public class ShooterSubsystem implements Subsystem {
                 .setStart(() -> {
                     PID.setTarget(0);
                     CommandStarted = true;
-
+                    ShooterStopped = true;
                 })
                 .setUpdate(() -> {
 
@@ -113,14 +114,16 @@ public class ShooterSubsystem implements Subsystem {
     @Override
     public void periodic() {
 
-        ActiveOpMode.telemetry().addData("Started: ", false);
-        ActiveOpMode.telemetry().addData("Started: ", false);
 
-        panels.addData("Robot Velocity: ", Shooter.getState().getVelocity());
-        panels.addData("Robot Target: ", PID.getTarget());
-        ActiveOpMode.telemetry().addData("ShooterStatus: ", Math.abs(RobotMap.SHOOTER_SPEED + getShooterVelocity()) < RobotMap.SHOOTER_SPEED_RANGE);
-        ActiveOpMode.telemetry().addData("ShooterSpeed: ", getShooterVelocity());
-        ActiveOpMode.telemetry().addData("ShooterTarget: ", RobotMap.SHOOTER_SPEED);
+
+//        ActiveOpMode.telemetry().addData("Started: ", false);
+//        ActiveOpMode.telemetry().addData("Started: ", false);
+//
+//        panels.addData("Robot Velocity: ", Shooter.getState().getVelocity());
+//        panels.addData("Robot Target: ", PID.getTarget());
+//        ActiveOpMode.telemetry().addData("ShooterStatus: ", Math.abs(RobotMap.SHOOTER_SPEED + getShooterVelocity()) < RobotMap.SHOOTER_SPEED_RANGE);
+//        ActiveOpMode.telemetry().addData("ShooterSpeed: ", getShooterVelocity());
+//        ActiveOpMode.telemetry().addData("ShooterTarget: ", RobotMap.SHOOTER_SPEED);
 //
 //        ActiveOpMode.telemetry().addData("Shooter Velocity: ", -Shooter.getState().getVelocity());
 //        ActiveOpMode.telemetry().addData("Shooter Target: ", PID.getTarget());
@@ -129,7 +132,14 @@ public class ShooterSubsystem implements Subsystem {
 
 
 //        double proportional = SHOOTER_P * (PID.getTarget() - Shooter.getVelocity());
-        Shooter.setPower(PIDPower);
+
+
+        if (ShooterStopped){
+            Shooter.setPower(0);
+        } else {
+            Shooter.setPower(PIDPower);
+        }
+
         ActiveOpMode.resetRuntime();
 
 //        ActiveOpMode.telemetry().update();
