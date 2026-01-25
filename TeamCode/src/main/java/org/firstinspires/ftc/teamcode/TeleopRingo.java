@@ -57,7 +57,7 @@ public class TeleopRingo extends NextFTCOpMode {
             IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
             ShooterSubsystem.INSTANCE.RunFullSpeed(),
             IntakeSubSystem.INSTANCE.IntakeStop()
-    ).afterTime(0.5);
+    );
 
 
     Command ShootFromFar =
