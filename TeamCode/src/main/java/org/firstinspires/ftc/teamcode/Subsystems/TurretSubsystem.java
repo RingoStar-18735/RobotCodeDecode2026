@@ -29,7 +29,6 @@ public class TurretSubsystem implements Subsystem {
     private PIDController PID;
 
 
-
     public TurretSubsystem(){}
 
     public boolean isMagnetPressed(){

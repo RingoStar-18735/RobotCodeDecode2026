@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.RobotMap;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
@@ -25,6 +26,7 @@ public class Constants {
 
             .centripetalScaling(0.001)
 
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.5, 0, 0.05, 0))
             .translationalPIDFCoefficients(new PIDFCoefficients(0.5, 0, 0.05, 0))
             .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.3, 0, 0.015, 0.01))
 
@@ -57,9 +59,9 @@ public class Constants {
                 .build();
     }
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(-5.11)
-            .strafePodX(-6.69)
-            .distanceUnit(DistanceUnit.CM)
+            .forwardPodY(RobotMap.ROBOT_DISTANCE_Y * 0.394)
+            .strafePodX(RobotMap.ROBOT_DISTANCE_X * 0.394)
+            .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)

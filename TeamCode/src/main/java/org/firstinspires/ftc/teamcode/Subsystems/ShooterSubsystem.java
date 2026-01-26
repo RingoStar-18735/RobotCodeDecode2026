@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.pedroPathing.PIDController;
 
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.CommandManager;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -59,12 +60,12 @@ public class ShooterSubsystem implements Subsystem {
                 .setStart(() -> {
                     PID.setTarget(RobotMap.SHOOTER_SPEED);
                     CommandStarted = true;
+                    ShooterStopped = false;
                 })
                 .setUpdate(() -> {
 
                 })
                 .setStop(interrupted -> {
-                    PID.setTarget(RobotMap.SHOOTER_SPEED);
                     CommandStarted = false;
 
                 })
@@ -78,20 +79,14 @@ public class ShooterSubsystem implements Subsystem {
     public Command StopSpeed () {
         return new LambdaCommand()
                 .setStart(() -> {
-                    PID.setTarget(0);
-                    CommandStarted = true;
                     ShooterStopped = true;
                 })
                 .setUpdate(() -> {
 
                 })
                 .setStop(interrupted -> {
-                    CommandStarted = false;
-
-
-                    PID.setTarget(0);
                 })
-                .setIsDone(()-> Math.abs(RobotMap.SHOOTER_SPEED) <= RobotMap.SHOOTER_SPEED_RANGE) // Returns if the command has finished
+                .setIsDone(()-> CommandStarted) // Returns if the command has finished
                 .requires(this)
                 .setInterruptible(true)
                 .named("RunFullSpeed"); // sets the name of the command; optional
@@ -119,11 +114,16 @@ public class ShooterSubsystem implements Subsystem {
 //        ActiveOpMode.telemetry().addData("Started: ", false);
 //        ActiveOpMode.telemetry().addData("Started: ", false);
 //
-//        panels.addData("Robot Velocity: ", Shooter.getState().getVelocity());
-//        panels.addData("Robot Target: ", PID.getTarget());
-//        ActiveOpMode.telemetry().addData("ShooterStatus: ", Math.abs(RobotMap.SHOOTER_SPEED + getShooterVelocity()) < RobotMap.SHOOTER_SPEED_RANGE);
-//        ActiveOpMode.telemetry().addData("ShooterSpeed: ", getShooterVelocity());
-//        ActiveOpMode.telemetry().addData("ShooterTarget: ", RobotMap.SHOOTER_SPEED);
+        panels.addData("Robot Velocity: ", Shooter.getState().getVelocity());
+        panels.addData("Robot Target: ", PID.getTarget());
+        panels.addData("SHootActive: ",CommandStarted);
+        CommandStarted = Math.abs(RobotMap.SHOOTER_SPEED + getShooterVelocity()) < RobotMap.SHOOTER_SPEED_RANGE;
+
+        ActiveOpMode.telemetry().addData("ShooterStatus: ", CommandStarted);
+        ActiveOpMode.telemetry().addData("CommandsRunning: ", CommandManager.INSTANCE.snapshot());
+        ActiveOpMode.telemetry().addData("ShooterSpeed: ", getShooterVelocity());
+        ActiveOpMode.telemetry().addData("ShooterTarget: ", RobotMap.SHOOTER_SPEED);
+        ActiveOpMode.telemetry().addData("ShooterStopped: ", ShooterStopped);
 //
 //        ActiveOpMode.telemetry().addData("Shooter Velocity: ", -Shooter.getState().getVelocity());
 //        ActiveOpMode.telemetry().addData("Shooter Target: ", PID.getTarget());
@@ -140,9 +140,7 @@ public class ShooterSubsystem implements Subsystem {
             Shooter.setPower(PIDPower);
         }
 
-        ActiveOpMode.resetRuntime();
 
-//        ActiveOpMode.telemetry().update();
         panels.update();
 
     }
