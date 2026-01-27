@@ -62,7 +62,7 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 
 
         //----------------------------TURRET----------------------------
-        Gamepads.gamepad1().dpadUp()
+       /* Gamepads.gamepad1().dpadUp()
                 .whenBecomesTrue(TurretSubsystem.INSTANCE.MoveAngle(90));
 
         Gamepads.gamepad1().dpadLeft()
@@ -79,7 +79,7 @@ import dev.nextftc.ftc.components.BulkReadComponent;
                 .whenBecomesTrue(TurretSubsystem.INSTANCE.DCPower(1));
 
         Gamepads.gamepad1().b()
-                .whenBecomesTrue(TurretSubsystem.INSTANCE.DCPower(0.8));
+                .whenBecomesTrue(TurretSubsystem.INSTANCE.DCPower(0.8));*/
     }
 
 
