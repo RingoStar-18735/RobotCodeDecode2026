@@ -4,6 +4,7 @@ import com.bylazar.configurables.annotations.Configurable;
 
 @Configurable
 public class RobotMap {
+    public static  double CLONE_ANGLE = -90;
     public static  double INTAKE_VELOCITY_CONSTRAINT = 25;
     public static  double STARTING_ANGLE_OFFSET = 45;
     public static  double FORWARD_INTAKE_LAST_BALL =3 ;

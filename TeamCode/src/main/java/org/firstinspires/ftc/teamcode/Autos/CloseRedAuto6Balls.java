@@ -32,7 +32,7 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Autonomous
-public class CloseBlueAuto extends NextFTCOpMode {
+public class CloseRedAuto6Balls extends NextFTCOpMode {
     public PathChain Path1;
     public PathChain Path2;
     public PathChain Path3;
@@ -47,7 +47,7 @@ public class CloseBlueAuto extends NextFTCOpMode {
     Follower follower;
     List<String> a = new ArrayList<String>();
 
-    public CloseBlueAuto() {
+    public CloseRedAuto6Balls() {
         addComponents(
                 new SubsystemComponent(
                         ShooterSubsystem.INSTANCE,
@@ -67,32 +67,31 @@ public class CloseBlueAuto extends NextFTCOpMode {
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(24.68759124087591, 126.84671532846713, 144));
+        follower.setStartingPose(new Pose(24.68759124087591, 126.84671532846713, 144).mirror());
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(28.682, 131.682),
+                                new Pose(28.682, 131.682).mirror(),
 
-                                new Pose(52.358, 93.693)
+                                new Pose(52.358, 93.693).mirror()
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(324), Math.toRadians(-38))
-
+                ).setLinearHeadingInterpolation(Math.toRadians(RobotMap.CLONE_ANGLE + 324), Math.toRadians(RobotMap.CLONE_ANGLE-38))
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(52.358, 93.693),
-                                new Pose(60.420, 84.796),
-                                new Pose(37.585, 84.210)
+                                new Pose(52.358, 93.693).mirror(),
+                                new Pose(60.420, 84.796).mirror(),
+                                new Pose(37.585, 84.210).mirror()
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(313), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(360+  RobotMap.CLONE_ANGLE+ 313), Math.toRadians(RobotMap.CLONE_ANGLE+180))
 
                 .build();
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(37.585, 84.210),
+                                new Pose(37.585, 84.210).mirror(),
 
-                                new Pose(15.000, 84.000)
+                                new Pose(15.000, 84.000).mirror()
                         )
                 ).setTangentHeadingInterpolation()
 
@@ -100,21 +99,21 @@ public class CloseBlueAuto extends NextFTCOpMode {
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(15.000, 84.000),
+                                new Pose(15.000, 84.000).mirror(),
 
-                                new Pose(52.568, 93.693)
+                                new Pose(52.568, 93.693).mirror()
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(313))
+                ).setLinearHeadingInterpolation(Math.toRadians(RobotMap.CLONE_ANGLE+180), Math.toRadians(RobotMap.CLONE_ANGLE+313))
 
                 .build();
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(52.568, 93.693),
+                                new Pose(52.568, 93.693).mirror(),
 
-                                new Pose(47.466, 72.147)
+                                new Pose(47.466, 72.147).mirror()
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(313), Math.toRadians(0))
+                ).setLinearHeadingInterpolation(Math.toRadians(RobotMap.CLONE_ANGLE+ 313), Math.toRadians(RobotMap.CLONE_ANGLE+ 0))
 
                 .build();
         Path1Command = new FollowPath(Path1);
