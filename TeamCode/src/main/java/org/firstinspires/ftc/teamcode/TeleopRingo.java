@@ -242,16 +242,25 @@ public class TeleopRingo extends NextFTCOpMode {
 
         Gamepads.gamepad2().y()
                 .whenTrue(
+                        new InstantCommand( () -> ShooterSubsystem.INSTANCE.ReverseWheel = false)
+                )
+                .whenTrue(
                         ShootFromFar
                 );
 
 
         Gamepads.gamepad2().x()
                 .whenTrue(
+                        new InstantCommand( () -> ShooterSubsystem.INSTANCE.ReverseWheel = false)
+                )
+                .whenTrue(
                         ShootFromMid
                 );
 
         Gamepads.gamepad2().b()
+                .whenTrue(
+                new InstantCommand( () -> ShooterSubsystem.INSTANCE.ReverseWheel = false)
+                )
                 .whenTrue(
                         ShootFromClose
                 );
@@ -259,16 +268,18 @@ public class TeleopRingo extends NextFTCOpMode {
         Gamepads.gamepad2().a()
                 .whenTrue(
                         new ParallelDeadlineGroup(
-                            ShooterSubsystem.INSTANCE.StopSpeed(),
-                            IntakeSubSystem.INSTANCE.IntakeStop(),
-                            new InstantCommand(()-> ShootFromFar.cancel()),
-                            new InstantCommand(()-> ShootFromMid.cancel()),
-                            new InstantCommand(()-> ShootFromClose.cancel())
+                                new Delay(2),
+                                new InstantCommand(()-> ShootFromFar.cancel()),
+                                new InstantCommand(()-> ShootFromMid.cancel()),
+                                new InstantCommand(()-> ShootFromClose.cancel()),
+                                ShooterSubsystem.INSTANCE.StopSpeed(),
+                                IntakeSubSystem.INSTANCE.IntakeStop()
+
                         ));
 
 
         Gamepads.gamepad1().x().whenTrue(
-                ShooterSubsystem.INSTANCE.ServoAim(0.0)
+                ShooterSubsystem.INSTANCE.ServoAim(0)
         );
 
 
@@ -283,14 +294,30 @@ public class TeleopRingo extends NextFTCOpMode {
                     );
 
 
+            Gamepads.gamepad2().rightBumper().toggleOnBecomesTrue()
+                    .whenBecomesTrue(
+                            IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_REVERSED_POWER)
+                    )
+                    .whenBecomesTrue(IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER)
+                    )
+                    .whenBecomesFalse(
+                            IntakeSubSystem.INSTANCE.IntakeStop()
+                    );
 
-//        Gamepads.gamepad1().dpadLeft().whenTrue(
-//                new SequentialGroup(
-//                        ShooterSubsystem.INSTANCE.RunFullSpeed(),
-//                        ShooterSubsystem.INSTANCE.StopSpeed(),
-//                        ShooterSubsystem.INSTANCE.RunFullSpeed()
-//                )
-//        );
+
+
+        Gamepads.gamepad2().dpadDown().whenTrue(
+                new SequentialGroup(
+                        new InstantCommand( () -> ShooterSubsystem.INSTANCE.ReverseWheel = true)
+                        )
+        );
+
+        Gamepads.gamepad2().dpadDown().whenFalse(
+                new SequentialGroup(
+                        new InstantCommand( () -> ShooterSubsystem.INSTANCE.ReverseWheel = false
+                        )
+                )
+        );
 
 
 

@@ -4,12 +4,11 @@ import com.bylazar.configurables.annotations.Configurable;
 
 @Configurable
 public class RobotMap {
-    public static  double CLONE_ANGLE = -90;
     public static  double INTAKE_VELOCITY_CONSTRAINT = 25;
     public static  double STARTING_ANGLE_OFFSET = 45;
-    public static  double FORWARD_INTAKE_LAST_BALL =3 ;
-    public static  double BACK_INTAKE_LAST_BALL = 0.8 ;
-    public static  double INTAKE_SHOOT_TIME_FIRST =2;
+    public static  double FORWARD_INTAKE_LAST_BALL = 3.5 ;
+    public static  double BACK_INTAKE_LAST_BALL = 0.9  ;
+    public static  double INTAKE_SHOOT_TIME_FIRST = 3;
     public static  double ROBOT_DISTANCE_X =-15;//
     public static  double ROBOT_DISTANCE_Y =-13;//
     public static  double INTAKE_SHOOT_TIME_SECOND =2
@@ -21,6 +20,7 @@ public class RobotMap {
     public static double SHOOTER_D = 0.1;
 
     public static double SHOOTER_SPEED = 2200;
+    public static double SERVO_MOVE_AUTO_MID = 0.5;
     public static double SERVO_MOVE_FAR = 0.65;
     public static double SERVO_MOVE_MID = 0.45;
     public static double SERVO_MOVE_CLOSE = 0.6;

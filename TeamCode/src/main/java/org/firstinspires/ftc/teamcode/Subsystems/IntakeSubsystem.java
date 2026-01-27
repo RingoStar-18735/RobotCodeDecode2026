@@ -1,59 +1,77 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import org.firstinspires.ftc.teamcode.RobotMap;
+
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.CRServoEx;
-import dev.nextftc.hardware.powerable.SetPower;
+import dev.nextftc.hardware.impl.MotorEx;
 
-public class IntakeSubsystem implements Subsystem {
-    public static IntakeSubsystem INSTANCE = new IntakeSubsystem();
-    public IntakeSubsystem() {}
+public class IntakeSubSystem implements Subsystem {
+    public final static IntakeSubSystem INSTANCE = new IntakeSubSystem();
+    public IntakeSubSystem() {}
 
+    public MotorEx IntakeMotor = new MotorEx("1E").reversed();
 
-    public double pow;
-    public CRServoEx intakeLeft = new CRServoEx ("01C");
-    public CRServoEx intakeRight = new CRServoEx ("02C");
+    public CRServoEx CR_left = new CRServoEx("02E");
+    public CRServoEx CR_right = new CRServoEx("03E");
 
-    public void setIntakeLeft(CRServoEx intakeLeft) {
-        this.intakeLeft = intakeLeft;
-        new SetPower(intakeLeft, 1-pow);
+    private void TransferPower(double power){
+        CR_left.setPower(power);
+        CR_right.setPower(-power);
     }
 
-    public void setIntakeRight(CRServoEx intakeRight) {
-        this.intakeRight = intakeRight;
-        new SetPower(intakeRight, pow);
+    @Override
+    public void periodic() {
+        ActiveOpMode.telemetry().addData("IntakeMotor Power:" , IntakeMotor.getPower());
+        ActiveOpMode.telemetry().addData("IntakeServo Power:" , CR_left.getPower());
+
     }
 
-    /*public Command intakePow(double pow){
-        return new
+    public Command IntakePower(double pow) {
+        return new LambdaCommand()
+                .setStart(()-> IntakeMotor.setPower(pow))
+                .setIsDone( ()-> IntakeMotor.getPower() == pow)
+                .requires(this);
     }
 
-    public Command intakePowLeft(double pow) {
-        return new SetPower(intakeLeft, pow).requires(this);
-    }
 
-    public Command intakePowRight(double pow) {
-        return new SetPower(intakeRight, pow).requires(this);
+    public Command Transfer(double pow) {
+        return new LambdaCommand().
+                setStart(()-> TransferPower(pow))
+                .setIsDone( ()-> CR_left.getPower() == pow && CR_right.getPower() == pow)
+                .requires(this);
     }
-
-    public Command intakePow(double pow){
+    public Command IntakeFullyTransfer(){
         return new ParallelGroup(
-                IntakeSubsystem.INSTANCE.intakePowLeft(pow),
-                IntakeSubsystem.INSTANCE.intakePowRight(1-pow)
+                Transfer(RobotMap.TRANSFER_SERVO_POWER),
+                IntakePower(RobotMap.INTAKE_MOTOR_POWER)
         );
-    }*/
+    }
 
-//    public Command intakePowOFF(){
-//        return new ParallelGroup(
-//                IntakeSubsystem.INSTANCE.intakePowLeft(0),
-//                IntakeSubsystem.INSTANCE.intakePowRight(0)
-//        );
-//    }
+    public Command IntakeFullyNotTransfer(){
+        return new ParallelGroup(
+                IntakePower(RobotMap.INTAKE_MOTOR_POWER),
+                Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+                IntakePower(RobotMap.INTAKE_MOTOR_POWER),
+                Transfer(-RobotMap.TRANSFER_SERVO_POWER)
+                );
+    }
 
- /*   crServoEx.setPower(0.0); // To turn off
-crServoEx.setPower(-1.0); // To spin in reverse fully
-crServoEx.setPower(0.5); // To spin forward partially*/
+    public Command IntakeStop(){
+        return new ParallelGroup(
+                IntakePower(0.0),
+                Transfer(0.0)
+        ).setName("קומנד הפסיק אינטייק");
+    }
 
-
+    public Command ReversedIntake() {
+        return new ParallelGroup(
+            Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+            IntakePower(RobotMap.INTAKE_REVERSED_POWER)
+        );
+    }
 }

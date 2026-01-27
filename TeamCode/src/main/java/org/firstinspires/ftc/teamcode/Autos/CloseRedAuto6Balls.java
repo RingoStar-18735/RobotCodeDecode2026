@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Autos;
 
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -67,53 +66,54 @@ public class CloseRedAuto6Balls extends NextFTCOpMode {
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(24.68759124087591, 126.84671532846713, 144).mirror());
+        follower.setStartingPose(new Pose(28.681751824817518, 131.68175182481747, 144).mirror());
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(28.682, 131.682).mirror(),
 
-                                new Pose(52.358, 93.693).mirror()
+                                new Pose(70, 90).mirror()
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(RobotMap.CLONE_ANGLE + 324), Math.toRadians(RobotMap.CLONE_ANGLE-38))
+                ).setLinearHeadingInterpolation(Math.toRadians(MirrorAngle(324)), Math.toRadians(MirrorAngle(325)))
+
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(52.358, 93.693).mirror(),
-                                new Pose(60.420, 84.796).mirror(),
-                                new Pose(37.585, 84.210).mirror()
+                        new BezierLine(
+                                new Pose(70, 90).mirror(),
+
+                                new Pose(60.000, 87).mirror()
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(360+  RobotMap.CLONE_ANGLE+ 313), Math.toRadians(RobotMap.CLONE_ANGLE+180))
+                ).setLinearHeadingInterpolation(Math.toRadians(MirrorAngle(335)), Math.toRadians(MirrorAngle(180)))
 
                 .build();
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(37.585, 84.210).mirror(),
+                                new Pose(60.000, 87).mirror(),
 
-                                new Pose(15.000, 84.000).mirror()
+                                new Pose(17.312, 87).mirror()
                         )
-                ).setTangentHeadingInterpolation()
+                ).setConstantHeadingInterpolation(Math.toRadians(MirrorAngle(180)))
 
                 .build();
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(15.000, 84.000).mirror(),
+                                new Pose(17.312, 87).mirror(),
 
-                                new Pose(52.568, 93.693).mirror()
+                                new Pose(70, 90).mirror()
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(RobotMap.CLONE_ANGLE+180), Math.toRadians(RobotMap.CLONE_ANGLE+313))
+                ).setLinearHeadingInterpolation(Math.toRadians(MirrorAngle(180)), Math.toRadians(MirrorAngle(330)))
 
                 .build();
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(52.568, 93.693).mirror(),
+                                new Pose(70, 90).mirror(),
 
-                                new Pose(47.466, 72.147).mirror()
+                                new Pose(15.000, 94.641).mirror()
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(RobotMap.CLONE_ANGLE+ 313), Math.toRadians(RobotMap.CLONE_ANGLE+ 0))
+                ).setLinearHeadingInterpolation(Math.toRadians(MirrorAngle(330)), Math.toRadians(MirrorAngle(180)))
 
                 .build();
         Path1Command = new FollowPath(Path1);
@@ -131,6 +131,11 @@ public class CloseRedAuto6Balls extends NextFTCOpMode {
                 Path5Command
         );
     }
+
+    public double MirrorAngle(double ang){
+        return (180 - ang + 360) % 360;
+    }
+
 
     @Override
     public void onUpdate() {
@@ -166,7 +171,7 @@ public class CloseRedAuto6Balls extends NextFTCOpMode {
                             new ParallelDeadlineGroup(
                                     new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
                                     IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
+                                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_REVERSED_POWER),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed()
                             ),
                             PrintCommand("Finished 3"),
