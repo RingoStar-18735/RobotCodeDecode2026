@@ -14,10 +14,10 @@ public class DriveSubsystem implements Subsystem{
     private DriveSubsystem() {}
 
     private MotorEx frontLeftMotor = new MotorEx("0C").brakeMode().reversed();
-    private MotorEx frontRightMotor = new MotorEx("1C").brakeMode(); // להרחיק מהעץ
-    private MotorEx backLeftMotor = new MotorEx("2C").brakeMode().reversed(); // להרחיק מהעץ
+    private MotorEx frontRightMotor = new MotorEx("1C").brakeMode();
+    private MotorEx backLeftMotor = new MotorEx("2C").brakeMode().reversed();
     private MotorEx backRightMotor = new MotorEx("3C").brakeMode();
-    private IMUEx imu = new IMUEx("imu", Direction.UP, Direction.FORWARD).zeroed();
+    public IMUEx imu = new IMUEx("imu", Direction.UP, Direction.FORWARD).zeroed();
 
 
     public Command driverControlled = new MecanumDriverControlled(
@@ -27,8 +27,8 @@ public class DriveSubsystem implements Subsystem{
             backRightMotor,
             Gamepads.gamepad1().leftStickY().negate(),
             Gamepads.gamepad1().leftStickX(),
-            Gamepads.gamepad1().rightStickX(),
-            new FieldCentric(imu)
+            Gamepads.gamepad1().rightStickX()
+           // new FieldCentric(imu)
     );
 
 }

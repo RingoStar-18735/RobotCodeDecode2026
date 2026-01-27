@@ -11,7 +11,7 @@ public class Launch implements Subsystem {
     public final static Launch INSTANCE = new Launch();
     public Launch(){}
 
-    public MotorEx launchMotor = new MotorEx("1C").reversed();
+    public MotorEx launchMotor = new MotorEx("1C");
     public ServoEx leftServo = new ServoEx("00C");
     public ServoEx rightServo = new ServoEx("01C");
 
