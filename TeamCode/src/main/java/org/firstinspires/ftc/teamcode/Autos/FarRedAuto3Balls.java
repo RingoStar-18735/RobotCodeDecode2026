@@ -31,22 +31,17 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Autonomous
-public class FarBlueAuto6Balls extends NextFTCOpMode {
+public class FarRedAuto3Balls extends NextFTCOpMode {
     public PathChain Path1;
     public PathChain Path2;
-    public PathChain Path3;
-    public PathChain Path4;
-    public PathChain Path5;
+
     Command Path1Command ;
     Command Path2Command;
-    Command Path3Command;
-    Command Path4Command ;
-    Command Path5Command ;
     Command Auto;
     Follower follower;
     List<String> a = new ArrayList<String>();
 
-    public FarBlueAuto6Balls() {
+    public FarRedAuto3Balls() {
         addComponents(
                 new SubsystemComponent(
                         ShooterSubsystem.INSTANCE,
@@ -66,24 +61,24 @@ public class FarBlueAuto6Balls extends NextFTCOpMode {
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(56, 8, 270));
+        follower.setStartingPose(new Pose(56, 8, -90).mirror());
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(56.000, 8.000),
+                                new Pose(56.000, 8.000).mirror(),
 
-                                new Pose(60.000, 25.000)
+                                new Pose(60.000, 18.000).mirror()
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(300))
+                ).setLinearHeadingInterpolation(Math.toRadians(MirrorAngle(270)), Math.toRadians(MirrorAngle(265)))
 
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(60.000, 25.000),
+                                new Pose(60.000, 18.000).mirror(),
 
-                                new Pose(50.000, 35.000)
+                                new Pose(50.000, 35.000).mirror()
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(300), Math.toRadians(-180))
+                ).setLinearHeadingInterpolation(Math.toRadians(MirrorAngle(300)), Math.toRadians(MirrorAngle(-210)))
 
                 .build();
         Path1Command = new FollowPath(Path1);
@@ -102,6 +97,7 @@ public class FarBlueAuto6Balls extends NextFTCOpMode {
         DrawingRobot.drawPoseHistory(follower.getPoseHistory());
         telemetry.addData("pose: ", follower.getPose());
         telemetry.addData("RunTime: ", getRuntime());
+        telemetry.addData("Commands: ", a);
         follower.update();
     }
     public Command PrintCommand(String b){
@@ -150,6 +146,7 @@ public class FarBlueAuto6Balls extends NextFTCOpMode {
                     PrintCommand("Finished 5")
             );
 
+
     Command ShootFromMid =
             new SequentialGroup(
                     new ParallelGroup(
@@ -192,6 +189,9 @@ public class FarBlueAuto6Balls extends NextFTCOpMode {
                     ),
                     PrintCommand("Finished 5")
             );
+    public double MirrorAngle(double ang){
+        return (180 - ang + 360) % 360;
+    }
 
     Command ShootFromClose =
             new SequentialGroup(

@@ -71,7 +71,7 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
                         new BezierLine(
                                 new Pose(28.682, 131.682),
 
-                                new Pose(65.000, 100.000)
+                                new Pose(70, 95)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(324), Math.toRadians(330))
 
@@ -79,7 +79,7 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(65.000, 100.000),
+                                new Pose(70, 95),
 
                                 new Pose(60.000, 84.000)
                         )
@@ -101,7 +101,7 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
                         new BezierLine(
                                 new Pose(17.312, 84.000),
 
-                                new Pose(65.000, 100.000)
+                                new Pose(70, 95)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(330))
 
@@ -109,9 +109,9 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(65.000, 100.000),
+                                new Pose(70, 95),
 
-                                new Pose(20.841, 94.641)
+                                new Pose(15.000, 94.641)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(330), Math.toRadians(180))
 
@@ -250,8 +250,8 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
                     new SequentialGroup(
                             new ParallelDeadlineGroup(
                                     new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                    //IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
-                                    //IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
+                                    IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+                                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_REVERSED_POWER),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed()
                             ),
                             PrintCommand("Finished 3"),
