@@ -31,7 +31,7 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Autonomous
-public class CloseRedAuto6Balls extends NextFTCOpMode {
+public class FarBlueAuto6Balls extends NextFTCOpMode {
     public PathChain Path1;
     public PathChain Path2;
     public PathChain Path3;
@@ -46,7 +46,7 @@ public class CloseRedAuto6Balls extends NextFTCOpMode {
     Follower follower;
     List<String> a = new ArrayList<String>();
 
-    public CloseRedAuto6Balls() {
+    public FarBlueAuto6Balls() {
         addComponents(
                 new SubsystemComponent(
                         ShooterSubsystem.INSTANCE,
@@ -66,76 +66,35 @@ public class CloseRedAuto6Balls extends NextFTCOpMode {
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(28.681751824817518, 131.68175182481747, 144).mirror());
+        follower.setStartingPose(new Pose(56, 8, 270));
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(28.682, 131.682).mirror(),
+                                new Pose(56.000, 8.000),
 
-                                new Pose(65.000, 100.000).mirror()
+                                new Pose(60.000, 25.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(MirrorAngle(324)), Math.toRadians(MirrorAngle(330)))
+                ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(300))
 
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(65.000, 100.000).mirror(),
+                                new Pose(60.000, 25.000),
 
-                                new Pose(60.000, 84.000).mirror()
+                                new Pose(50.000, 35.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(MirrorAngle(330)), Math.toRadians(MirrorAngle(180)))
-
-                .build();
-
-        Path3 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(60.000, 84.000).mirror(),
-
-                                new Pose(17.312, 84.000).mirror()
-                        )
-                ).setConstantHeadingInterpolation(Math.toRadians(MirrorAngle(180)))
-
-                .build();
-
-        Path4 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(17.312, 84.000),
-
-                                new Pose(65.000, 100.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(MirrorAngle(180)), Math.toRadians(MirrorAngle(330)))
-
-                .build();
-
-        Path5 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(65.000, 100.000).mirror(),
-
-                                new Pose(20.841, 94.641).mirror()
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(MirrorAngle(330)), Math.toRadians(MirrorAngle(180)))
+                ).setLinearHeadingInterpolation(Math.toRadians(300), Math.toRadians(-180))
 
                 .build();
         Path1Command = new FollowPath(Path1);
         Path2Command = new FollowPath(Path2);
-        Path3Command = new FollowPath(Path3);
-        Path4Command = new FollowPath(Path4);
-        Path5Command = new FollowPath(Path5);
+
         Auto = new SequentialGroup(
                 Path1Command,
-                ShootFromClose,
-                Path2Command,
-                MoveWhilePathing(Path3Command),
-                Path4Command,
-                ShootFromClose,
-                Path5Command
+                ShootFromFar,
+                Path2Command
         );
     }
-
-    public double MirrorAngle(double ang){
-        return (180 - ang + 360) % 360;
-    }
-
 
     @Override
     public void onUpdate() {
@@ -238,7 +197,7 @@ public class CloseRedAuto6Balls extends NextFTCOpMode {
             new SequentialGroup(
                     new ParallelGroup(
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_CLOSE)
+                            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_AUTO_MID)
                     ),
                     PrintCommand("Finished 1"),
                     new ParallelDeadlineGroup(
@@ -255,8 +214,8 @@ public class CloseRedAuto6Balls extends NextFTCOpMode {
                     new SequentialGroup(
                             new ParallelDeadlineGroup(
                                     new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
+                                    //IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+                                    //IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed()
                             ),
                             PrintCommand("Finished 3"),

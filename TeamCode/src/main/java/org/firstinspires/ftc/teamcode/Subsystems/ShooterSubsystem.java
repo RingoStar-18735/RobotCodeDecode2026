@@ -23,6 +23,7 @@ import dev.nextftc.hardware.powerable.SetPower;
 public class ShooterSubsystem implements Subsystem {
     public final static ShooterSubsystem INSTANCE = new ShooterSubsystem();
 
+    public boolean ReverseWheel = false;
     public boolean ShooterStopped = false;
     private boolean CommandStarted = true;
     private TelemetryManager panels = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -134,7 +135,9 @@ public class ShooterSubsystem implements Subsystem {
 //        double proportional = SHOOTER_P * (PID.getTarget() - Shooter.getVelocity());
 
 
-        if (ShooterStopped){
+        if (ReverseWheel){
+            Shooter.setPower(-0.2);
+        } else if (ShooterStopped){
             Shooter.setPower(0);
         } else {
             Shooter.setPower(PIDPower);

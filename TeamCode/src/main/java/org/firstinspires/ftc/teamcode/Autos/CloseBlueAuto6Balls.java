@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Autos;
 
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -67,54 +66,54 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(24.68759124087591, 126.84671532846713, 144));
+        follower.setStartingPose(new Pose(28.681751824817518, 131.68175182481747, 144));
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(28.682, 131.682),
 
-                                new Pose(52.358, 93.693)
+                                new Pose(65.000, 100.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(324), Math.toRadians(-38))
+                ).setLinearHeadingInterpolation(Math.toRadians(324), Math.toRadians(330))
 
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(52.358, 93.693),
-                                new Pose(60.420, 84.796),
-                                new Pose(37.585, 84.210)
+                        new BezierLine(
+                                new Pose(65.000, 100.000),
+
+                                new Pose(60.000, 84.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(313), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(330), Math.toRadians(180))
 
                 .build();
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(37.585, 84.210),
+                                new Pose(60.000, 84.000),
 
-                                new Pose(15.000, 84.000)
+                                new Pose(17.312, 84.000)
                         )
-                ).setTangentHeadingInterpolation()
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(15.000, 84.000),
+                                new Pose(17.312, 84.000),
 
-                                new Pose(52.568, 93.693)
+                                new Pose(65.000, 100.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(313))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(330))
 
                 .build();
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(52.568, 93.693),
+                                new Pose(65.000, 100.000),
 
-                                new Pose(47.466, 72.147)
+                                new Pose(20.841, 94.641)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(313), Math.toRadians(0))
+                ).setLinearHeadingInterpolation(Math.toRadians(330), Math.toRadians(180))
 
                 .build();
         Path1Command = new FollowPath(Path1);
@@ -234,7 +233,7 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
             new SequentialGroup(
                     new ParallelGroup(
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_CLOSE)
+                            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_AUTO_MID)
                     ),
                     PrintCommand("Finished 1"),
                     new ParallelDeadlineGroup(
@@ -251,8 +250,8 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
                     new SequentialGroup(
                             new ParallelDeadlineGroup(
                                     new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
+                                    //IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+                                    //IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed()
                             ),
                             PrintCommand("Finished 3"),
