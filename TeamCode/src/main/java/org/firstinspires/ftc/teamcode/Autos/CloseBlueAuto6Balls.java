@@ -37,11 +37,12 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
     public PathChain Path3;
     public PathChain Path4;
     public PathChain Path5;
-    Command Path1Command ;
+
+    Command Path1Command;
     Command Path2Command;
     Command Path3Command;
-    Command Path4Command ;
-    Command Path5Command ;
+    Command Path4Command;
+    Command Path5Command;
     Command Auto;
     Follower follower;
     List<String> a = new ArrayList<String>();
@@ -53,7 +54,6 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
                         IntakeSubSystem.INSTANCE,
                         TurretSubsystem.INSTANCE
                 ),
-
                 new PedroComponent(Constants::createFollower),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
@@ -71,15 +71,15 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
                         new BezierLine(
                                 new Pose(28.682, 131.682),
 
-                                new Pose(70, 95)
+                                new Pose(70, 90)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(324), Math.toRadians(330))
+                ).setLinearHeadingInterpolation(Math.toRadians(324), Math.toRadians(325))
 
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(70, 95),
+                                new Pose(70, 90),
 
                                 new Pose(60.000, 84.000)
                         )
@@ -101,7 +101,7 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
                         new BezierLine(
                                 new Pose(17.312, 84.000),
 
-                                new Pose(70, 95)
+                                new Pose(70, 90)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(330))
 
@@ -109,7 +109,7 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(70, 95),
+                                new Pose(70, 90),
 
                                 new Pose(15.000, 94.641)
                         )

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autos;
 
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -31,32 +32,37 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Autonomous
-public class CloseRedAuto6Balls extends NextFTCOpMode {
+public class newAutoBlueClose extends NextFTCOpMode {
     public PathChain Path1;
     public PathChain Path2;
     public PathChain Path3;
     public PathChain Path4;
     public PathChain Path5;
     public PathChain Path6;
-    Command Path1Command ;
+    public PathChain Path7;
+    public PathChain Path8;
+    public PathChain Path9;
+
+    Command Path1Command;
     Command Path2Command;
     Command Path3Command;
-    Command Path4Command ;
-    Command Path5Command ;
-    Command Path6Command ;
-
+    Command Path4Command;
+    Command Path5Command;
+    Command Path6Command;
+    Command Path7Command;
+    Command Path8Command;
+    Command Path9Command;
     Command Auto;
     Follower follower;
     List<String> a = new ArrayList<String>();
 
-    public CloseRedAuto6Balls() {
+    public newAutoBlueClose() {
         addComponents(
                 new SubsystemComponent(
                         ShooterSubsystem.INSTANCE,
                         IntakeSubSystem.INSTANCE,
                         TurretSubsystem.INSTANCE
                 ),
-
                 new PedroComponent(Constants::createFollower),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
@@ -69,64 +75,94 @@ public class CloseRedAuto6Balls extends NextFTCOpMode {
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(28.681751824817518, 131.68175182481747, 144).mirror());
+        follower.setStartingPose(new Pose(34, 136, 135));
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(28.682, 131.682).mirror(),
+                                new Pose(34.000, 136.000),
 
-                                new Pose(75, 92).mirror()
+                                new Pose(58, 90.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(MirrorAngle(324)), Math.toRadians(MirrorAngle(327)))
-
-                .build();
-
-        Path6 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(75, 92).mirror(),
-
-                                new Pose(80, 87).mirror()
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(MirrorAngle(325)), Math.toRadians(MirrorAngle(183)))
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(80, 87).mirror(),
+                                new Pose(58.000, 90.000),
 
-                                new Pose(67, 87).mirror()
+                                new Pose(50.000, 84.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(MirrorAngle(183)), Math.toRadians(MirrorAngle(183)))
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(67, 87).mirror(),
+                                new Pose(50.000, 84.000),
 
-                                new Pose(17.312, 87).mirror()
+                                new Pose(15.000, 84.000)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(MirrorAngle(183)))
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(17.312, 87).mirror(),
+                                new Pose(15.000, 84.000),
 
-                                new Pose(75, 92).mirror()
+                                new Pose(58.000, 90.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(MirrorAngle(183)), Math.toRadians(MirrorAngle(327)))
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(75, 92).mirror(),
+                                new Pose(58.000, 90.000),
 
-                                new Pose(15.000, 94.641).mirror()
+                                new Pose(50.000, 60.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(MirrorAngle(330)), Math.toRadians(MirrorAngle(180)))
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
+
+                .build();
+
+        Path6 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(50.000, 60.000),
+
+                                new Pose(8.000, 60.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
+
+                .build();
+
+        Path7 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Pose(8.000, 60.000),
+                                new Pose(66.584, 57.546),
+                                new Pose(58.000, 90.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
+
+                .build();
+
+        Path8 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Pose(58.000, 90.000),
+                                new Pose(53.869, 65.292),
+                                new Pose(7.000, 58.000)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(130))
+
+                .build();
+
+        Path9 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Pose(7.000, 58.000),
+                                new Pose(68.715, 60.234),
+                                new Pose(58.000, 90.000)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(130), Math.toRadians(180))
 
                 .build();
         Path1Command = new FollowPath(Path1);
@@ -135,22 +171,25 @@ public class CloseRedAuto6Balls extends NextFTCOpMode {
         Path4Command = new FollowPath(Path4);
         Path5Command = new FollowPath(Path5);
         Path6Command = new FollowPath(Path6);
+        Path7Command = new FollowPath(Path7);
+        Path8Command = new FollowPath(Path8);
+        Path9Command = new FollowPath(Path9);
         Auto = new SequentialGroup(
                 Path1Command,
                 ShootFromClose,
-                Path6Command,
                 Path2Command,
                 MoveWhilePathing(Path3Command),
                 Path4Command,
                 ShootFromClose,
-                Path5Command
+                Path5Command,
+                MoveWhilePathing(Path6Command),
+                Path7Command,
+                Path8Command,
+                IntakeSubSystem.INSTANCE.IntakeFullyNotTransfer(),
+                Path9Command,
+                ShootFromClose
         );
     }
-
-    public double MirrorAngle(double ang){
-        return (180 - ang + 360) % 360;
-    }
-
 
     @Override
     public void onUpdate() {
@@ -186,7 +225,7 @@ public class CloseRedAuto6Balls extends NextFTCOpMode {
                             new ParallelDeadlineGroup(
                                     new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
                                     IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_REVERSED_POWER),
+                                    IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed()
                             ),
                             PrintCommand("Finished 3"),
@@ -251,9 +290,10 @@ public class CloseRedAuto6Balls extends NextFTCOpMode {
 
     Command ShootFromClose =
             new SequentialGroup(
-                    new ParallelGroup(
+                    new ParallelDeadlineGroup(
+                            new Delay(1),
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_CLOSE)
+                            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_AUTO_MID)
                     ),
                     PrintCommand("Finished 1"),
                     new ParallelDeadlineGroup(
@@ -262,30 +302,30 @@ public class CloseRedAuto6Balls extends NextFTCOpMode {
                                     IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed(),
                                     IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                    IntakeSubSystem.INSTANCE.IntakeFullyTransfer()
+                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
                             )
                     ),
                     PrintCommand("Finished 2"),
-                    new SequentialGroup(
-                            new ParallelDeadlineGroup(
-                                    new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-                            ),
-                            PrintCommand("Finished 3"),
-
-                            new ParallelDeadlineGroup(
-                                    new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-                            ),
-                            PrintCommand("Finished 4")
-
-                    ),
+//                    new SequentialGroup(
+//                            new ParallelDeadlineGroup(
+//                                    new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
+//                                    //IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+//                                    //IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
+//                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
+//                            ),
+//                            PrintCommand("Finished 3"),
+//
+//                            new ParallelDeadlineGroup(
+//                                    new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
+//                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
+//                                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
+//                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
+//                            ),
+//                            PrintCommand("Finished 4")
+//
+//                    ),
                     new ParallelDeadlineGroup(
+                            new Delay(1),
                             ShooterSubsystem.INSTANCE.StopSpeed(),
                             IntakeSubSystem.INSTANCE.IntakeStop()
                     ),
@@ -295,8 +335,8 @@ public class CloseRedAuto6Balls extends NextFTCOpMode {
 
     private Command MoveWhilePathing(Command path){
         return new ParallelDeadlineGroup(
-                        new Delay(4),
-                        path,
+                new Delay(4),
+                path,
                 IntakeSubSystem.INSTANCE.IntakeFullyNotTransfer()
         );
     }
@@ -308,3 +348,4 @@ public class CloseRedAuto6Balls extends NextFTCOpMode {
         Auto.schedule();
     }
 }
+
