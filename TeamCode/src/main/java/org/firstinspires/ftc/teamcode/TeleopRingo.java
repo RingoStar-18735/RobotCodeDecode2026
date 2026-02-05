@@ -6,6 +6,7 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
+import org.firstinspires.ftc.teamcode.Subsystems.LimelightApril;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -40,13 +41,15 @@ public class TeleopRingo extends NextFTCOpMode {
                 new SubsystemComponent(
                         ShooterSubsystem.INSTANCE,
                         IntakeSubSystem.INSTANCE,
-                        TurretSubsystem.INSTANCE
+                        TurretSubsystem.INSTANCE,
+                        LimelightApril.INSTANCE
                         ),
 
                 new PedroComponent(Constants::createFollower),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
         );
+         hasStartedMatch = false;
     }
 
 
@@ -205,27 +208,27 @@ public class TeleopRingo extends NextFTCOpMode {
         TurretSubsystem.INSTANCE.ResetAngle().schedule();
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
-
     }
     public Command PrintCommand(String b){
         return new InstantCommand(()->a.add(b));
     }
 
-
+    boolean hasStartedMatch;
     @Override
     public void onUpdate() {
         telemetry.addData("ShootFinished: ", ShooterSubsystem.INSTANCE.RunFullSpeed().isDone());
         telemetry.addData("FinishedCommands: ",a);
+        telemetry.addData("Pos: ",follower.getPose());
         follower.update();
 
-        //TurretSubsystem.INSTANCE.LimelightMove().schedule();
-
-
+        follower.setPose(LimelightApril.INSTANCE.getRobotPos(follower, TurretSubsystem.INSTANCE.getAngle()));
+        if(hasStartedMatch)        TurretSubsystem.INSTANCE.FollowPoint(FieldMap.BLUE_TARGET_POS, follower).schedule();
 
     }
 
     @Override
     public void onStartButtonPressed() {
+        hasStartedMatch = true;
         follower =  Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(0,0, 135));
 

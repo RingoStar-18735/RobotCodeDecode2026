@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -48,21 +46,21 @@ public class LimelightApril implements Subsystem {
                 double x = botpose.getPosition().x;
                 double y = botpose.getPosition().y;
                 double heading = botpose.getOrientation().getYaw(AngleUnit.DEGREES);
-                telemetry.addData("MT1 Location", "(" + x + ", " + y + " ," +heading+ ")");
+                Pose pose = new Pose(x, y, heading);
                 return new Pose(x, y, heading);
             }
         }
-        telemetry.addData("MT1 Location", "No Limelight Location Detected");
         return new Pose(-10,-10, -10);
     }
 
-    public Pose getRobotPos(Follower follower, double TurretAngle, double CameraOffset){
+    public Pose getRobotPos(Follower follower, double TurretAngle ){
         Pose CamPos = getPoseLimelight();
         if(CamPos.getPose().getX() == -1) return follower.getPose();
 
-        double xBot = CamPos.getX() + RobotMap.TURRET_RADIUS * Math.sin(Math.toRadians(TurretAngle));
-        double yBot = CamPos.getY() - RobotMap.TURRET_RADIUS * Math.cos(Math.toRadians(TurretAngle));
-        double b b
+        double xBot = CamPos.getX() - RobotMap.TURRET_RADIUS * Math.cos(Math.toRadians(TurretAngle + follower.getPose().getHeading()));
+        double yBot = CamPos.getY() - RobotMap.TURRET_RADIUS * Math.sin(Math.toRadians(TurretAngle + follower.getPose().getHeading()));
+        double headingBot = CamPos.getHeading() -  TurretAngle;
+        return  new Pose(xBot,yBot,headingBot);
     }
 
 

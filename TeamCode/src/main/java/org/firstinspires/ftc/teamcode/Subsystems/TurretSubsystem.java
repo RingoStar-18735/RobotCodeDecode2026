@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -75,7 +76,6 @@ public class TurretSubsystem implements Subsystem {
 
 
 
-
 //    public Command LimelightMove(){
 //        return ;
 //    }
@@ -88,7 +88,6 @@ public class TurretSubsystem implements Subsystem {
 //        ActiveOpMode.telemetry().addData("target X:" , getTX());
 //        ActiveOpMode.telemetry().addData("target Y:" , getTY());
 
-   //     if(!isMagnetPressed()) ResetEncoder();
 
         ActiveOpMode.telemetry().addData("magnet state:" , !magnet.getState());
         ActiveOpMode.telemetry().addData("turret position:" , getAngle());
@@ -104,14 +103,33 @@ public class TurretSubsystem implements Subsystem {
         ActiveOpMode.telemetry().addData("MotorPow:" , turretmotor.getPower());
         ActiveOpMode.telemetry().addData("Offset:" , offset);
 
-//        if(isReset){
-//            turretmotor.setPower(PIDPower);
-//        }
+        if(isReset){
+            turretmotor.setPower(PIDPower);
+        }
     }
-    public Command MoveToAngle(double ang){
+    public Command MoveToAngle(double Normalang){
         return new InstantCommand(
-                ()-> PID.setTarget(Math.max(RobotMap.MIN_TURRET_ANGLE, Math.min(RobotMap.MAX_TURRET_ANGLE, ang)))
-        );
+                ()-> PID.setTarget(AngleConverter(Normalang)));
+    }
+    public Command MoveToSetAngle(double ang){
+        return new InstantCommand(
+                ()-> PID.setTarget(ang));
+    }
+
+    public Command FollowPoint(Pose pose, Follower follower){
+        double dist = Math.sqrt(Math.pow(pose.getX() - follower.getPose().getX(), 2) + Math.pow(pose.getY() - follower.getPose().getY(), 2));
+        double ang = Math.atan((pose.getY() - follower.getPose().getY()) / pose.getX() - follower.getPose().getX());
+
+        ActiveOpMode.telemetry().addData("Distance: " , dist);
+        ActiveOpMode.telemetry().addData("angle: " , ang);
+
+        return  MoveAngle(ang);
+    }
+
+    public double AngleConverter(double ang){
+        double midAngle =(( RobotMap.MAX_TURRET_ANGLE + RobotMap.MIN_TURRET_ANGLE) /2) - 360;
+        double angle =  ang - midAngle;
+        return  Math.max(RobotMap.MIN_TURRET_ANGLE, Math.min(RobotMap.MAX_TURRET_ANGLE, angle));
     }
 
     public void setRobotPose(Pose pos){RobotPose = pos;}
