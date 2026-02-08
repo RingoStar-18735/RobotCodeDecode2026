@@ -118,7 +118,10 @@ public class TurretSubsystem implements Subsystem {
 
     public Command FollowPoint(Pose pose, Follower follower){
         double dist = Math.sqrt(Math.pow(pose.getX() - follower.getPose().getX(), 2) + Math.pow(pose.getY() - follower.getPose().getY(), 2));
-        double ang = Math.atan((pose.getY() - follower.getPose().getY()) / pose.getX() - follower.getPose().getX());
+        double ang = Math.atan2(
+                pose.getY() - follower.getPose().getY(),
+                pose.getX() - follower.getPose().getX()
+        );
 
         ActiveOpMode.telemetry().addData("Distance: " , dist);
         ActiveOpMode.telemetry().addData("angle: " , ang);

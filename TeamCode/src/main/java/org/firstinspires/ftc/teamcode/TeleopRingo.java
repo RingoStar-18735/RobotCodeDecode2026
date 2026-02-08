@@ -219,9 +219,11 @@ public class TeleopRingo extends NextFTCOpMode {
         telemetry.addData("ShootFinished: ", ShooterSubsystem.INSTANCE.RunFullSpeed().isDone());
         telemetry.addData("FinishedCommands: ",a);
         telemetry.addData("Pos: ",follower.getPose());
-        follower.update();
 
         follower.setPose(LimelightApril.INSTANCE.getRobotPos(follower, TurretSubsystem.INSTANCE.getAngle()));
+        follower.update();
+
+
         if(hasStartedMatch)        TurretSubsystem.INSTANCE.FollowPoint(FieldMap.BLUE_TARGET_POS, follower).schedule();
 
     }
@@ -230,7 +232,7 @@ public class TeleopRingo extends NextFTCOpMode {
     public void onStartButtonPressed() {
         hasStartedMatch = true;
         follower =  Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(0,0, 135));
+        follower.setStartingPose(new Pose(0,0, Math.PI / 2));
 
         DriverControlledCommand driverControlled = new PedroDriverControlled(
                 Gamepads.gamepad1().leftStickY(),

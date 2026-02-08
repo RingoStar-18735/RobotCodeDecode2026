@@ -45,7 +45,7 @@ public class LimelightApril implements Subsystem {
             if (botpose != null) {
                 double x = botpose.getPosition().x;
                 double y = botpose.getPosition().y;
-                double heading = botpose.getOrientation().getYaw(AngleUnit.DEGREES);
+                double heading = botpose.getOrientation().getYaw(AngleUnit.RADIANS);
                 Pose pose = new Pose(x, y, heading);
                 return new Pose(x, y, heading);
             }
@@ -55,11 +55,11 @@ public class LimelightApril implements Subsystem {
 
     public Pose getRobotPos(Follower follower, double TurretAngle ){
         Pose CamPos = getPoseLimelight();
-        if(CamPos.getPose().getX() == -1) return follower.getPose();
+        if(CamPos.getPose().getX() == -10) return follower.getPose();
 
-        double xBot = CamPos.getX() - RobotMap.TURRET_RADIUS * Math.cos(Math.toRadians(TurretAngle + follower.getPose().getHeading()));
-        double yBot = CamPos.getY() - RobotMap.TURRET_RADIUS * Math.sin(Math.toRadians(TurretAngle + follower.getPose().getHeading()));
-        double headingBot = CamPos.getHeading() -  TurretAngle;
+        double xBot = CamPos.getX()*39.37 + 72 - RobotMap.TURRET_RADIUS * Math.cos((Math.toRadians(TurretAngle) + follower.getPose().getHeading()));
+        double yBot = CamPos.getY()*39.37 + 72 - RobotMap.TURRET_RADIUS * Math.sin((Math.toRadians(TurretAngle) + follower.getPose().getHeading()));
+        double headingBot = CamPos.getHeading() -  Math.toRadians(TurretAngle);
         return  new Pose(xBot,yBot,headingBot);
     }
 
