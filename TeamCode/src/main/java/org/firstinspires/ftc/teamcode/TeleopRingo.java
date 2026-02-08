@@ -6,6 +6,7 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
+import org.firstinspires.ftc.teamcode.Subsystems.LimelightApril;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -16,7 +17,6 @@ import java.util.List;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
-import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
@@ -41,13 +41,15 @@ public class TeleopRingo extends NextFTCOpMode {
                 new SubsystemComponent(
                         ShooterSubsystem.INSTANCE,
                         IntakeSubSystem.INSTANCE,
-                        TurretSubsystem.INSTANCE
+                        TurretSubsystem.INSTANCE,
+                        LimelightApril.INSTANCE
                         ),
 
                 new PedroComponent(Constants::createFollower),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
         );
+         hasStartedMatch = false;
     }
 
 
@@ -71,8 +73,11 @@ public class TeleopRingo extends NextFTCOpMode {
 
     Command ShootFromFar =
             new SequentialGroup(
-                    ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR),
-                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
+                    new ParallelDeadlineGroup(
+                            new Delay(1),
+                            ShooterSubsystem.INSTANCE.RunFullSpeed(),
+                            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR)
+                    ),
                     PrintCommand("Finished 1"),
                     new ParallelDeadlineGroup(
                             new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
@@ -80,28 +85,28 @@ public class TeleopRingo extends NextFTCOpMode {
                                     IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed(),
                                     IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                    IntakeSubSystem.INSTANCE.IntakeFullyTransfer()
+                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
                             )
                     ),
                     PrintCommand("Finished 2"),
-                    new SequentialGroup(
-                            new ParallelDeadlineGroup(
-                                    new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-                            ),
-                            PrintCommand("Finished 3"),
-                            new ParallelDeadlineGroup(
-                                    new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-                            ),
-                            PrintCommand("Finished 4")
-
-                    ),
+//                    new SequentialGroup(
+//                            new ParallelDeadlineGroup(
+//                                    new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
+//                                    //IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+//                                    //IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
+//                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
+//                            ),
+//                            PrintCommand("Finished 3"),
+//
+//                            new ParallelDeadlineGroup(
+//                                    new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
+//                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
+//                                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
+//                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
+//                            ),
+//                            PrintCommand("Finished 4")
+//
+//                    ),
                     new ParallelDeadlineGroup(
                             ShooterSubsystem.INSTANCE.StopSpeed(),
                             IntakeSubSystem.INSTANCE.IntakeStop()
@@ -111,7 +116,8 @@ public class TeleopRingo extends NextFTCOpMode {
             );
     Command ShootFromMid =
             new SequentialGroup(
-                    new ParallelGroup(
+                    new ParallelDeadlineGroup(
+                            new Delay(1),
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
                             ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID)
                     ),
@@ -122,39 +128,40 @@ public class TeleopRingo extends NextFTCOpMode {
                                     IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed(),
                                     IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                    IntakeSubSystem.INSTANCE.IntakeFullyTransfer()
+                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
                             )
                     ),
                     PrintCommand("Finished 2"),
-                    new SequentialGroup(
-                            new ParallelDeadlineGroup(
-                                    new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-                            ),
-                            PrintCommand("Finished 3"),
-
-                            new ParallelDeadlineGroup(
-                                    new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-                            ),
-                            PrintCommand("Finished 4")
-
-                    ),
+//                    new SequentialGroup(
+//                            new ParallelDeadlineGroup(
+//                                    new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
+//                                    //IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+//                                    //IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
+//                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
+//                            ),
+//                            PrintCommand("Finished 3"),
+//
+//                            new ParallelDeadlineGroup(
+//                                    new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
+//                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
+//                                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
+//                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
+//                            ),
+//                            PrintCommand("Finished 4")
+//
+//                    ),
                     new ParallelDeadlineGroup(
                             ShooterSubsystem.INSTANCE.StopSpeed(),
                             IntakeSubSystem.INSTANCE.IntakeStop()
                     ),
                     PrintCommand("Finished 5")
+
             );
 
     Command ShootFromClose =
             new SequentialGroup(
-                    new ParallelGroup(
+                    new ParallelDeadlineGroup(
+                            new Delay(1),
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
                             ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_CLOSE)
                     ),
@@ -165,29 +172,28 @@ public class TeleopRingo extends NextFTCOpMode {
                                     IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed(),
                                     IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                    IntakeSubSystem.INSTANCE.IntakeFullyTransfer()
+                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
                             )
                     ),
                     PrintCommand("Finished 2"),
-                    new SequentialGroup(
-                            new ParallelDeadlineGroup(
-                                    new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-                            ),
-                            PrintCommand("Finished 3"),
-
-                            new ParallelDeadlineGroup(
-                                    new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-                            ),
-                            PrintCommand("Finished 4")
-
-                    ),
+//                    new SequentialGroup(
+//                            new ParallelDeadlineGroup(
+//                                    new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
+//                                    //IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+//                                    //IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
+//                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
+//                            ),
+//                            PrintCommand("Finished 3"),
+//
+//                            new ParallelDeadlineGroup(
+//                                    new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
+//                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
+//                                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
+//                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
+//                            ),
+//                            PrintCommand("Finished 4")
+//
+//                    ),
                     new ParallelDeadlineGroup(
                             ShooterSubsystem.INSTANCE.StopSpeed(),
                             IntakeSubSystem.INSTANCE.IntakeStop()
@@ -199,32 +205,34 @@ public class TeleopRingo extends NextFTCOpMode {
 
     @Override
     public void onInit() {
-        //TurretSubsystem.INSTANCE.ResetAngle().schedule();
+        TurretSubsystem.INSTANCE.ResetAngle().schedule();
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
-
     }
     public Command PrintCommand(String b){
         return new InstantCommand(()->a.add(b));
     }
 
-
+    boolean hasStartedMatch;
     @Override
     public void onUpdate() {
         telemetry.addData("ShootFinished: ", ShooterSubsystem.INSTANCE.RunFullSpeed().isDone());
         telemetry.addData("FinishedCommands: ",a);
+        telemetry.addData("Pos: ",follower.getPose());
+
+        follower.setPose(LimelightApril.INSTANCE.getRobotPos(follower, TurretSubsystem.INSTANCE.getAngle()));
         follower.update();
 
-        //TurretSubsystem.INSTANCE.LimelightMove().schedule();
 
-
+        if(hasStartedMatch)        TurretSubsystem.INSTANCE.FollowPoint(FieldMap.BLUE_TARGET_POS, follower).schedule();
 
     }
 
     @Override
     public void onStartButtonPressed() {
+        hasStartedMatch = true;
         follower =  Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(0,0, 135));
+        follower.setStartingPose(new Pose(0,0, Math.PI / 2));
 
         DriverControlledCommand driverControlled = new PedroDriverControlled(
                 Gamepads.gamepad1().leftStickY(),
