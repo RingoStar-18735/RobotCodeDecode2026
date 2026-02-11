@@ -29,7 +29,7 @@ public class RobotMap {
     public static double INTAKE_MOTOR_POWER = 1;
     public static double TRANSFER_SERVO_POWER = 1;
 
-    public static double TURRET_P = 0.005;
+    public static double TURRET_P = 0.01;
     public static double TURRET_I = 0.0000;
     public static double TURRET_D = 0.00001;
 
@@ -38,7 +38,7 @@ public class RobotMap {
     public static double TURRET_RADIUS = 0.394 * 16.977;
 
 
-    public static double RESET_TURRET_POWER = 0.3;
+    public static double RESET_TURRET_POWER = 0.25;
 
     public static double MAX_TURRET_ANGLE = 240;
     public static double MIN_TURRET_ANGLE = -48;

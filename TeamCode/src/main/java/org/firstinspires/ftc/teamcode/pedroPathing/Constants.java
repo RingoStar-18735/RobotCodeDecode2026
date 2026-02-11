@@ -38,8 +38,8 @@ public class Constants {
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
-            .rightFrontMotorName("1C")
-            .rightRearMotorName("3C")
+            .rightFrontMotorName("3C")
+            .rightRearMotorName("1C")
             .leftRearMotorName("2C")
             .leftFrontMotorName("0C")
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)

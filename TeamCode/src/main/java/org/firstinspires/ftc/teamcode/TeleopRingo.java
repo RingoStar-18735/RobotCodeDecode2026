@@ -17,7 +17,6 @@ import java.util.List;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
-import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -55,7 +54,7 @@ public class TeleopRingo extends NextFTCOpMode {
 
 
     public Command FeedWithKickBack(){
-        return new SequentialGroup(
+        return new SequentialGroupFixed(
                 new ParallelDeadlineGroup(
                         new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
                         IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
@@ -72,7 +71,7 @@ public class TeleopRingo extends NextFTCOpMode {
 
 
     Command ShootFromFar =
-            new SequentialGroup(
+            new SequentialGroupFixed(
                     new ParallelDeadlineGroup(
                             new Delay(1),
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
@@ -81,7 +80,7 @@ public class TeleopRingo extends NextFTCOpMode {
                     PrintCommand("Finished 1"),
                     new ParallelDeadlineGroup(
                             new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
-                            new SequentialGroup(
+                            new SequentialGroupFixed(
                                     IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed(),
                                     IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
@@ -115,7 +114,7 @@ public class TeleopRingo extends NextFTCOpMode {
 
             );
     Command ShootFromMid =
-            new SequentialGroup(
+            new SequentialGroupFixed(
                     new ParallelDeadlineGroup(
                             new Delay(1),
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
@@ -124,7 +123,8 @@ public class TeleopRingo extends NextFTCOpMode {
                     PrintCommand("Finished 1"),
                     new ParallelDeadlineGroup(
                             new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
-                            new SequentialGroup(
+                            new SequentialGroupFixed(
+
                                     IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed(),
                                     IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
@@ -159,7 +159,7 @@ public class TeleopRingo extends NextFTCOpMode {
             );
 
     Command ShootFromClose =
-            new SequentialGroup(
+            new SequentialGroupFixed(
                     new ParallelDeadlineGroup(
                             new Delay(1),
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
@@ -168,7 +168,7 @@ public class TeleopRingo extends NextFTCOpMode {
                     PrintCommand("Finished 1"),
                     new ParallelDeadlineGroup(
                             new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
-                            new SequentialGroup(
+                            new SequentialGroupFixed(
                                     IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed(),
                                     IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
@@ -220,11 +220,12 @@ public class TeleopRingo extends NextFTCOpMode {
         telemetry.addData("FinishedCommands: ",a);
         telemetry.addData("Pos: ",follower.getPose());
 
-        follower.setPose(LimelightApril.INSTANCE.getRobotPos(follower, TurretSubsystem.INSTANCE.getAngle()));
+        //follower.setPose(LimelightApril.INSTANCE.getRobotPos(follower, TurretSubsystem.INSTANCE.getAngle()));
         follower.update();
 
 
-        if(hasStartedMatch)        TurretSubsystem.INSTANCE.FollowPoint(FieldMap.BLUE_TARGET_POS, follower).schedule();
+        if (hasStartedMatch)
+            TurretSubsystem.INSTANCE.FollowPoint(FieldMap.RED_TARGET_POS, follower).schedule();
 
     }
 
@@ -232,13 +233,13 @@ public class TeleopRingo extends NextFTCOpMode {
     public void onStartButtonPressed() {
         hasStartedMatch = true;
         follower =  Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(0,0, Math.PI / 2));
+        follower.setStartingPose(new Pose(72,72, Math.PI / 2));
 
         DriverControlledCommand driverControlled = new PedroDriverControlled(
                 Gamepads.gamepad1().leftStickY(),
                 Gamepads.gamepad1().leftStickX(),
                 Gamepads.gamepad1().rightStickX().negate(),
-                false
+                true
         );
         driverControlled.schedule();
 
@@ -315,13 +316,13 @@ public class TeleopRingo extends NextFTCOpMode {
 
 
         Gamepads.gamepad2().dpadDown().whenTrue(
-                new SequentialGroup(
+                new SequentialGroupFixed(
                         new InstantCommand( () -> ShooterSubsystem.INSTANCE.ReverseWheel = true)
                         )
         );
 
         Gamepads.gamepad2().dpadDown().whenFalse(
-                new SequentialGroup(
+                new SequentialGroupFixed(
                         new InstantCommand( () -> ShooterSubsystem.INSTANCE.ReverseWheel = false
                         )
                 )
