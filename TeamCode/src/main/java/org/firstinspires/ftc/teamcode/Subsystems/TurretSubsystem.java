@@ -113,6 +113,9 @@ public class TurretSubsystem implements Subsystem {
     }
 
     public Command FollowPoint(Pose targetpose, Follower follower){
+        // max -> 5*PI / 4
+        //min -> -PI / 2
+        double addedAngleMinMax = Math.PI / 8;
         // double dist = Math.sqrt(Math.pow(targetpose.getX() - follower.getPose().getX(), 2) + Math.pow(targetpose.getY() - follower.getPose().getY(), 2));
         // we assume that the robot starts at 90 degrees, relative to positive x (pedro coordinate system, https://pedropathing.com/docs/fieldcoordinates-dark.png)
         double beta = follower.getHeading(); // robot angle in relation to field [-PI, PI] relative to positive x (pedro coordinate system, https://pedropathing.com/docs/fieldcoordinates-dark.png)
@@ -134,14 +137,14 @@ public class TurretSubsystem implements Subsystem {
         if (gamma < -Math.PI / 2) {
             gamma += 2 * Math.PI;
 
-            if (gamma > (5 * Math.PI) / 4){
-                gamma = 0; // impossible angle, return to 0
+            if (gamma > (5 * Math.PI) / 4) {
+                gamma =  -Math.PI / 2 + addedAngleMinMax ; // impossible angle, return to 0
             }
         } else if (gamma > (5 * Math.PI) / 4) {
             gamma -= 2 * Math.PI;
 
             if (gamma < -Math.PI / 2) {
-                gamma = 0; // impossible angle, return to 0
+                gamma = ((5 * Math.PI) / 4) - addedAngleMinMax; // impossible angle, return to 0
             }
         } // Converts gamma to [-PI / 2 , (5 * PI) / 4]
 

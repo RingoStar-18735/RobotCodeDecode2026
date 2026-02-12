@@ -105,12 +105,6 @@ public class ShooterSubsystem implements Subsystem {
         return Shooter.getVelocity();
     }
 
-//    public Command ShootByDistance(double distance){
-//        return new SwitchCommand(
-//                ()-> distance,
-//
-//        )
-//    }
 
     @Override
     public void periodic() {
