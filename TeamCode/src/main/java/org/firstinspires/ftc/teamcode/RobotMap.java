@@ -40,8 +40,8 @@ public class RobotMap {
 
     public static double RESET_TURRET_POWER = 0.25;
 
-    public static double MAX_TURRET_ANGLE = 240;
-    public static double MIN_TURRET_ANGLE = -48;
+    public static double MAX_TURRET_ANGLE = 225;
+    public static double MIN_TURRET_ANGLE = -90;
 
     public static int LIMELIGHT_HZ = 100;
 

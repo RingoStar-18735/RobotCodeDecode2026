@@ -16,6 +16,7 @@ public class MecanumTeleOp extends LinearOpMode {
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("1C");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("3C");
 
+
         // Reverse the right side motors. This may be wrong for your setup.
         // If your robot moves backwards when commanded to go forwards,
         // reverse the left side instead.
@@ -25,7 +26,7 @@ public class MecanumTeleOp extends LinearOpMode {
 
         waitForStart();
 //        frontRightMotor.setPower(1);
-//        sleep(5000);
+        sleep(5000);
 //        frontRightMotor.setPower(0);
 //        frontLeftMotor.setPower(1);
 //        sleep(5000);

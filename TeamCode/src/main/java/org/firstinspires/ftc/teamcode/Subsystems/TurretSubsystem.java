@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.teamcode.RobotMap;
+import org.firstinspires.ftc.teamcode.SequentialGroupFixed;
+import org.firstinspires.ftc.teamcode.WaitMillis;
 import org.firstinspires.ftc.teamcode.pedroPathing.PIDController;
 
 import dev.nextftc.core.commands.Command;
@@ -19,14 +21,23 @@ public class TurretSubsystem implements Subsystem {
 
     public final static TurretSubsystem INSTANCE = new TurretSubsystem();
 
+    double Test2;
+    double Test1;
+    private boolean matchStarted = false;
+    private Pose newStartingPosition = new Pose();
     public boolean isReset = false;
-
     double offset = 0;
-
-
     private DigitalChannel magnet;
     private MotorEx turretmotor = new MotorEx ("2E");
     private PIDController PID;
+
+    public void startMatch() {
+        matchStarted = true;
+    }
+
+    public Pose getNewStartingPosition() {
+        return newStartingPosition;
+    }
 
     @Override
     public void initialize() {
@@ -41,7 +52,7 @@ public class TurretSubsystem implements Subsystem {
 
 
 
-    public boolean isMagnetPressed(){
+    public boolean isMagnetPressed() {
         return magnet.getState();
     }
 
@@ -55,7 +66,7 @@ public class TurretSubsystem implements Subsystem {
                 })
                 .setStop(interrupted -> {
                     turretmotor.setPower(0.0);
-                    isReset = true;
+                    sleep(1000);
                     ResetEncoder();
                 })
                 .setIsDone(()-> !isMagnetPressed()) // Returns if the command has finished
@@ -90,14 +101,21 @@ public class TurretSubsystem implements Subsystem {
         ActiveOpMode.telemetry().addData("Is Reset:" , isReset);
         magnet.setMode(DigitalChannel.Mode.INPUT);
 
+        ActiveOpMode.telemetry().addData("LL new pose: ", newStartingPosition);
+
+        ActiveOpMode.telemetry().addData("Limelight Heading:", Math.toDegrees(LimelightApril.INSTANCE.getPoseLimelight().getHeading()));
+        ActiveOpMode.telemetry().addData("Modified Limelight Heading:" , Math.toDegrees(((LimelightApril.INSTANCE.getPoseLimelight().getHeading() - (Math.PI / 2)) % (2 * Math.PI) + (2 * Math.PI)) % (2 * Math.PI)));
+        ActiveOpMode.telemetry().addData("Test Modified Heading:" , Test1);
+        ActiveOpMode.telemetry().addData("Robot Heading:" , Test2);
 
         double PIDPower = -PID.calculateOutput(getAngle(), ActiveOpMode.getRuntime());
-        ActiveOpMode.telemetry().update();
 //
         ActiveOpMode.telemetry().addData("MotorPow:" , turretmotor.getPower());
         ActiveOpMode.telemetry().addData("Offset:" , offset);
 
-        if(isReset){
+        ActiveOpMode.telemetry().update();
+
+        if(matchStarted){
             turretmotor.setPower(PIDPower);
         }
     }
@@ -148,15 +166,47 @@ public class TurretSubsystem implements Subsystem {
             }
         } // Converts gamma to [-PI / 2 , (5 * PI) / 4]
 
-        // ActiveOpMode.telemetry().addData("Distance: " , dist);
-        ActiveOpMode.telemetry().addData("Turret Alpha: " , Math.toDegrees(alpha));
-        ActiveOpMode.telemetry().addData("Turret Beta: " , Math.toDegrees(beta));
-        ActiveOpMode.telemetry().addData("Turret Gamma: " , Math.toDegrees(gamma));
-
         double finalGamma = gamma;
         return new InstantCommand(
                 () -> PID.setTarget(Math.toDegrees(finalGamma)));
     }
+
+    public Command LimelightScan(){
+        return new SequentialGroupFixed(
+                ResetAngle(),
+                new LambdaCommand()
+                        .setStart(() -> {
+                            turretmotor.setPower(-RobotMap.RESET_TURRET_POWER);
+                        })
+                        .setUpdate(() -> {
+                            if (getAngle() >= RobotMap.MAX_TURRET_ANGLE) {
+                                turretmotor.setPower(RobotMap.RESET_TURRET_POWER);
+                            }
+                        })
+                        .setStop(interrupted -> {
+                            turretmotor.setPower(0);
+                        })
+                        .setIsDone(() -> LimelightApril.INSTANCE.getIdList().contains(20) || LimelightApril.INSTANCE.getIdList().contains(24)) // Returns if the command has finished
+                                .requires(this, LimelightApril.INSTANCE)
+                                .setInterruptible(true)
+                                .named("LimelightScan"), // sets the name of the command; optional
+                new WaitMillis(5000),
+                new InstantCommand(() -> {
+                    Pose LimelightPose = LimelightApril.INSTANCE.getPoseLimelight();
+
+                    Pose newPose = new Pose(
+                            LimelightPose.getX(),
+                            LimelightPose.getY(),
+                            ((LimelightApril.INSTANCE.getPoseLimelight().getHeading() - (Math.PI / 2)) % (2 * Math.PI) + (2 * Math.PI)) % (2 * Math.PI) + Math.toRadians(getAngle()));
+                    newStartingPosition = newPose;
+
+                    Test1 = Math.toDegrees(((LimelightApril.INSTANCE.getPoseLimelight().getHeading() - (Math.PI / 2)) % (2 * Math.PI) + (2 * Math.PI)) % (2 * Math.PI));
+                    Test2 = getAngle();
+                    isReset = true;
+                })
+        );
+    }
+
 
     public double AngleConverter(double ang){
         double midAngle =(( RobotMap.MAX_TURRET_ANGLE + RobotMap.MIN_TURRET_ANGLE) /2) - 360;
@@ -166,11 +216,16 @@ public class TurretSubsystem implements Subsystem {
 
 
 
+
     public Command MoveAngle(double ang){
         return MoveToAngle(getAngle() + ang);
     }
 
-
-
-
+    public final void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
 }
