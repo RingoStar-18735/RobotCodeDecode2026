@@ -107,7 +107,6 @@ public class ShooterSubsystem implements Subsystem {
     }
 
 
-
     @Override
     public void periodic() {
 
