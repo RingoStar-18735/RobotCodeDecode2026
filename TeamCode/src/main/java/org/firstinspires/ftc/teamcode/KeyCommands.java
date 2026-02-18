@@ -8,7 +8,8 @@ import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
 
 public class KeyCommands {
-    public static Command Shoot(ShootType type){
+
+    public static Command Shoot(ShootType type) {
         double shootAngle = RobotMap.SERVO_MOVE_CLOSE;
         if(type == ShootType.FAR) shootAngle = RobotMap.SERVO_MOVE_FAR;
         else if (type == ShootType.MID) shootAngle = RobotMap.SERVO_MOVE_MID;
@@ -53,5 +54,22 @@ public class KeyCommands {
 
                 );
         return Shoot;
+    }
+
+
+    public Command FeedWithKickBack(){
+        return new SequentialGroupFixed(
+                new ParallelDeadlineGroup(
+                        new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
+                        IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR__POWER),
+                        IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER)
+                ),
+
+                new ParallelDeadlineGroup(
+                        new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
+                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR__POWER),
+                        IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
+                )
+        );
     }
 }

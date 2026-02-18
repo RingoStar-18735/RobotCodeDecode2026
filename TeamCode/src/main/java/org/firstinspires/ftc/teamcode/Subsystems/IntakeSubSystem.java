@@ -47,7 +47,7 @@ public class IntakeSubSystem implements Subsystem {
     }
     public Command IntakeFullyTransfer(){
         return new ParallelGroup(
-                Transfer(RobotMap.TRANSFER_SERVO_POWER),
+                Transfer(RobotMap.TRANSMISSION_MOTOR__POWER),
                 IntakePower(RobotMap.INTAKE_MOTOR_POWER)
         );
     }
@@ -55,9 +55,9 @@ public class IntakeSubSystem implements Subsystem {
     public Command IntakeFullyNotTransfer(){
         return new ParallelGroup(
                 IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+                Transfer(-RobotMap.TRANSMISSION_MOTOR__POWER),
                 IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                Transfer(-RobotMap.TRANSFER_SERVO_POWER)
+                Transfer(-RobotMap.TRANSMISSION_MOTOR__POWER)
                 );
     }
 
@@ -70,7 +70,7 @@ public class IntakeSubSystem implements Subsystem {
 
     public Command ReversedIntake() {
         return new ParallelGroup(
-            Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+            Transfer(-RobotMap.TRANSMISSION_MOTOR__POWER),
             IntakePower(RobotMap.INTAKE_REVERSED_POWER)
         );
     }

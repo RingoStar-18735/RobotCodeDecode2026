@@ -27,7 +27,7 @@ public class RobotMap {
     public static double SHOOTER_SPEED_RANGE = 150;
 
     public static double INTAKE_MOTOR_POWER = 1;
-    public static double TRANSFER_SERVO_POWER = 1;
+    public static double TRANSMISSION_MOTOR__POWER = 1;
 
     public static double TURRET_P = 0.005;
     public static double TURRET_I = 0.0000;

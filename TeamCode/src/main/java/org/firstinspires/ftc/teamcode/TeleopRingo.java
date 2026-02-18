@@ -53,13 +53,13 @@ public class TeleopRingo extends NextFTCOpMode {
         return new SequentialGroupFixed(
                 new ParallelDeadlineGroup(
                         new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                        IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+                        IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR__POWER),
                         IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER)
                 ),
 
                 new ParallelDeadlineGroup(
                         new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
+                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR__POWER),
                         IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
                 )
         );
@@ -157,7 +157,7 @@ public class TeleopRingo extends NextFTCOpMode {
                     .whenBecomesTrue(
                             IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
                     )
-                    .whenBecomesTrue(IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER)
+                    .whenBecomesTrue(IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR__POWER)
                     )
                     .whenBecomesFalse(
                             IntakeSubSystem.INSTANCE.IntakeStop()
@@ -168,7 +168,7 @@ public class TeleopRingo extends NextFTCOpMode {
                     .whenBecomesTrue(
                             IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_REVERSED_POWER)
                     )
-                    .whenBecomesTrue(IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER)
+                    .whenBecomesTrue(IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR__POWER)
                     )
                     .whenBecomesFalse(
                             IntakeSubSystem.INSTANCE.IntakeStop()
