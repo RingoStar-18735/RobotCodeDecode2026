@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.geometry.Pose;
 
 @Configurable
 public class RobotMap {
@@ -11,8 +12,8 @@ public class RobotMap {
     public static  double INTAKE_SHOOT_TIME_FIRST = 2.5;
     public static  double ROBOT_DISTANCE_X =-15;//
     public static  double ROBOT_DISTANCE_Y =-13;//
-    public static  double INTAKE_SHOOT_TIME_SECOND =2
-            ;
+    public static  double INTAKE_SHOOT_TIME_SECOND =2;
+
 //    public static  double MINIMUM_PERCENT_FOR_DETECT = 5;
 //    public static  double LIME_CONSTANT = 1.1;
     public static double SHOOTER_P = 0.05;
@@ -27,7 +28,7 @@ public class RobotMap {
     public static double SHOOTER_SPEED_RANGE = 150;
 
     public static double INTAKE_MOTOR_POWER = 1;
-    public static double TRANSMISSION_MOTOR__POWER = 1;
+    public static double TRANSMISSION_MOTOR_POWER = -1;
 
     public static double TURRET_P = 0.005;
     public static double TURRET_I = 0.0000;
@@ -54,4 +55,6 @@ public class RobotMap {
     public static double SHOOT_TIME = 0.5;
     public static int RED_PIPELINE = 1;
 
+    public static Pose CLOSE_BLUE_STARTING_POSITION = new Pose(34, 136, 135);
+    public static Pose MIDDLE_STARTING_POSITION = new Pose(72, 72, 0);
 }

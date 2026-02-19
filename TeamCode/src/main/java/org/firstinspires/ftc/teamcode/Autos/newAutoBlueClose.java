@@ -8,10 +8,12 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.SequentialGroupFixed;
 import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
+import org.firstinspires.ftc.teamcode.Teleop.FieldMap;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.DrawingRobot;
 
@@ -76,6 +78,7 @@ public class newAutoBlueClose extends NextFTCOpMode {
     }
     @Override
     public void onInit() {
+        TurretSubsystem.INSTANCE.ResetAngle().schedule();
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
         follower = Constants.createFollower(hardwareMap);
@@ -191,12 +194,12 @@ public class newAutoBlueClose extends NextFTCOpMode {
                 .build();
 
         Command ShootFromFar =
-                new SequentialGroup(
+                new SequentialGroupFixed(
                         ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR),
                         ShooterSubsystem.INSTANCE.RunFullSpeed(),
                         new ParallelDeadlineGroup(
                                 new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
-                                new SequentialGroup(
+                                new SequentialGroupFixed(
                                         IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
                                         ShooterSubsystem.INSTANCE.RunFullSpeed(),
                                         IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
@@ -204,16 +207,16 @@ public class newAutoBlueClose extends NextFTCOpMode {
                                         IntakeSubSystem.INSTANCE.IntakeFullyTransfer()
                                 )
                         ),
-                        new SequentialGroup(
+                        new SequentialGroupFixed(
                                 new ParallelDeadlineGroup(
                                         new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                        IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+                                        IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR_POWER),
                                         IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
                                         ShooterSubsystem.INSTANCE.RunFullSpeed()
                                 ),
                                 new ParallelDeadlineGroup(
                                         new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
+                                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
                                         IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
                                         ShooterSubsystem.INSTANCE.RunFullSpeed()
                                 )
@@ -244,14 +247,14 @@ public class newAutoBlueClose extends NextFTCOpMode {
                         new SequentialGroup(
                                 new ParallelDeadlineGroup(
                                         new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                        IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+                                        IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR_POWER),
                                         IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
                                         ShooterSubsystem.INSTANCE.RunFullSpeed()
                                 ),
 
                                 new ParallelDeadlineGroup(
                                         new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
+                                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
                                         IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
                                         ShooterSubsystem.INSTANCE.RunFullSpeed()
                                 )
@@ -282,14 +285,14 @@ public class newAutoBlueClose extends NextFTCOpMode {
                         new SequentialGroup(
                                 new ParallelDeadlineGroup(
                                         new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                        IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+                                        IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR_POWER),
                                         IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_REVERSED_POWER),
                                         ShooterSubsystem.INSTANCE.RunFullSpeed()
                                 ),
 
                                 new ParallelDeadlineGroup(
                                         new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
+                                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
                                         IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
                                         ShooterSubsystem.INSTANCE.RunFullSpeed()
                                 )
@@ -343,6 +346,9 @@ public class newAutoBlueClose extends NextFTCOpMode {
     }
     @Override
     public void onStartButtonPressed() {
-        Auto.schedule();
+        new ParallelGroup(
+                Auto,
+                TurretSubsystem.INSTANCE.FollowPoint(FieldMap.BLUE_TARGET_POS, follower)
+        ).schedule();
     }
 }

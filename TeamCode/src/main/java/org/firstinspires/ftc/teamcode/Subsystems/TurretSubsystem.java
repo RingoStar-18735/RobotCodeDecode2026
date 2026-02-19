@@ -2,15 +2,14 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
-import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.SequentialGroupFixed;
-import org.firstinspires.ftc.teamcode.WaitMillis;
+import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.pedroPathing.PIDController;
 
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -45,12 +44,7 @@ public class TurretSubsystem implements Subsystem {
         PID = new PIDController(RobotMap.TURRET_P , RobotMap.TURRET_I, RobotMap.TURRET_D);
         magnet = ActiveOpMode.hardwareMap().get(DigitalChannel.class , "magnet");
         magnet.setMode(DigitalChannel.Mode.INPUT);
-
-
-        turretmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
-
-
 
     public boolean isMagnetPressed() {
         return magnet.getState();
@@ -68,6 +62,7 @@ public class TurretSubsystem implements Subsystem {
                     turretmotor.setPower(0.0);
                     sleep(1000);
                     ResetEncoder();
+                    isReset = true;
                 })
                 .setIsDone(()-> !isMagnetPressed()) // Returns if the command has finished
                 .requires(this)
@@ -75,56 +70,41 @@ public class TurretSubsystem implements Subsystem {
                 .named("ResetTurret"); // sets the name of the command; optional
     }
 
-
-    public void ResetEncoder(){
+     public double ResetEncoder(){
         offset = getAngle();
-    }
+        return offset;
+     }
 
-
-//    public Command LimelightMove(){
-//        return ;
-//    }
-    public double getAngle(){
+    public double getAngle() {
         return (turretmotor.getCurrentPosition() * RobotMap.TURRET_GEAR_RATIO ) - offset;
     }
+
     @Override
     public void periodic() {
-//        ActiveOpMode.telemetry().addData("target area:" , getTa());
-//        ActiveOpMode.telemetry().addData("target X:" , getTX());
-//        ActiveOpMode.telemetry().addData("target Y:" , getTY());
-
-
-        ActiveOpMode.telemetry().addData("magnet state:" , !magnet.getState());
-        ActiveOpMode.telemetry().addData("turret position:" , getAngle());
-//        ActiveOpMode.telemetry().addData("Turret angle:" , getAngle());
+        ActiveOpMode.telemetry().addData("Turret Angle:" , getAngle());
         ActiveOpMode.telemetry().addData("Turret Target:" , PID.getTarget());
         ActiveOpMode.telemetry().addData("Is Reset:" , isReset);
-        magnet.setMode(DigitalChannel.Mode.INPUT);
-
-        ActiveOpMode.telemetry().addData("LL new pose: ", newStartingPosition);
-
-        ActiveOpMode.telemetry().addData("Limelight Heading:", Math.toDegrees(LimelightApril.INSTANCE.getPoseLimelight().getHeading()));
-        ActiveOpMode.telemetry().addData("Modified Limelight Heading:" , Math.toDegrees(((LimelightApril.INSTANCE.getPoseLimelight().getHeading() - (Math.PI / 2)) % (2 * Math.PI) + (2 * Math.PI)) % (2 * Math.PI)));
-        ActiveOpMode.telemetry().addData("Test Modified Heading:" , Test1);
-        ActiveOpMode.telemetry().addData("Robot Heading:" , Test2);
 
         double PIDPower = -PID.calculateOutput(getAngle(), ActiveOpMode.getRuntime());
-//
-        ActiveOpMode.telemetry().addData("MotorPow:" , turretmotor.getPower());
+
         ActiveOpMode.telemetry().addData("Offset:" , offset);
+
+
 
         ActiveOpMode.telemetry().update();
 
-        if(matchStarted){
+        if(isReset) {
             turretmotor.setPower(PIDPower);
         }
     }
+
     public Command MoveToAngle(double Normalang){
         ActiveOpMode.telemetry().addData("Normalang" , Normalang);
         ActiveOpMode.telemetry().addData("NormalangConverted" , AngleConverter(Normalang));
         return new InstantCommand(
                 ()-> PID.setTarget(-15));
     }
+
     public Command MoveToSetAngle(double ang){
         return new InstantCommand(
                 ()-> PID.setTarget(ang));
@@ -148,6 +128,8 @@ public class TurretSubsystem implements Subsystem {
 
         if (beta < 0) {
             beta += 2 * Math.PI;
+            beta -= 3 * Math.PI / 4;
+            beta %= 2 * Math.PI;
         } // Converts beta to [0, 2PI]
 
         double gamma = beta - alpha; // robot angle in relation to target [-2PI, 2PI]
@@ -156,13 +138,13 @@ public class TurretSubsystem implements Subsystem {
             gamma += 2 * Math.PI;
 
             if (gamma > (5 * Math.PI) / 4) {
-                gamma =  -Math.PI / 2 + addedAngleMinMax ; // impossible angle, return to 0
+                gamma =  0; // impossible angle, return to 0
             }
         } else if (gamma > (5 * Math.PI) / 4) {
             gamma -= 2 * Math.PI;
 
             if (gamma < -Math.PI / 2) {
-                gamma = ((5 * Math.PI) / 4) - addedAngleMinMax; // impossible angle, return to 0
+                gamma = 0; // impossible angle, return to 0
             }
         } // Converts gamma to [-PI / 2 , (5 * PI) / 4]
 
@@ -171,7 +153,7 @@ public class TurretSubsystem implements Subsystem {
                 () -> PID.setTarget(Math.toDegrees(finalGamma)));
     }
 
-    public Command LimelightScan(){
+    public Command LimelightScan() {
         return new SequentialGroupFixed(
                 ResetAngle(),
                 new LambdaCommand()
@@ -190,7 +172,7 @@ public class TurretSubsystem implements Subsystem {
                                 .requires(this, LimelightApril.INSTANCE)
                                 .setInterruptible(true)
                                 .named("LimelightScan"), // sets the name of the command; optional
-                new WaitMillis(5000),
+                new Delay(5),
                 new InstantCommand(() -> {
                     Pose LimelightPose = LimelightApril.INSTANCE.getPoseLimelight();
 

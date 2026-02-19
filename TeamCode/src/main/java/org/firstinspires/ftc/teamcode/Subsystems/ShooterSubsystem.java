@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.pedroPathing.PIDController;
 
 import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.CommandManager;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -27,6 +26,7 @@ public class ShooterSubsystem implements Subsystem {
     public boolean ShooterStopped = false;
     private boolean CommandStarted = true;
     private TelemetryManager panels = PanelsTelemetry.INSTANCE.getTelemetry();
+
 
 
 
@@ -59,7 +59,7 @@ public class ShooterSubsystem implements Subsystem {
     public Command RunFullSpeed () {
         return new LambdaCommand()
                 .setStart(() -> {
-                    PID.setTarget(RobotMap.SHOOTER_SPEED);
+                    PID.setTarget(-RobotMap.SHOOTER_SPEED);
                     CommandStarted = true;
                     ShooterStopped = false;
                 })
@@ -119,11 +119,12 @@ public class ShooterSubsystem implements Subsystem {
         panels.addData("SHootActive: ",CommandStarted);
         CommandStarted = Math.abs(RobotMap.SHOOTER_SPEED + getShooterVelocity()) < RobotMap.SHOOTER_SPEED_RANGE;
 
-        ActiveOpMode.telemetry().addData("ShooterStatus: ", CommandStarted);
-        ActiveOpMode.telemetry().addData("CommandsRunning: ", CommandManager.INSTANCE.snapshot());
-        ActiveOpMode.telemetry().addData("ShooterSpeed: ", getShooterVelocity());
-        ActiveOpMode.telemetry().addData("ShooterTarget: ", RobotMap.SHOOTER_SPEED);
-        ActiveOpMode.telemetry().addData("ShooterStopped: ", ShooterStopped);
+//        ActiveOpMode.telemetry().addData("ShooterStatus: ", CommandStarted);
+//        ActiveOpMode.telemetry().addData("CommandsRunning: ", CommandManager.INSTANCE.snapshot());
+//        ActiveOpMode.telemetry().addData("ShooterSpeed: ", getShooterVelocity());
+//        ActiveOpMode.telemetry().addData("ShooterTarget: ", RobotMap.SHOOTER_SPEED);
+//        ActiveOpMode.telemetry().addData("ShooterStopped: ", ShooterStopped);
+//        ActiveOpMode.telemetry().addData("ShooterCalculate: ", PID.calculateOutput(-Shooter.getVelocity(), ActiveOpMode.getRuntime()));
 //
 //        ActiveOpMode.telemetry().addData("Shooter Velocity: ", -Shooter.getState().getVelocity());
 //        ActiveOpMode.telemetry().addData("Shooter Target: ", PID.getTarget());

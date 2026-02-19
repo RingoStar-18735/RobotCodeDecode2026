@@ -1,5 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Teleop;
 
+import org.firstinspires.ftc.teamcode.RobotMap;
+import org.firstinspires.ftc.teamcode.SequentialGroupFixed;
+import org.firstinspires.ftc.teamcode.Subsystems.ShootType;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 
@@ -23,9 +26,11 @@ public class KeyCommands {
                         new ParallelDeadlineGroup(
                                 new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
                                 new SequentialGroupFixed(
-                                        IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
+                                        IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
+                                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
                                         ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                        IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
+                                        IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
+                                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
                                         ShooterSubsystem.INSTANCE.RunFullSpeed()
                                 )
                         ),
@@ -61,13 +66,13 @@ public class KeyCommands {
         return new SequentialGroupFixed(
                 new ParallelDeadlineGroup(
                         new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                        IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR__POWER),
+                        IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR_POWER),
                         IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER)
                 ),
 
                 new ParallelDeadlineGroup(
                         new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR__POWER),
+                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
                         IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
                 )
         );

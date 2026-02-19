@@ -7,7 +7,9 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.RobotBank;
 import org.firstinspires.ftc.teamcode.RobotMap;
+import org.firstinspires.ftc.teamcode.Subsystems.AllianceType;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
@@ -165,14 +167,14 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
                     new SequentialGroup(
                             new ParallelDeadlineGroup(
                                     new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+                                    IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR_POWER),
                                     IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed()
                             ),
                             PrintCommand("Finished 3"),
                             new ParallelDeadlineGroup(
                                     new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
+                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
                                     IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed()
                             ),
@@ -207,7 +209,7 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
                     new SequentialGroup(
                             new ParallelDeadlineGroup(
                                     new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+                                    IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR_POWER),
                                     IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed()
                             ),
@@ -215,7 +217,7 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
 
                             new ParallelDeadlineGroup(
                                     new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
+                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
                                     IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed()
                             ),
@@ -250,7 +252,7 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
                     new SequentialGroup(
                             new ParallelDeadlineGroup(
                                     new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
+                                    IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR_POWER),
                                     IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_REVERSED_POWER),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed()
                             ),
@@ -258,7 +260,7 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
 
                             new ParallelDeadlineGroup(
                                     new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
+                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
                                     IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
                                     ShooterSubsystem.INSTANCE.RunFullSpeed()
                             ),
@@ -285,6 +287,10 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
 
     @Override
     public void onStartButtonPressed() {
+        RobotBank.Alliance = AllianceType.BLUE;
         Auto.schedule();
+        RobotBank.LastAutoTurretAngle = TurretSubsystem.INSTANCE.getAngle();
+        RobotBank.LastAutoPos = follower.getPose();
+        RobotBank.Offset = TurretSubsystem.INSTANCE.ResetEncoder();
     }
 }
