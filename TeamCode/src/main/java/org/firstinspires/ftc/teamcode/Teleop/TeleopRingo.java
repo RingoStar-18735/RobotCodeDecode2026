@@ -5,9 +5,11 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.FieldMap;
 import org.firstinspires.ftc.teamcode.RobotBank;
 import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.SequentialGroupFixed;
+import org.firstinspires.ftc.teamcode.Subsystems.AllianceType;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.LimelightApril;
 import org.firstinspires.ftc.teamcode.Subsystems.ShootType;
@@ -36,6 +38,7 @@ import dev.nextftc.hardware.driving.DriverControlledCommand;
 public class TeleopRingo extends NextFTCOpMode {
     Follower follower;
     List<String> a = new ArrayList<String>();
+    AllianceType allianceType = AllianceType.BLUE;
 
     public TeleopRingo(){
         addComponents(
@@ -105,11 +108,16 @@ public class TeleopRingo extends NextFTCOpMode {
 
     @Override
     public void onInit() {
-        // TurretSubsystem.INSTANCE.LimelightScan().schedule();
+        allianceType = RobotBank.Alliance;
+        TurretSubsystem.INSTANCE.setOffset(RobotBank.LastAutoTurretAngle);
+
+
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
         TurretSubsystem.INSTANCE.ResetAngle().schedule();
+
     }
+
 
     public Command PrintCommand(String b){
         return new InstantCommand(()->a.add(b));
@@ -120,7 +128,8 @@ public class TeleopRingo extends NextFTCOpMode {
     public void onUpdate() {
 //        telemetry.addData("ShootFinished: ", ShooterSubsystem.INSTANCE.RunFullSpeed().isDone());
 //        telemetry.addData("FinishedCommands: ",a);
-//        telemetry.addData("Pos: ",follower.getPose());
+        telemetry.addData("Pos: ",follower.getPose());
+        telemetry.addData("yaw: ",follower.getPose().getHeading());
 //        ActiveOpMode.telemetry().addData("PosRobotCalced: ", LimelightApril.INSTANCE.getRobotPos(follower, TurretSubsystem.INSTANCE.getAngle()));
 
         //follower.setPose(LimelightApril.INSTANCE.getRobotPos(follower, 01.INSTANCE.getAngle()));
@@ -128,16 +137,14 @@ public class TeleopRingo extends NextFTCOpMode {
 
 
         if (hasStartedMatch)
-            TurretSubsystem.INSTANCE.FollowPoint(FieldMap.BLUE_TARGET_POS, follower).schedule();
+            TurretSubsystem.INSTANCE.FollowPoint(FieldMap.BLUE_TARGET_POS, follower.getPose(), false).schedule();
     }
 
     @Override
     public void onStartButtonPressed() {
-        TurretSubsystem.INSTANCE.startMatch();
         hasStartedMatch = true;
         follower =  Constants.createFollower(hardwareMap);
         follower.setStartingPose(RobotBank.LastAutoPos);
-
         DriverControlledCommand driverControlled = new PedroDriverControlled(
                 Gamepads.gamepad1().leftStickX(),
                 Gamepads.gamepad1().leftStickY(),
@@ -155,13 +162,13 @@ public class TeleopRingo extends NextFTCOpMode {
 
 
         Gamepads.gamepad2().y()
-                .whenTrue(ShootFromFar);
-//                .whenTrue(
-//                        new InstantCommand( () -> ShooterSubsystem.INSTANCE.ReverseWheel = false)
-//                )
-//                .whenTrue(
-//                        KeyCommands.Shoot(ShootType.FAR)
-//                );
+//                .whenTrue(ShootFromFar);
+                .whenTrue(
+                        new InstantCommand( () -> ShooterSubsystem.INSTANCE.ReverseWheel = false)
+                )
+                .whenTrue(
+                        KeyCommands.Shoot(ShootType.FAR)
+                );
 
 
         Gamepads.gamepad2().x()

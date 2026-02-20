@@ -35,7 +35,7 @@ public class ShooterSubsystem implements Subsystem {
 
     @Override
     public void initialize() {
-        if(Shooter.getDirection() != -1)
+        if(Shooter.getDirection() != 1)
             Shooter.reverse();
     }
 

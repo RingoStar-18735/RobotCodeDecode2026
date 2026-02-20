@@ -48,9 +48,9 @@ public class LimelightApril implements Subsystem {
     @Override
     public void periodic() {
         CurrentResult = limelight.getLatestResult();
-        ActiveOpMode.telemetry().addData("PoseLimelightConverted: ", getPoseLimelight());
-        ActiveOpMode.telemetry().addData("PosRobotCalced: ", CurrentResult.getBotpose());
-        ActiveOpMode.telemetry().addData("PoseLimelightRaw: ", CurrentResult.getBotpose());
+//        ActiveOpMode.telemetry().addData("PoseLimelightConverted: ", getPoseLimelight());
+//        ActiveOpMode.telemetry().addData("PosRobotCalced: ", CurrentResult.getBotpose());
+//        ActiveOpMode.telemetry().addData("PoseLimelightRaw: ", CurrentResult.getBotpose());
 
         List<FiducialResult> fiducials = CurrentResult.getFiducialResults();
         List<Integer> tempidList = new ArrayList<Integer>();

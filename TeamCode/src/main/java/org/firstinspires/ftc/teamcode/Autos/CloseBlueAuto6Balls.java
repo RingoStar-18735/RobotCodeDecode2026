@@ -291,6 +291,6 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
         Auto.schedule();
         RobotBank.LastAutoTurretAngle = TurretSubsystem.INSTANCE.getAngle();
         RobotBank.LastAutoPos = follower.getPose();
-        RobotBank.Offset = TurretSubsystem.INSTANCE.ResetEncoder();
+        RobotBank.Offset = TurretSubsystem.INSTANCE.getOffset();
     }
 }

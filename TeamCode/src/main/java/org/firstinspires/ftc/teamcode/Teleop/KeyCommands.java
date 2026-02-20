@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
+import org.firstinspires.ftc.teamcode.Printer;
 import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.SequentialGroupFixed;
 import org.firstinspires.ftc.teamcode.Subsystems.ShootType;
@@ -13,6 +14,7 @@ import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
 public class KeyCommands {
 
     public static Command Shoot(ShootType type) {
+        Printer printer = new Printer("Shoot");
         double shootAngle = RobotMap.SERVO_MOVE_CLOSE;
         if(type == ShootType.FAR) shootAngle = RobotMap.SERVO_MOVE_FAR;
         else if (type == ShootType.MID) shootAngle = RobotMap.SERVO_MOVE_MID;
@@ -23,17 +25,23 @@ public class KeyCommands {
                                 ShooterSubsystem.INSTANCE.RunFullSpeed(),
                                 ShooterSubsystem.INSTANCE.ServoAim(shootAngle)
                         ),
+                        printer.addPrintCommand("1"),
+                        printer.PrintCommand(),
                         new ParallelDeadlineGroup(
                                 new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
                                 new SequentialGroupFixed(
                                         IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
                                         IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
                                         ShooterSubsystem.INSTANCE.RunFullSpeed(),
+                                        printer.addPrintCommand("2"),
+                                        printer.PrintCommand(),
                                         IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
                                         IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
                                         ShooterSubsystem.INSTANCE.RunFullSpeed()
                                 )
                         ),
+                        printer.addPrintCommand("3"),
+                        printer.PrintCommand(),
 //                    new SequentialGroup(
 //                            new ParallelDeadlineGroup(
 //                                    new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
@@ -52,10 +60,14 @@ public class KeyCommands {
 //                            PrintCommand("Finished 4")
 //
 //                    ),
+                        printer.addPrintCommand("4"),
+                        printer.PrintCommand(),
                         new ParallelDeadlineGroup(
                                 ShooterSubsystem.INSTANCE.StopSpeed(),
                                 IntakeSubSystem.INSTANCE.IntakeStop()
-                        )
+                        ),
+                        printer.addPrintCommand("5"),
+                        printer.PrintCommand()
 
                 );
         return Shoot;

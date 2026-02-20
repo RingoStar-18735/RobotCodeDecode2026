@@ -8,12 +8,14 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.SequentialGroupFixed;
-import org.firstinspires.ftc.teamcode.RobotMap;
+import org.firstinspires.ftc.teamcode.FieldMap;
+import org.firstinspires.ftc.teamcode.RobotBank;
+import org.firstinspires.ftc.teamcode.Subsystems.AllianceType;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
+import org.firstinspires.ftc.teamcode.Subsystems.ShootType;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
-import org.firstinspires.ftc.teamcode.Teleop.FieldMap;
+import org.firstinspires.ftc.teamcode.Teleop.KeyCommands;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.DrawingRobot;
 
@@ -21,9 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
-import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -45,6 +44,7 @@ public class newAutoBlueClose extends NextFTCOpMode {
     public PathChain Path9;
     public PathChain Path10;
     public PathChain Path11;
+    boolean hasStarted = false;
 
     Command Path1Command;
     Command Path2Command;
@@ -78,6 +78,7 @@ public class newAutoBlueClose extends NextFTCOpMode {
     }
     @Override
     public void onInit() {
+        RobotBank.Alliance = AllianceType.BLUE;
         TurretSubsystem.INSTANCE.ResetAngle().schedule();
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
@@ -193,117 +194,6 @@ public class newAutoBlueClose extends NextFTCOpMode {
 
                 .build();
 
-        Command ShootFromFar =
-                new SequentialGroupFixed(
-                        ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR),
-                        ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                        new ParallelDeadlineGroup(
-                                new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
-                                new SequentialGroupFixed(
-                                        IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                        ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                        IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                        ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                        IntakeSubSystem.INSTANCE.IntakeFullyTransfer()
-                                )
-                        ),
-                        new SequentialGroupFixed(
-                                new ParallelDeadlineGroup(
-                                        new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                        IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR_POWER),
-                                        IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
-                                        ShooterSubsystem.INSTANCE.RunFullSpeed()
-                                ),
-                                new ParallelDeadlineGroup(
-                                        new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
-                                        IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                                        ShooterSubsystem.INSTANCE.RunFullSpeed()
-                                )
-
-                        ),
-                        new ParallelDeadlineGroup(
-                                ShooterSubsystem.INSTANCE.StopSpeed(),
-                                IntakeSubSystem.INSTANCE.IntakeStop()
-                        )
-                );
-
-        Command ShootFromMid =
-                new SequentialGroup(
-                        new ParallelGroup(
-                                ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID)
-                        ),
-                        new ParallelDeadlineGroup(
-                                new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
-                                new SequentialGroup(
-                                        IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                        ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                        IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                        ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                        IntakeSubSystem.INSTANCE.IntakeFullyTransfer()
-                                )
-                        ),
-                        new SequentialGroup(
-                                new ParallelDeadlineGroup(
-                                        new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                        IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR_POWER),
-                                        IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
-                                        ShooterSubsystem.INSTANCE.RunFullSpeed()
-                                ),
-
-                                new ParallelDeadlineGroup(
-                                        new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
-                                        IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                                        ShooterSubsystem.INSTANCE.RunFullSpeed()
-                                )
-
-                        ),
-                        new ParallelDeadlineGroup(
-                                ShooterSubsystem.INSTANCE.StopSpeed(),
-                                IntakeSubSystem.INSTANCE.IntakeStop()
-                        )
-                );
-
-        Command ShootFromClose =
-                new SequentialGroup(
-                        new ParallelGroup(
-                                ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_AUTO_MID)
-                        ),
-                        new ParallelDeadlineGroup(
-                                new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
-                                new SequentialGroup(
-                                        IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                        ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                        IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                        ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                        IntakeSubSystem.INSTANCE.IntakeFullyTransfer()
-                                )
-                        ),
-                        new SequentialGroup(
-                                new ParallelDeadlineGroup(
-                                        new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                        IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR_POWER),
-                                        IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_REVERSED_POWER),
-                                        ShooterSubsystem.INSTANCE.RunFullSpeed()
-                                ),
-
-                                new ParallelDeadlineGroup(
-                                        new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
-                                        IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                                        ShooterSubsystem.INSTANCE.RunFullSpeed()
-                                )
-
-                        ),
-                        new ParallelDeadlineGroup(
-                                ShooterSubsystem.INSTANCE.StopSpeed(),
-                                IntakeSubSystem.INSTANCE.IntakeStop()
-                        )
-
-                );
 
         Path1Command = new FollowPath(Path1);
         Path2Command = new FollowPath(Path2);
@@ -319,36 +209,45 @@ public class newAutoBlueClose extends NextFTCOpMode {
 
         Auto = new SequentialGroup(
                 Path1Command,
+                KeyCommands.Shoot(ShootType.MID),
 //                ShootFromFar,
                 Path2Command,
                 Path3Command,
                 Path4Command,
+                KeyCommands.Shoot(ShootType.MID),
 //                ShootFromFar,
                 Path5Command,
                 Path6Command,
                 Path7Command,
+                KeyCommands.Shoot(ShootType.MID),
 //                ShootFromFar,
                 Path8Command,
                 Path9Command,
                 Path10Command,
+                KeyCommands.Shoot(ShootType.MID),
 //                ShootFromFar,
                 Path11Command
         );
 
+
+
     }
     @Override
     public void onUpdate() {
+        if (hasStarted)TurretSubsystem.INSTANCE.FollowPoint(FieldMap.BLUE_TARGET_POS, follower.getPose().mirror(), false).schedule();
+
         DrawingRobot.drawDebug(follower);
         DrawingRobot.drawPoseHistory(follower.getPoseHistory());
         telemetry.addData("pose: ", follower.getPose());
-        telemetry.addData("RunTime: ", getRuntime());
+        telemetry.addData("yaw: ", follower.getPose().getHeading());
         follower.update();
     }
     @Override
     public void onStartButtonPressed() {
-        new ParallelGroup(
-                Auto,
-                TurretSubsystem.INSTANCE.FollowPoint(FieldMap.BLUE_TARGET_POS, follower)
-        ).schedule();
+        hasStarted = true;
+        Auto.schedule();
+        RobotBank.Offset = TurretSubsystem.INSTANCE.getOffset();
+        RobotBank.LastAutoPos = follower.getPose();
+        RobotBank.LastAutoTurretAngle = TurretSubsystem.INSTANCE.getAngle();
     }
 }

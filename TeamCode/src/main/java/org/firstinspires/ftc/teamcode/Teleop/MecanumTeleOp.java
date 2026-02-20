@@ -30,7 +30,7 @@ public class MecanumTeleOp extends LinearOpMode {
 
         waitForStart();
 //        frontRightMotor.setPower(1);
-        sleep(5000);
+        sleep(1000);
 //        frontRightMotor.setPower(0);
 //        frontLeftMotor.setPower(1);
 //        sleep(5000);
@@ -49,7 +49,7 @@ public class MecanumTeleOp extends LinearOpMode {
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
 
-            Shooter.setPower(1);
+            Shooter.setPower(-1);
             telemetry.addData("Velocity: ", Shooter.getVelocity());
             telemetry.update();
             // Denominator is the largest motor power (absolute value) or 1
