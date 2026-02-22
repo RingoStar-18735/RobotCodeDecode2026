@@ -9,7 +9,10 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.FieldMap;
+import org.firstinspires.ftc.teamcode.Printer;
 import org.firstinspires.ftc.teamcode.RobotBank;
+import org.firstinspires.ftc.teamcode.RobotMap;
+import org.firstinspires.ftc.teamcode.SequentialGroupFixed;
 import org.firstinspires.ftc.teamcode.Subsystems.AllianceType;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShootType;
@@ -23,7 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
@@ -68,7 +72,8 @@ public class newAutoBlueClose extends NextFTCOpMode {
                 new SubsystemComponent(
                         ShooterSubsystem.INSTANCE,
                         IntakeSubSystem.INSTANCE,
-                        TurretSubsystem.INSTANCE
+                        TurretSubsystem.INSTANCE,
+                        Printer.INSTANCE
                 ),
                 new PedroComponent(Constants::createFollower),
                 BulkReadComponent.INSTANCE,
@@ -76,6 +81,7 @@ public class newAutoBlueClose extends NextFTCOpMode {
         );
 
     }
+
     @Override
     public void onInit() {
         RobotBank.Alliance = AllianceType.BLUE;
@@ -207,9 +213,17 @@ public class newAutoBlueClose extends NextFTCOpMode {
         Path10Command = new FollowPath(Path10);
         Path11Command = new FollowPath(Path11);
 
-        Auto = new SequentialGroup(
+        Auto = new SequentialGroupFixed(
                 Path1Command,
-                KeyCommands.Shoot(ShootType.MID),
+                new ParallelDeadlineGroup(
+                        new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
+                        ShooterSubsystem.INSTANCE.RunFullSpeed(),
+                        new SequentialGroupFixed(
+                                IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
+                                IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER)
+                        )
+                ),
+//                KeyCommands.Shoot(ShootType.MID),
 //                ShootFromFar,
                 Path2Command,
                 Path3Command,
@@ -234,19 +248,21 @@ public class newAutoBlueClose extends NextFTCOpMode {
     }
     @Override
     public void onUpdate() {
-        if (hasStarted)TurretSubsystem.INSTANCE.FollowPoint(FieldMap.BLUE_TARGET_POS, follower.getPose().mirror(), false).schedule();
-
+        follower.update();
+        if (hasStarted)TurretSubsystem.INSTANCE.FollowPoint(FieldMap.BLUE_TARGET_POS, follower.getPose()).schedule();
+        RobotBank.Offset = TurretSubsystem.INSTANCE.getOffset();
+        RobotBank.LastAutoPos = follower.getPose();
+        RobotBank.LastAutoTurretAngle = TurretSubsystem.INSTANCE.getAngle();
         DrawingRobot.drawDebug(follower);
         DrawingRobot.drawPoseHistory(follower.getPoseHistory());
         telemetry.addData("pose: ", follower.getPose());
         telemetry.addData("yaw: ", follower.getPose().getHeading());
-        follower.update();
     }
     @Override
     public void onStartButtonPressed() {
         hasStarted = true;
         Auto.schedule();
-        RobotBank.Offset = TurretSubsystem.INSTANCE.getOffset();
+        RobotBank.Offset = TurretSubsystem.INSTANCE.getAngle();
         RobotBank.LastAutoPos = follower.getPose();
         RobotBank.LastAutoTurretAngle = TurretSubsystem.INSTANCE.getAngle();
     }

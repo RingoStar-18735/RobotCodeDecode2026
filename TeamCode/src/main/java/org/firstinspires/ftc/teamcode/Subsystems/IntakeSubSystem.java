@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import org.firstinspires.ftc.teamcode.RobotMap;
+import org.firstinspires.ftc.teamcode.SequentialGroupFixed;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.ParallelGroup;
@@ -59,7 +60,7 @@ public class IntakeSubSystem implements Subsystem {
     }
 
     public Command IntakeStop(){
-        return new ParallelGroup(
+        return new SequentialGroupFixed(
                 IntakePower(0.0),
                 Transfer(0.0)
         ).setName("קומנד הפסיק אינטייק");

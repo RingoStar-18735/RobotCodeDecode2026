@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.pedroPathing.PIDController;
 
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -19,7 +20,7 @@ public class TurretSubsystem implements Subsystem {
     public final static TurretSubsystem INSTANCE = new TurretSubsystem();
 
     public boolean isReset = false;
-
+    boolean toFollow = true;
     double offset = 0;
 
 
@@ -29,6 +30,7 @@ public class TurretSubsystem implements Subsystem {
 
     @Override
     public void initialize() {
+        toFollow = true;
         isReset = false;
         PID = new PIDController(RobotMap.TURRET_P , RobotMap.TURRET_I, RobotMap.TURRET_D);
         magnet = ActiveOpMode.hardwareMap().get(DigitalChannel.class , "magnet");
@@ -54,8 +56,9 @@ public class TurretSubsystem implements Subsystem {
                 })
                 .setStop(interrupted -> {
                     turretmotor.setPower(0.0);
-                    isReset = true;
                     ResetEncoder();
+                    new Delay(2);
+                    isReset = true;
                 })
                 .setIsDone(()-> !isMagnetPressed()) // Returns if the command has finished
                 .requires(this)
@@ -63,6 +66,9 @@ public class TurretSubsystem implements Subsystem {
                 .named("ResetTurret"); // sets the name of the command; optional
     }
 
+    public void setReset(boolean reset) {
+        isReset = reset;
+    }
 
     public void ResetEncoder(){
         offset = getAngle();
@@ -116,59 +122,47 @@ public class TurretSubsystem implements Subsystem {
                 ()-> PID.setTarget(ang));
     }
 
-    public Command FollowPoint(Pose targetpose, Pose poseOG, boolean Mirror){
-        // max -> 5*PI / 4
-        //min -> -PI / 2
-        Pose pose = poseOG;
-        if(Mirror) pose = poseOG.mirror();
-        double addedAngleMinMax = Math.PI / 8;
-        // double dist = Math.sqrt(Math.pow(targetpose.getX() - follower.getPose().getX(), 2) + Math.pow(targetpose.getY() - follower.getPose().getY(), 2));
-        // we assume that the robot starts at 90 degrees, relative to positive x (pedro coordinate system, https://pedropathing.com/docs/fieldcoordinates-dark.png)
-        double beta = -pose.getHeading(); // robot angle in relation to field [-PI, PI] relative to positive x (pedro coordinate system, https://pedropathing.com/docs/fieldcoordinates-dark.png)
-        double x=  ((72 -(pose.getPose().getX() - 72)));
-        double y= pose.getPose().getY();
-        double alpha = Math.atan(
-                (targetpose.getY() -y)/
-        (targetpose.getX() -x)
-        ); // robot angle in relation to target (based on position) [-PI, PI] relative to positive x (pedro coordinate system, https://pedropathing.com/docs/fieldcoordinates-dark.png)
-        ActiveOpMode.telemetry().addData("Alpha: ", alpha);
-        ActiveOpMode.telemetry().addData("beta: ", beta);
-        ActiveOpMode.telemetry().addData("X: ", x);
-        ActiveOpMode.telemetry().addData("Y: ", y);
-        if (alpha < 0) {
-            alpha += 2 * Math.PI;
-        } // Converts alpha to [0, 2PI]
+    public Command FollowPoint(Pose targetpose, Pose pose) {
+        // Robot pose in field coordinates
+        if(!toFollow) return new InstantCommand(() -> PID.setTarget(180));
 
-        if (beta < 0) {
-            beta += 2 * Math.PI;
-        } // Converts beta to [0, 2PI]
+        final double rx = pose.getX();
+        final double ry = pose.getY();
+        final double heading = pose.getHeading(); // Pedro heading is radians
 
-        double gamma =alpha-beta; // robot angle in relation to target [-2PI, 2PI]
-        ActiveOpMode.telemetry().addData("gamma1: ", gamma);
+        // Vector from robot to target in field coordinates
+        final double dx = targetpose.getX() - rx;
+        final double dy = targetpose.getY() - ry;
 
-        if (gamma < -Math.PI / 2) { // min ang
-            gamma += 2 * Math.PI;
+        // World angle from robot to target
+        final double alpha = Math.atan2(dy, dx); // [-pi, pi]
 
-            if (gamma > (5 * Math.PI) / 4) { //max ang
-                gamma =  gamma-=2*Math.PI + addedAngleMinMax ; // impossible angle, return to 0
-            }
-        } else if (gamma > (5 * Math.PI) / 4) {
-            gamma -= 2 * Math.PI;
+        // Turret angle relative to robot forward:
+        // gamma = (world angle to target) - (robot world heading)
+        double gamma = heading - alpha; //
 
-            if (gamma < -Math.PI / 2) {
-                gamma+=2*Math.PI - addedAngleMinMax ; // impossible angle, return to 0
-            }
-        } // Converts gamma to [-PI / 2 , (5 * PI) / 4]
+        // Wrap to [-pi, pi]
+        gamma = Math.atan2(Math.sin(gamma), Math.cos(gamma));
 
-        // ActiveOpMode.telemetry().addData("Distance: " , dist);
-        ActiveOpMode.telemetry().addData("Turret Alpha: " , Math.toDegrees(alpha));
-        ActiveOpMode.telemetry().addData("Turret Beta: " , Math.toDegrees(beta));
-        ActiveOpMode.telemetry().addData("Turret Gamma: " , Math.toDegrees(gamma));
-        ActiveOpMode.telemetry().addData("gamma2: ", gamma);
+        // Convert to degrees
+        double gammaDeg = Math.toDegrees(gamma);
 
-        double finalGamma = gamma;
-        return new InstantCommand(
-                () -> PID.setTarget(Math.toDegrees(finalGamma)));
+        // Clamp to turret mechanical limits
+        gammaDeg = Math.max(RobotMap.MIN_TURRET_ANGLE, Math.min(RobotMap.MAX_TURRET_ANGLE, gammaDeg));
+
+        // Telemetry to verify
+        ActiveOpMode.telemetry().addData("Turret rx,ry", "%.2f, %.2f", rx, ry);
+        ActiveOpMode.telemetry().addData("Turret tx,ty", "%.2f, %.2f", targetpose.getX(), targetpose.getY());
+        ActiveOpMode.telemetry().addData("Turret alpha(deg)", Math.toDegrees(alpha));
+        ActiveOpMode.telemetry().addData("Turret heading(deg)", Math.toDegrees(heading));
+        ActiveOpMode.telemetry().addData("Turret gamma(deg)", gammaDeg);
+
+        final double finalGammaDeg = gammaDeg;
+        return new InstantCommand(() -> PID.setTarget(finalGammaDeg));
+    }
+
+    public void setToFollow(boolean toFollow) {
+        this.toFollow = toFollow;
     }
 
     public double AngleConverter(double ang){

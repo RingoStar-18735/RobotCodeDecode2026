@@ -6,6 +6,7 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.FieldMap;
+import org.firstinspires.ftc.teamcode.Printer;
 import org.firstinspires.ftc.teamcode.RobotBank;
 import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.SequentialGroupFixed;
@@ -46,8 +47,9 @@ public class TeleopRingo extends NextFTCOpMode {
                         ShooterSubsystem.INSTANCE,
                         IntakeSubSystem.INSTANCE,
                         TurretSubsystem.INSTANCE,
-                        LimelightApril.INSTANCE
-                        ),
+                        LimelightApril.INSTANCE,
+                        Printer.INSTANCE
+                ),
                 new PedroComponent(Constants::createFollower),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
@@ -55,66 +57,16 @@ public class TeleopRingo extends NextFTCOpMode {
          hasStartedMatch = false;
     }
 
-    Command ShootFromFar =
-            new SequentialGroupFixed(
-                    ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR),
-                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                    new ParallelDeadlineGroup(
-                            new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
-                            new SequentialGroupFixed(
-                                    IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                    IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                    IntakeSubSystem.INSTANCE.IntakeFullyTransfer()
-                            )
-                    ),
-                    new SequentialGroupFixed(
-                            new ParallelDeadlineGroup(
-                                    new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-                            ),
-                            new ParallelDeadlineGroup(
-                                    new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-                            )
-
-                    ),
-                    new ParallelDeadlineGroup(
-                            ShooterSubsystem.INSTANCE.StopSpeed(),
-                            IntakeSubSystem.INSTANCE.IntakeStop()
-                    )
-            );
-
-    public Command FeedWithKickBack(){
-        return new SequentialGroupFixed(
-                new ParallelDeadlineGroup(
-                        new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                        IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR_POWER),
-                        IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER)
-                ),
-
-                new ParallelDeadlineGroup(
-                        new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
-                        IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
-                )
-        );
-    }
 
     @Override
     public void onInit() {
         allianceType = RobotBank.Alliance;
         TurretSubsystem.INSTANCE.setOffset(RobotBank.LastAutoTurretAngle);
 
-
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
-        TurretSubsystem.INSTANCE.ResetAngle().schedule();
+        TurretSubsystem.INSTANCE.setReset(true);
+//        TurretSubsystem.INSTANCE.ResetAngle().schedule();
 
     }
 
@@ -130,21 +82,23 @@ public class TeleopRingo extends NextFTCOpMode {
 //        telemetry.addData("FinishedCommands: ",a);
         telemetry.addData("Pos: ",follower.getPose());
         telemetry.addData("yaw: ",follower.getPose().getHeading());
+        telemetry.addData("LastAutoPos: ",RobotBank.LastAutoPos);
 //        ActiveOpMode.telemetry().addData("PosRobotCalced: ", LimelightApril.INSTANCE.getRobotPos(follower, TurretSubsystem.INSTANCE.getAngle()));
 
         //follower.setPose(LimelightApril.INSTANCE.getRobotPos(follower, 01.INSTANCE.getAngle()));
         follower.update();
 
 
-        if (hasStartedMatch)
-            TurretSubsystem.INSTANCE.FollowPoint(FieldMap.BLUE_TARGET_POS, follower.getPose(), false).schedule();
+        if (hasStartedMatch) {
+            TurretSubsystem.INSTANCE.FollowPoint(FieldMap.BLUE_TARGET_POS, follower.getPose()).schedule();
+        }
     }
 
     @Override
     public void onStartButtonPressed() {
-        hasStartedMatch = true;
         follower =  Constants.createFollower(hardwareMap);
-        follower.setStartingPose(RobotBank.LastAutoPos);
+        follower.setPose(RobotBank.LastAutoPos);
+        hasStartedMatch = true;
         DriverControlledCommand driverControlled = new PedroDriverControlled(
                 Gamepads.gamepad1().leftStickX(),
                 Gamepads.gamepad1().leftStickY(),
@@ -160,6 +114,12 @@ public class TeleopRingo extends NextFTCOpMode {
                 new InstantCommand(()-> follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), 135)))
         );
 
+        Gamepads.gamepad1().leftBumper().toggleOnBecomesTrue()
+                .whenBecomesTrue(
+                        new InstantCommand(()->TurretSubsystem.INSTANCE.setToFollow(false))
+                ).whenBecomesFalse(
+                        new InstantCommand(()->TurretSubsystem.INSTANCE.setToFollow(true))
+                );
 
         Gamepads.gamepad2().y()
 //                .whenTrue(ShootFromFar);
