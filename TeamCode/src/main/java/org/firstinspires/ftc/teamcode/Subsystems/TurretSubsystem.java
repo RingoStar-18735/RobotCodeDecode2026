@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.pedroPathing.PIDController;
 
 import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -46,7 +45,7 @@ public class TurretSubsystem implements Subsystem {
         return magnet.getState();
     }
 
-    public Command ResetAngle(){
+    public Command ResetAngleRight(){
         return new LambdaCommand()
                 .setStart(() -> {
                     turretmotor.setPower(-RobotMap.RESET_TURRET_POWER);
@@ -57,7 +56,6 @@ public class TurretSubsystem implements Subsystem {
                 .setStop(interrupted -> {
                     turretmotor.setPower(0.0);
                     ResetEncoder();
-                    new Delay(2);
                     isReset = true;
                 })
                 .setIsDone(()-> !isMagnetPressed()) // Returns if the command has finished
@@ -65,6 +63,18 @@ public class TurretSubsystem implements Subsystem {
                 .setInterruptible(true)
                 .named("ResetTurret"); // sets the name of the command; optional
     }
+
+
+    public void ResetAngleLeft(){
+        isReset = false;
+        turretmotor.setPower(0.3);
+        if (isMagnetPressed()) {
+            turretmotor.setPower(0);
+            ResetEncoder();
+            isReset = true;
+        }
+    }
+
 
     public void setReset(boolean reset) {
         isReset = reset;
@@ -88,12 +98,14 @@ public class TurretSubsystem implements Subsystem {
 //        ActiveOpMode.telemetry().addData("target Y:" , getTY());
 
 
+
         ActiveOpMode.telemetry().addData("magnet state:" , !magnet.getState());
         ActiveOpMode.telemetry().addData("turret position:" , getAngle());
 //        ActiveOpMode.telemetry().addData("Turret angle:" , getAngle());
         ActiveOpMode.telemetry().addData("Turret Target:" , PID.getTarget());
         ActiveOpMode.telemetry().addData("Is Reset:" , isReset);
         magnet.setMode(DigitalChannel.Mode.INPUT);
+
 
 
         double PIDPower = -PID.calculateOutput(getAngle(), ActiveOpMode.getRuntime());
@@ -128,7 +140,13 @@ public class TurretSubsystem implements Subsystem {
 
         final double rx = pose.getX();
         final double ry = pose.getY();
-        final double heading = pose.getHeading(); // Pedro heading is radians
+        double heading = pose.getHeading();// Pedro heading is radians
+//        if (Math.toDegrees(heading) < Math.toRadians(-180)) {
+//           heading = heading + 360;
+//        } else if (Math.toDegrees(heading) > Math.toRadians(180)) {
+//            heading = heading - 360;
+//        }
+//        final double finalHeading = heading;
 
         // Vector from robot to target in field coordinates
         final double dx = targetpose.getX() - rx;
@@ -157,9 +175,22 @@ public class TurretSubsystem implements Subsystem {
         ActiveOpMode.telemetry().addData("Turret heading(deg)", Math.toDegrees(heading));
         ActiveOpMode.telemetry().addData("Turret gamma(deg)", gammaDeg);
 
+        gammaDeg -= 90;
         final double finalGammaDeg = gammaDeg;
-        return new InstantCommand(() -> PID.setTarget(finalGammaDeg));
+        double deg = finalGammaDeg;
+
+        if (RobotMap.TURRET_ROBOT_DIFRANCE){
+            deg = finalGammaDeg - 90;
+        }
+        final double finaldeg = deg;
+
+            return new InstantCommand(() -> PID.setTarget(finalGammaDeg));
+
     }
+
+//    public Command TurretAngle(double ang) {
+//        return
+//    }
 
     public void setToFollow(boolean toFollow) {
         this.toFollow = toFollow;

@@ -38,6 +38,9 @@ public class RobotMap {
 
     public static double TURRET_RADIUS = 0.394 * 16.977;
 
+    public static boolean TURRET_ROBOT_DIFRANCE = false;
+
+
 
     public static double RESET_TURRET_POWER = 0.2;
 

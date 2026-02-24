@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Teleop;
 
 import org.firstinspires.ftc.teamcode.Printer;
 import org.firstinspires.ftc.teamcode.RobotMap;
+import org.firstinspires.ftc.teamcode.SequentialGroupFixed;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShootType;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
@@ -13,12 +14,17 @@ import dev.nextftc.core.commands.groups.SequentialGroup;
 
 public class KeyCommands {
 
-    public static Command Shoot(ShootType type) {
+    public static Command
+
+
+
+
+    Shoot(ShootType type) {
         double shootAngle = RobotMap.SERVO_MOVE_CLOSE;
         if(type == ShootType.FAR) shootAngle = RobotMap.SERVO_MOVE_FAR;
         else if (type == ShootType.MID) shootAngle = RobotMap.SERVO_MOVE_MID;
         Command Shoot =
-                new SequentialGroup(
+                new SequentialGroupFixed(
                         new ParallelDeadlineGroup(
                                 new Delay(1),
                                 Printer.INSTANCE.addPrintCommand("Shoot 1"),
@@ -27,6 +33,7 @@ public class KeyCommands {
                                 Printer.INSTANCE.addPrintCommand("Shoot 2")
                                 ),
                         Printer.INSTANCE.addPrintCommand("Shoot 3"),//good
+                        new Delay(1),
                         new ParallelDeadlineGroup(
                                 new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
                                 new SequentialGroup(

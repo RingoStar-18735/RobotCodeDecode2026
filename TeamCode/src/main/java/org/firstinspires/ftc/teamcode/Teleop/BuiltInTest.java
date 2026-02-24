@@ -35,6 +35,21 @@ public class BuiltInTest extends NextFTCOpMode {
         );
     }
 
+    /*@Override
+    public void onInit() {
+        AllianceType = RobotBank.Alliance;
+        if (RobotBank.Alliance == AllianceType.BLUE) {
+            NewTargetPose = FieldMap.BLUE_TARGET_POS;
+        } else if (RobotBank.Alliance == AllianceType.RED) {
+            NewTargetPose = FieldMap.RED_TARGET_POS;
+        }
+        ShooterSubsystem.INSTANCE.StopSpeed().schedule();
+        IntakeSubSystem.INSTANCE.IntakeStop().schedule();
+        TurretSubsystem.INSTANCE.setReset(true);
+//        TurretSubsystem.INSTANCE.ResetAngleRight().schedule();
+        TurretSubsystem.INSTANCE.setOffset(RobotBank.Offset);
+    }*/
+
     public Command BitCommand(){
         return new SequentialGroupFixed(
 //                ShooterSubsystem.INSTANCE.move(0.5),
@@ -57,8 +72,9 @@ public class BuiltInTest extends NextFTCOpMode {
 //        );
 //        driverControlled.schedule();
 
-        Gamepads.gamepad1().a()
+         Gamepads.gamepad1().a()
                 .whenTrue(BitCommand());
+
     }
 
 }

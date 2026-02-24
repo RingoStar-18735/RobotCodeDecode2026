@@ -42,7 +42,8 @@ public class ShooterSubsystem implements Subsystem {
     private final MotorEx Shooter = new MotorEx("3E");
     private final PIDController PID = new PIDController(RobotMap.SHOOTER_P, RobotMap.SHOOTER_I, RobotMap.SHOOTER_D);
     private final ServoEx left_aim = new ServoEx("00E");
-    private final ServoEx right_aim = new ServoEx("01E");
+    private final ServoEx right_aim = new ServoEx("03E");
+
 
 
    // public Command RunVelocity(double v){
@@ -100,6 +101,7 @@ public class ShooterSubsystem implements Subsystem {
     public Command ServoAim(double pos) {
         return new SetPositions(left_aim.to(1 - pos), right_aim.to(pos));
     }
+
 
     public  double getShooterVelocity(){
         return Shooter.getVelocity();

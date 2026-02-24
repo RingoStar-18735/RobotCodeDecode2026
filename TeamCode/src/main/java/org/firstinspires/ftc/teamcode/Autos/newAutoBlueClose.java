@@ -15,10 +15,8 @@ import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.SequentialGroupFixed;
 import org.firstinspires.ftc.teamcode.Subsystems.AllianceType;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
-import org.firstinspires.ftc.teamcode.Subsystems.ShootType;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
-import org.firstinspires.ftc.teamcode.Teleop.KeyCommands;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.DrawingRobot;
 
@@ -84,27 +82,28 @@ public class newAutoBlueClose extends NextFTCOpMode {
 
     @Override
     public void onInit() {
+        RobotMap.TURRET_ROBOT_DIFRANCE = false;
         RobotBank.Alliance = AllianceType.BLUE;
-        TurretSubsystem.INSTANCE.ResetAngle().schedule();
+        TurretSubsystem.INSTANCE.ResetAngleRight().schedule();
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(34, 136, 135));
+        follower.setStartingPose(new Pose(34, 136, Math.toRadians(180)));
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(34.000, 136.000),
 
-                                new Pose(55.000, 90.000)
+                                new Pose(58.000, 90.000)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(55.000, 90.000),
+                                new Pose(58.000, 90.000),
 
-                                new Pose(53.000, 59.000)
+                                new Pose(58.000, 60.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -112,9 +111,9 @@ public class newAutoBlueClose extends NextFTCOpMode {
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(53.000, 59.000),
+                                new Pose(58.000, 60.000),
 
-                                new Pose(13.000, 59.000)
+                                new Pose(15.000, 60.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -122,9 +121,9 @@ public class newAutoBlueClose extends NextFTCOpMode {
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(13.000, 59.000),
-                                new Pose(61.174, 53.185),
-                                new Pose(55.000, 90.000)
+                                new Pose(15.000, 60.000),
+                                new Pose(53.209, 60.177),
+                                new Pose(58.000, 90.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -132,9 +131,9 @@ public class newAutoBlueClose extends NextFTCOpMode {
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(55.000, 90.000),
+                                new Pose(58.000, 90.000),
 
-                                new Pose(53.000, 84.000)
+                                new Pose(58.000, 84.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -142,9 +141,9 @@ public class newAutoBlueClose extends NextFTCOpMode {
 
         Path6 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(53.000, 84.000),
+                                new Pose(58.000, 84.000),
 
-                                new Pose(15.000, 84.000)
+                                new Pose(20.000, 84.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -152,9 +151,9 @@ public class newAutoBlueClose extends NextFTCOpMode {
 
         Path7 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(15.000, 84.000),
+                                new Pose(20.000, 84.000),
 
-                                new Pose(55.000, 90.000)
+                                new Pose(58.000, 90.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -162,39 +161,9 @@ public class newAutoBlueClose extends NextFTCOpMode {
 
         Path8 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(55.000, 90.000),
+                                new Pose(58.000, 90.000),
 
-                                new Pose(53.000, 36.000)
-                        )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
-
-                .build();
-
-        Path9 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(53.000, 36.000),
-
-                                new Pose(13.000, 36.000)
-                        )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
-
-                .build();
-
-        Path10 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(13.000, 36.000),
-
-                                new Pose(55.000, 90.000)
-                        )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
-
-                .build();
-
-        Path11 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(55.000, 90.000),
-
-                                new Pose(29.010, 91.025)
+                                new Pose(30.000, 85.000)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0))
 
@@ -209,43 +178,47 @@ public class newAutoBlueClose extends NextFTCOpMode {
         Path6Command = new FollowPath(Path6);
         Path7Command = new FollowPath(Path7);
         Path8Command = new FollowPath(Path8);
-        Path9Command = new FollowPath(Path9);
-        Path10Command = new FollowPath(Path10);
-        Path11Command = new FollowPath(Path11);
+//        Path9Command = new FollowPath(Path9);
+//        Path10Command = new FollowPath(Path10);
+//        Path11Command = new FollowPath(Path11);
 
         Auto = new SequentialGroupFixed(
                 Path1Command,
-                new ParallelDeadlineGroup(
-                        new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
-                        ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                        new SequentialGroupFixed(
-                                IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                                IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER)
-                        )
-                ),
-//                KeyCommands.Shoot(ShootType.MID),
-//                ShootFromFar,
+                Shoot,
                 Path2Command,
-                Path3Command,
+                MoveWhilePathing(Path3),
                 Path4Command,
-                KeyCommands.Shoot(ShootType.MID),
-//                ShootFromFar,
+                Shoot,
                 Path5Command,
-                Path6Command,
+                MoveWhilePathing(Path6),
                 Path7Command,
-                KeyCommands.Shoot(ShootType.MID),
-//                ShootFromFar,
-                Path8Command,
-                Path9Command,
-                Path10Command,
-                KeyCommands.Shoot(ShootType.MID),
-//                ShootFromFar,
-                Path11Command
+                Shoot,
+                Path8Command
         );
 
 
 
     }
+
+    Command Shoot =
+            new ParallelDeadlineGroup(
+                    new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
+                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
+                    new SequentialGroupFixed(
+                            new Delay(2),
+                            IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
+                            IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER)
+                    )
+            );
+
+    private Command MoveWhilePathing(PathChain path){
+        return new ParallelDeadlineGroup(
+                new Delay(4),
+//                new InstantCommand(()-> follower.followPath(path, 50, false)),
+                IntakeSubSystem.INSTANCE.IntakeFullyNotTransfer()
+        );
+    }
+
     @Override
     public void onUpdate() {
         follower.update();
@@ -255,7 +228,7 @@ public class newAutoBlueClose extends NextFTCOpMode {
         RobotBank.LastAutoTurretAngle = TurretSubsystem.INSTANCE.getAngle();
         DrawingRobot.drawDebug(follower);
         DrawingRobot.drawPoseHistory(follower.getPoseHistory());
-        telemetry.addData("pose: ", follower.getPose());
+        telemetry.addData("pose: ", RobotBank.LastAutoPos);
         telemetry.addData("yaw: ", follower.getPose().getHeading());
     }
     @Override
