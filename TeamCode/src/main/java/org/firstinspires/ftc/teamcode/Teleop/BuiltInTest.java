@@ -52,10 +52,15 @@ public class BuiltInTest extends NextFTCOpMode {
 
     public Command BitCommand(){
         return new SequentialGroupFixed(
-//                ShooterSubsystem.INSTANCE.move(0.5),
+                ShooterSubsystem.INSTANCE.move(0.5),
+                //new Delay(200),
                 ShooterSubsystem.INSTANCE.ServoAim(0.6), // CLOSE
+               // new Delay(200),
                 ShooterSubsystem.INSTANCE.ServoAim(0.45), // MID
+              //  new Delay(200),
                 ShooterSubsystem.INSTANCE.ServoAim(0.65)// FAR
+            //    new Delay(200)
+
 //                IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
 //                TurretSubsystem.INSTANCE.ResetAngle()
         );

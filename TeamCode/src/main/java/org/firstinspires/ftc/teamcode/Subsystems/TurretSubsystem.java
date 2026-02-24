@@ -141,12 +141,17 @@ public class TurretSubsystem implements Subsystem {
         final double rx = pose.getX();
         final double ry = pose.getY();
         double heading = pose.getHeading();// Pedro heading is radians
-//        if (Math.toDegrees(heading) < Math.toRadians(-180)) {
-//           heading = heading + 360;
-//        } else if (Math.toDegrees(heading) > Math.toRadians(180)) {
+
+        ActiveOpMode.telemetry().addData("headingBefore" , Math.toDegrees(heading));
+        if (Math.toDegrees(heading) < -180) {
+           heading = heading + Math.toRadians(360);
+        }
+        ActiveOpMode.telemetry().addData("headingAfter" , Math.toDegrees(heading));
+
+//        else if (Math.toDegrees(heading) > 180) {
 //            heading = heading - 360;
 //        }
-//        final double finalHeading = heading;
+        final double finalHeading = heading;
 
         // Vector from robot to target in field coordinates
         final double dx = targetpose.getX() - rx;
@@ -157,7 +162,7 @@ public class TurretSubsystem implements Subsystem {
 
         // Turret angle relative to robot forward:
         // gamma = (world angle to target) - (robot world heading)
-        double gamma = heading - alpha; //
+        double gamma = finalHeading - alpha; //
 
         // Wrap to [-pi, pi]
         gamma = Math.atan2(Math.sin(gamma), Math.cos(gamma));
@@ -175,7 +180,7 @@ public class TurretSubsystem implements Subsystem {
         ActiveOpMode.telemetry().addData("Turret heading(deg)", Math.toDegrees(heading));
         ActiveOpMode.telemetry().addData("Turret gamma(deg)", gammaDeg);
 
-        gammaDeg -= 90;
+//        gammaDeg -= 90;
         final double finalGammaDeg = gammaDeg;
         double deg = finalGammaDeg;
 

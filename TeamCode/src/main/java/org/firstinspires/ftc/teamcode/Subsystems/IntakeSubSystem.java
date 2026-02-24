@@ -17,8 +17,8 @@ public class IntakeSubSystem implements Subsystem {
 
     public MotorEx TransferMotor = new MotorEx("0E");
 
-    private void TransferPower(double power){
-        TransferMotor.setPower(power);
+    private void TransferPower(double pow){
+        TransferMotor.setPower(pow);
     }
 
     @Override

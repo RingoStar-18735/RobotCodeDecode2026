@@ -45,6 +45,10 @@ public class TeleopRingo extends NextFTCOpMode {
     boolean turretRobot = false;
     Pose turretRobotDifrance;
     List<String> a = new ArrayList<String>();
+    boolean activateFieldCentricCoraction = false;
+    double errorDistance = 0;
+    double lastXPos = 0;
+    double newXPos = follower.getPose().getX();
     AllianceType allianceType = AllianceType.BLUE;
     Pose NewTargetPose = FieldMap.BLUE_TARGET_POS;
 
@@ -106,6 +110,7 @@ public class TeleopRingo extends NextFTCOpMode {
         return new InstantCommand(()->a.add(b));
     }
 
+
     boolean hasStartedMatch;
     @Override
     public void onUpdate() {
@@ -117,11 +122,20 @@ public class TeleopRingo extends NextFTCOpMode {
         telemetry.addData("Pos: ",follower.getPose());
         telemetry.addData("yaw: ",follower.getPose().getHeading());
         telemetry.addData("LastAutoPos: ",RobotBank.LastAutoPos);
-        telemetry.addData("turretRobotDifrance: ",turretRobotDifrance);
 
         if (hasStartedMatch) {
-//            turretRobotDifrance = new Pose(follower.getPose().getX(), follower.getPose().getY(),follower.getPose().getHeading());
-            TurretSubsystem.INSTANCE.FollowPoint(NewTargetPose, follower.getPose()).schedule();
+            if (activateFieldCentricCoraction) {
+                errorDistance = follower.getPose().getX() - lastXPos;
+                newXPos = lastXPos - errorDistance;
+            } else {
+                newXPos = follower.getPose().getX();
+            }
+
+            turretRobotDifrance = new Pose(newXPos, follower.getPose().getY(),follower.getPose().getHeading() - Math.toRadians(90));
+            telemetry.addData("turretRobotDifrance: ",turretRobotDifrance);
+            telemetry.addData("Math.toRadians(90): ",Math.toRadians(90));
+            telemetry.addData("getHeading() - Math.toRadians(90): ",follower.getPose().getHeading() - Math.toRadians(90));
+            TurretSubsystem.INSTANCE.FollowPoint(NewTargetPose, turretRobotDifrance).schedule();
         }
 //        ActiveOpMode.telemetry().addData("PosRobotCalced: ", LimelightApril.INSTANCE.getRobotPos(follower, TurretSubsystem.INSTANCE.getAngle()));
 
@@ -146,11 +160,14 @@ public class TeleopRingo extends NextFTCOpMode {
         driverControlled.schedule();
 
         Gamepads.gamepad1().rightBumper()
-//                .whenTrue(
-//                        new InstantCommand(()-> TurretSubsystem.INSTANCE.setOffset(RobotBank.Offset + Math.toRadians(180) + follower.getPose().getHeading()))
-//                )
                 .whenTrue(
-                        new InstantCommand(()-> follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), Math.toRadians(0))))
+                        new InstantCommand(()-> lastXPos = follower.getPose().getX())
+                )
+                .whenTrue(
+                        new InstantCommand(()-> activateFieldCentricCoraction = true)
+                )
+                .whenTrue(
+                        new InstantCommand(()-> follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), Math.toRadians(90))))
                 );
 
 
