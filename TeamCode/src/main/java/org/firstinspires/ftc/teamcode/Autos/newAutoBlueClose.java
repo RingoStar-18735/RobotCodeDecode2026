@@ -26,6 +26,7 @@ import java.util.List;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
+import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
@@ -181,16 +182,29 @@ public class newAutoBlueClose extends NextFTCOpMode {
 //        Path9Command = new FollowPath(Path9);
 //        Path10Command = new FollowPath(Path10);
 //        Path11Command = new FollowPath(Path11);
+        Command ShootMid = new ParallelDeadlineGroup(
+                new Delay(4),
+                new SequentialGroup(
+                        ShooterSubsystem.INSTANCE.RunFullSpeed(),
+                        ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID),
+                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
+                        IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
+                        new Delay(2),
+                        ShooterSubsystem.INSTANCE.StopSpeed(),
+                        IntakeSubSystem.INSTANCE.IntakeStop(),
+                        IntakeSubSystem.INSTANCE.Transfer(0),
+                        IntakeSubSystem.INSTANCE.IntakePower(0)
+                ));
 
         Auto = new SequentialGroupFixed(
                 Path1Command,
-                Shoot,
+                ShootMid,
                 Path2Command,
-                MoveWhilePathing(Path3),
+                MoveWhilePathing(Path3Command),
                 Path4Command,
                 Shoot,
                 Path5Command,
-                MoveWhilePathing(Path6),
+                MoveWhilePathing(Path6Command),
                 Path7Command,
                 Shoot,
                 Path8Command
@@ -211,10 +225,10 @@ public class newAutoBlueClose extends NextFTCOpMode {
                     )
             );
 
-    private Command MoveWhilePathing(PathChain path){
+    private Command MoveWhilePathing(Command path){
         return new ParallelDeadlineGroup(
                 new Delay(4),
-//                new InstantCommand(()-> follower.followPath(path, 50, false)),
+                path,
                 IntakeSubSystem.INSTANCE.IntakeFullyNotTransfer()
         );
     }
@@ -222,7 +236,13 @@ public class newAutoBlueClose extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         follower.update();
-        if (hasStarted)TurretSubsystem.INSTANCE.FollowPoint(FieldMap.BLUE_TARGET_POS, follower.getPose()).schedule();
+        if (hasStarted){
+            if (RobotBank.Alliance == AllianceType.BLUE) {
+                TurretSubsystem.INSTANCE.FollowPoint(FieldMap.BLUE_TARGET_POS, follower.getPose()).schedule();
+            } else if (RobotBank.Alliance == AllianceType.RED) {
+                TurretSubsystem.INSTANCE.FollowPoint(FieldMap.RED_TARGET_POS, follower.getPose()).schedule();
+            }
+        }
         RobotBank.Offset = TurretSubsystem.INSTANCE.getOffset();
         RobotBank.LastAutoPos = follower.getPose();
         RobotBank.LastAutoTurretAngle = TurretSubsystem.INSTANCE.getAngle();

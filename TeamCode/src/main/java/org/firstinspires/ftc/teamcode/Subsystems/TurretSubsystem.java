@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.pedroPathing.PIDController;
 
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -55,6 +56,7 @@ public class TurretSubsystem implements Subsystem {
                 })
                 .setStop(interrupted -> {
                     turretmotor.setPower(0.0);
+                    new Delay(4).schedule();
                     ResetEncoder();
                     isReset = true;
                 })
@@ -145,6 +147,8 @@ public class TurretSubsystem implements Subsystem {
         ActiveOpMode.telemetry().addData("headingBefore" , Math.toDegrees(heading));
         if (Math.toDegrees(heading) < -180) {
            heading = heading + Math.toRadians(360);
+        } else if (Math.toDegrees(heading) > 180) {
+            heading = heading - Math.toRadians(360);
         }
         ActiveOpMode.telemetry().addData("headingAfter" , Math.toDegrees(heading));
 

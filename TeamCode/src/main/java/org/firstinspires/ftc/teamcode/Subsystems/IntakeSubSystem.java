@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.SequentialGroupFixed;
 
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -52,10 +53,9 @@ public class IntakeSubSystem implements Subsystem {
 
     public Command IntakeFullyNotTransfer(){
         return new ParallelGroup(
+                new Delay(3),
                 IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                Transfer(-RobotMap.TRANSMISSION_MOTOR_POWER),
-                IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                Transfer(-RobotMap.TRANSMISSION_MOTOR_POWER)
+                Transfer(RobotMap.TRANSMISSION_MOTOR_REVERSE_POWER)
                 );
     }
 

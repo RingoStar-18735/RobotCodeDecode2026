@@ -2,7 +2,10 @@ package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.RobotBank;
+import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
 
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -21,6 +24,16 @@ public class ServoTest extends NextFTCOpMode {
                 BindingsComponent.INSTANCE
         );
 
+    }
+
+    @Override
+    public void onInit() {
+//        ShooterSubsystem.INSTANCE.StopSpeed().schedule();
+        IntakeSubSystem.INSTANCE.IntakeStop().schedule();
+        TurretSubsystem.INSTANCE.setReset(true);
+////        TurretSubsystem.INSTANCE.ResetAngleRight().schedule();
+        TurretSubsystem.INSTANCE.setOffset(RobotBank.Offset);
+        ShooterSubsystem.INSTANCE.StopSpeed().schedule();
     }
 
     @Override

@@ -2,11 +2,12 @@ package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.SequentialGroupFixed;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.ftc.Gamepads;
@@ -27,19 +28,21 @@ public class CheckingCode extends NextFTCOpMode {
         );
     }
 
+    @Override
+    public void onInit() {
+        IntakeSubSystem.INSTANCE.IntakeStop().schedule();
+        ShooterSubsystem.INSTANCE.StopSpeed().schedule();
+    }
+
     public Command CC() {
-        return new SequentialGroupFixed(
+        return new ParallelDeadlineGroup(
+                new Delay(3),
                 IntakeSubSystem.INSTANCE.IntakePower(1),
-                //new Delay(100),
                 IntakeSubSystem.INSTANCE.Transfer(-1),
-                //new Delay(100),
-                ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                //new Delay(100),
-                ShooterSubsystem.INSTANCE.ServoAim(0.65), // FAR
-                //new Delay(100),
-                ShooterSubsystem.INSTANCE.ServoAim(0.45), // MID
-                //new Delay(100),
-                ShooterSubsystem.INSTANCE.ServoAim(0.5) // CLOSE
+                ShooterSubsystem.INSTANCE.RunFullSpeed()
+//                ShooterSubsystem.INSTANCE.ServoAim(0.65), // FAR
+//                ShooterSubsystem.INSTANCE.ServoAim(0.45), // MID
+//                ShooterSubsystem.INSTANCE.ServoAim(0.5) // CLOSE
         );
     }
 
