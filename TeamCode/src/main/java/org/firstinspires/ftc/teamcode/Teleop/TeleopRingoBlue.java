@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
+import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -67,6 +67,33 @@ public class TeleopRingoBlue extends NextFTCOpMode {
         hasStartedMatch = false;
     }
 
+
+    Command ShootFar = new SequentialGroup(
+            new ParallelGroup(
+                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
+                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
+            ),
+            ShooterSubsystem.INSTANCE.RunFullSpeed(),
+            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR)
+    );
+
+    Command ShootMid = new SequentialGroup(
+            new ParallelGroup(
+                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
+                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
+            ),
+            ShooterSubsystem.INSTANCE.RunFullSpeed(),
+            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID)
+    );
+
+    Command ShootClose = new SequentialGroup(
+            new ParallelGroup(
+                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
+                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
+            ),
+            ShooterSubsystem.INSTANCE.RunFullSpeed(),
+            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_CLOSE)
+    );
 
     @Override
     public void onInit() {
@@ -179,34 +206,25 @@ public class TeleopRingoBlue extends NextFTCOpMode {
 
         Gamepads.gamepad2().y()
                 .whenBecomesTrue(
-                        ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR)
-                ).whenBecomesTrue(
-                        ShooterSubsystem.INSTANCE.RunFullSpeed()
+                        ShootFar
                 );
 
 
         Gamepads.gamepad2().x()
                 .whenBecomesTrue(
-                        ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID)
-                ).whenBecomesTrue(
-                        ShooterSubsystem.INSTANCE.RunFullSpeed()
+                        ShootMid
                 );
 
         Gamepads.gamepad2().b()
                 .whenBecomesTrue(
-                        ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_CLOSE)
-                ).whenBecomesTrue(
-                        ShooterSubsystem.INSTANCE.RunFullSpeed()
+                        ShootClose
                 );
 
         Gamepads.gamepad2().a()
                 .whenTrue(
-                        new ParallelDeadlineGroup(
-                                new Delay(1),
+                        new ParallelGroup(
                                 ShooterSubsystem.INSTANCE.StopSpeed(),
-                                IntakeSubSystem.INSTANCE.IntakeStop(),
-                                IntakeSubSystem.INSTANCE.Transfer(0)
-
+                                IntakeSubSystem.INSTANCE.IntakeStop()
                         ));
 
 
@@ -215,22 +233,19 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                 .whenBecomesTrue(
                         IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
                 )
-                .whenBecomesTrue(IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR_POWER)
+                .whenBecomesTrue(IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR_REVERSE_POWER)
                 )
                 .whenBecomesFalse(
                         IntakeSubSystem.INSTANCE.IntakeStop()
                 );
 
 
-        Gamepads.gamepad2().rightBumper().toggleOnBecomesTrue()
+        Gamepads.gamepad2().rightBumper()
                 .whenBecomesTrue(
                         IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
                 )
-                .whenBecomesTrue(IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER)
-                )
-                .whenBecomesFalse(
-                        IntakeSubSystem.INSTANCE.IntakeStop()
-                );
+                .whenBecomesTrue(IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER));
+
 
 
 

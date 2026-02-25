@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import org.firstinspires.ftc.teamcode.RobotMap;
-import org.firstinspires.ftc.teamcode.SequentialGroupFixed;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.MotorEx;
@@ -60,9 +60,10 @@ public class IntakeSubSystem implements Subsystem {
     }
 
     public Command IntakeStop(){
-        return new SequentialGroupFixed(
-                IntakePower(0.0),
-                Transfer(0.0)
+        return new SequentialGroup(
+                Transfer(0.0),
+                new Delay(0.5),
+                IntakePower(0.0)
         ).setName("קומנד הפסיק אינטייק");
     }
 
