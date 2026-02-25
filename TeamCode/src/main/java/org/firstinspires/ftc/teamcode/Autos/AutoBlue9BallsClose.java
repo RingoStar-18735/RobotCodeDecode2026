@@ -26,8 +26,8 @@ import java.util.List;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
+import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
-import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
@@ -36,7 +36,7 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Autonomous
-public class newAutoBlueClose extends NextFTCOpMode {
+public class AutoBlue9BallsClose extends NextFTCOpMode {
     public PathChain Path1;
     public PathChain Path2;
     public PathChain Path3;
@@ -58,15 +58,15 @@ public class newAutoBlueClose extends NextFTCOpMode {
     Command Path6Command;
     Command Path7Command;
     Command Path8Command;
-/*    Command Path9Command;
+//  Command Path9Command;
     Command Path10Command;
-    Command Path11Command;*/
+    Command Path11Command;
     Command Auto;
     Follower follower;
     List<String> a = new ArrayList<String>();
 
 
-    public newAutoBlueClose(){
+    public AutoBlue9BallsClose(){
 
         addComponents(
                 new SubsystemComponent(
@@ -77,6 +77,7 @@ public class newAutoBlueClose extends NextFTCOpMode {
                 ),
                 new PedroComponent(Constants::createFollower),
                 BulkReadComponent.INSTANCE,
+
                 BindingsComponent.INSTANCE
         );
 
@@ -115,7 +116,7 @@ public class newAutoBlueClose extends NextFTCOpMode {
                         new BezierLine(
                                 new Pose(58.000, 60.000),
 
-                                new Pose(15.000, 60.000)
+                                new Pose(20.000, 60)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -123,7 +124,7 @@ public class newAutoBlueClose extends NextFTCOpMode {
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(15.000, 60.000),
+                                new Pose(20.000, 60),
                                 new Pose(53.209, 60.177),
                                 new Pose(58.000, 90.000)
                         )
@@ -145,7 +146,7 @@ public class newAutoBlueClose extends NextFTCOpMode {
                         new BezierLine(
                                 new Pose(58.000, 86.000),
 
-                                new Pose(20.000, 86.000)
+                                new Pose(25.000, 86.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -153,7 +154,7 @@ public class newAutoBlueClose extends NextFTCOpMode {
 
         Path7 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(20.000, 86.000),
+                                new Pose(25.000, 86.000),
 
                                 new Pose(62.000, 90.000)
                         )
@@ -163,9 +164,9 @@ public class newAutoBlueClose extends NextFTCOpMode {
 
         Path8 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(58.000, 90.000),
+                                new Pose(62.000, 90.000),
 
-                                new Pose(30.000, 85.000)
+                                new Pose(33.000, 85.000)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
@@ -185,25 +186,31 @@ public class newAutoBlueClose extends NextFTCOpMode {
 //        Path11Command = new FollowPath(Path11);
 
         Command ShootMid = new SequentialGroup(
-                ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID),
+                new ParallelDeadlineGroup(
+                        new Delay(2.5),
+                        ShooterSubsystem.INSTANCE.RunFullSpeed()
+                ),
+                ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_AUTO_MID),
                 IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
                 IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
                 new Delay(2),
-                IntakeSubSystem.INSTANCE.Transfer(0),
                 IntakeSubSystem.INSTANCE.IntakePower(0),
-                new InstantCommand(()-> ShooterSubsystem.INSTANCE.PID.setTarget(0))
+                IntakeSubSystem.INSTANCE.Transfer(0),
+                new ParallelDeadlineGroup(
+                        new Delay(1),
+                        ShooterSubsystem.INSTANCE.StopSpeed()
+                )
         );
 
         Auto = new SequentialGroupFixed(
                 Path1Command,
                 ShootMid,
                 Path2Command,
-                Path3Command,
+                MoveWithoutShooting(Path3Command),
                 Path4Command,
                 ShootMid,
                 Path5Command,
-                Path6Command,
+                MoveWithoutShooting(Path6Command),
                 Path7Command,
                 ShootMid,
                 Path8Command
@@ -224,12 +231,27 @@ public class newAutoBlueClose extends NextFTCOpMode {
                     )
             );
 
-    private Command MoveWhilePathing(Command path){
+    private Command MoveWhilePathing(Command path) {
         return new ParallelDeadlineGroup(
                 new Delay(4),
                 path,
-                IntakeSubSystem.INSTANCE.IntakeFullyNotTransfer()
+               IntakeSubSystem.INSTANCE.IntakeFullyNotTransfer()
         );
+    }
+
+    private Command MoveWithoutShooting(Command path) {
+        ShooterSubsystem.INSTANCE.StopSpeed();
+        return new SequentialGroup(
+                new ParallelGroup(
+                        path,
+                        IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
+                        IntakeSubSystem.INSTANCE.Transfer(-RobotMap.INTAKE_REVERSED_POWER)
+                ),
+                new Delay(2),
+                IntakeSubSystem.INSTANCE.IntakePower(0),
+                IntakeSubSystem.INSTANCE.Transfer(0)
+        );
+
     }
 
     @Override

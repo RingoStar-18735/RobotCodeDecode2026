@@ -24,6 +24,8 @@ import java.util.List;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
+import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -68,6 +70,39 @@ public class TeleopRingoRed extends NextFTCOpMode {
     }
 
 
+    Command ShootFar = new SequentialGroup(
+            new ParallelDeadlineGroup(
+                    new Delay(2.5),
+                    ShooterSubsystem.INSTANCE.RunFullSpeed()
+            ),
+            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR),
+            IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
+            IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
+
+    );
+
+    Command ShootMid = new SequentialGroup(
+            new ParallelDeadlineGroup(
+                    new Delay(2.5),
+                    ShooterSubsystem.INSTANCE.RunFullSpeed()
+            ),
+            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID),
+            IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
+            IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
+
+    );
+
+    Command ShootClose = new SequentialGroup(
+            new ParallelDeadlineGroup(
+                    new Delay(2.5),
+                    ShooterSubsystem.INSTANCE.RunFullSpeed()
+            ),
+            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_CLOSE),
+            IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
+            IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
+
+    );
+
     @Override
     public void onInit() {
         allianceType = RobotBank.Alliance;
@@ -76,30 +111,10 @@ public class TeleopRingoRed extends NextFTCOpMode {
         } else if (RobotBank.Alliance == AllianceType.RED) {
             NewTargetPose = FieldMap.RED_TARGET_POS;
         }
-//        ShooterSubsystem.INSTANCE.StopSpeed().schedule();
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
-////        TurretSubsystem.INSTANCE.ResetAngleRight().schedule();
         TurretSubsystem.INSTANCE.setOffset(RobotBank.Offset);
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
     }
-
-
-    public Command PrintCommand(String b){
-        return new InstantCommand(()->a.add(b));
-    }
-
-//    public Command shoot(){
-//        timer.resetTimer();
-//        if (timer.getElapsedTimeSeconds() <= 3) {
-//            new ParallelDeadlineGroup(
-//                    ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR),
-//                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-//            );
-//        } else if (timer.getElapsedTimeSeconds() > 3) {
-//            ShooterSubsystem.INSTANCE.StopSpeed();
-//
-//        }
-//    }
 
 
     boolean hasStartedMatch;
@@ -107,10 +122,6 @@ public class TeleopRingoRed extends NextFTCOpMode {
     public void onUpdate() {
         follower.update();
 
-
-
-//        telemetry.addData("ShootFinished: ", ShooterSubsystem.INSTANCE.RunFullSpeed().isDone());
-//        telemetry.addData("FinishedCommands: ",a);
         telemetry.addData("Pos: ",follower.getPose());
         telemetry.addData("yaw: ",follower.getPose().getHeading());
         telemetry.addData("LastAutoPos: ",RobotBank.LastAutoPos);
@@ -132,13 +143,6 @@ public class TeleopRingoRed extends NextFTCOpMode {
             }
             TurretSubsystem.INSTANCE.FollowPoint(NewTargetPose, turretRobotDifrance).schedule();
         }
-//        ActiveOpMode.telemetry().addData("PosRobotCalced: ", LimelightApril.INSTANCE.getRobotPos(follower, TurretSubsystem.INSTANCE.getAngle()));
-
-        //follower.setPose(LimelightApril.INSTANCE.getRobotPos(follower, 01.INSTANCE.getAngle()));
-
-
-
-
     }
 
     @Override
@@ -176,36 +180,26 @@ public class TeleopRingoRed extends NextFTCOpMode {
 
         Gamepads.gamepad2().y()
                 .whenBecomesTrue(
-                        ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR)
-                ).whenBecomesTrue(
-                        ShooterSubsystem.INSTANCE.RunFullSpeed()
-                        );
+                        ShootFar
+                );
 
 
         Gamepads.gamepad2().x()
                 .whenBecomesTrue(
-                        ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID)
-                ).whenBecomesTrue(
-                        ShooterSubsystem.INSTANCE.RunFullSpeed()
+                        ShootMid
                 );
 
         Gamepads.gamepad2().b()
                 .whenBecomesTrue(
-                        ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_CLOSE)
-                ).whenBecomesTrue(
-                        ShooterSubsystem.INSTANCE.RunFullSpeed()
+                        ShootClose
                 );
 
         Gamepads.gamepad2().a()
                 .whenTrue(
-                        new ParallelDeadlineGroup(
-                                new Delay(1),
+                        new ParallelGroup(
                                 ShooterSubsystem.INSTANCE.StopSpeed(),
-                                IntakeSubSystem.INSTANCE.IntakeStop(),
-                                IntakeSubSystem.INSTANCE.Transfer(0)
-
+                                IntakeSubSystem.INSTANCE.IntakeStop()
                         ));
-
 
 
         Gamepads.gamepad2().leftBumper().toggleOnBecomesTrue()
@@ -213,17 +207,6 @@ public class TeleopRingoRed extends NextFTCOpMode {
                         IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
                 )
                 .whenBecomesTrue(IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSMISSION_MOTOR_POWER)
-                )
-                .whenBecomesFalse(
-                        IntakeSubSystem.INSTANCE.IntakeStop()
-                );
-
-
-        Gamepads.gamepad2().rightBumper().toggleOnBecomesTrue()
-                .whenBecomesTrue(
-                        IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
-                )
-                .whenBecomesTrue(IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER)
                 )
                 .whenBecomesFalse(
                         IntakeSubSystem.INSTANCE.IntakeStop()
@@ -243,22 +226,5 @@ public class TeleopRingoRed extends NextFTCOpMode {
                         )
                 )
         );
-
-//        Gamepads.gamepad1().a().whenBecomesTrue(
-//                new ParallelGroup(
-//                        IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-//                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
-//                        ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID),
-//                        ShooterSubsystem.INSTANCE.RunFullSpeed()
-//                ));
-//
-//        Gamepads.gamepad1().y().whenBecomesTrue(
-//                new ParallelGroup(
-//                        IntakeSubSystem.INSTANCE.IntakeStop(),
-//                        IntakeSubSystem.INSTANCE.Transfer(0),
-//                        ShooterSubsystem.INSTANCE.StopSpeed()
-//                )
-//        );
-
     }
 }
