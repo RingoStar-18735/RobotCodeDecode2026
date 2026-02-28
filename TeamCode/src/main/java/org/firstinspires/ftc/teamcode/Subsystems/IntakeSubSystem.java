@@ -62,7 +62,7 @@ public class IntakeSubSystem implements Subsystem {
     public Command IntakeStop(){
         return new SequentialGroup(
                 Transfer(0.0),
-                new Delay(0.5),
+                new Delay(0.1),
                 IntakePower(0.0)
         ).setName("קומנד הפסיק אינטייק");
     }

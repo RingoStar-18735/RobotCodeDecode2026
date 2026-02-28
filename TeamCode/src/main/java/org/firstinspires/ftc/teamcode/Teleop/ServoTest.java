@@ -7,6 +7,9 @@ import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
 
+import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.ftc.Gamepads;
@@ -26,6 +29,14 @@ public class ServoTest extends NextFTCOpMode {
 
     }
 
+
+    Command Shoot = new SequentialGroup(
+            ShooterSubsystem.INSTANCE.RunFullSpeed(),
+            new InstantCommand(ShooterSubsystem.INSTANCE::getShooterVelocity)
+    );
+
+
+
     @Override
     public void onInit() {
 //        ShooterSubsystem.INSTANCE.StopSpeed().schedule();
@@ -38,16 +49,23 @@ public class ServoTest extends NextFTCOpMode {
 
     @Override
     public void onStartButtonPressed() {
-        Gamepads.gamepad1().a()
-                .whenBecomesTrue(ShooterSubsystem.INSTANCE.ServoAim(0));
+//        Gamepads.gamepad1().a()
+//                .whenTrue(ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_NEW_MID));
 
-        Gamepads.gamepad1().b()
-                .whenBecomesTrue(ShooterSubsystem.INSTANCE.ServoAim(0.2));
+//        Gamepads.gamepad1().b()
+//                .whenTrue(ShooterSubsystem.INSTANCE.RunFullSpeed());
 
-        Gamepads.gamepad1().x()
-                .whenBecomesTrue(ShooterSubsystem.INSTANCE.ServoAim(0.8));
+//        Gamepads.gamepad1().b()
+//                .whenTrue(IntakeSubSystem.INSTANCE.IntakePower(1))
+//                .whenBecomesTrue(IntakeSubSystem.INSTANCE.Transfer(-1));
 
-        Gamepads.gamepad1().y()
-                .whenBecomesTrue(ShooterSubsystem.INSTANCE.ServoAim(1));
+       Gamepads.gamepad1().b()
+               .whenBecomesTrue(ShooterSubsystem.INSTANCE.ServoAim(0));
+//
+//        Gamepads.gamepad1().x()
+//                .whenBecomesTrue(ShooterSubsystem.INSTANCE.ServoAim(0.8));
+//
+//        Gamepads.gamepad1().y()
+//                .whenBecomesTrue(ShooterSubsystem.INSTANCE.ServoAim(1));
     }
 }

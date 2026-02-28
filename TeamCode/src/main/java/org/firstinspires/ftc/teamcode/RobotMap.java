@@ -18,8 +18,9 @@ public class RobotMap {
     public static double SHOOTER_I = 0.0;
     public static double SHOOTER_D = 0.1;
 
+
     public static double SHOOTER_SPEED = 2200;
-    public static double SERVO_MOVE_AUTO_MID = 0.2;
+    public static double SERVO_MOVE_AUTO_MID = 0.45;
     public static double SERVO_MOVE_FAR = 0.65;
     public static double SERVO_MOVE_MID = 0.45;
     public static double SERVO_MOVE_CLOSE = 0.5;
@@ -41,9 +42,9 @@ public class RobotMap {
 
 
 
-    public static double RESET_TURRET_POWER = 0.2;
+    public static double RESET_TURRET_POWER = 0.25;
 
-    public static double MAX_TURRET_ANGLE = 225;
+    public static double MAX_TURRET_ANGLE = 90;
     public static double MIN_TURRET_ANGLE = -90;
 
     public static int LIMELIGHT_HZ = 100;

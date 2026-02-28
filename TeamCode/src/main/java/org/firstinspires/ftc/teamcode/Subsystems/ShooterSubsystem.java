@@ -103,7 +103,7 @@ public class ShooterSubsystem implements Subsystem {
     }
 
 
-    public  double getShooterVelocity(){
+    public double getShooterVelocity(){
         return Shooter.getVelocity();
     }
 

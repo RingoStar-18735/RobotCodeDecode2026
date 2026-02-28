@@ -64,7 +64,7 @@ public class MoveForwardAuto extends NextFTCOpMode {
     @Override
     public void onInit() {
         RobotMap.TURRET_ROBOT_DIFRANCE = false;
-        RobotBank.Alliance = AllianceType.RED;
+        RobotBank.Alliance = AllianceType.BLUE          ;
         TurretSubsystem.INSTANCE.ResetAngleRight().schedule();
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
