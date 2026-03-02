@@ -75,7 +75,7 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                     new Delay(2),
                     ShooterSubsystem.INSTANCE.RunFullSpeed()
             ),
-            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR),
+            ShooterSubsystem.INSTANCE.ServoAimCommand(RobotMap.SERVO_MOVE_FAR),
             new ParallelDeadlineGroup(
                     new Delay(0.3),
                     IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
@@ -108,7 +108,7 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                     new Delay(2),
                     ShooterSubsystem.INSTANCE.RunFullSpeed()
             ),
-            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID),
+            ShooterSubsystem.INSTANCE.ServoAimCommand(RobotMap.SERVO_MOVE_MID),
             new ParallelDeadlineGroup(
                     new Delay(0.3),
                     IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
@@ -141,7 +141,7 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                     new Delay(2),
                     ShooterSubsystem.INSTANCE.RunFullSpeed()
             ),
-            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_CLOSE),
+            ShooterSubsystem.INSTANCE.ServoAimCommand(RobotMap.SERVO_MOVE_CLOSE),
             new ParallelDeadlineGroup(
                     new Delay(0.3),
                     IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),

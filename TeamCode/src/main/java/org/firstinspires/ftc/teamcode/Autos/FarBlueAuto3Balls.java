@@ -107,7 +107,7 @@ public class FarBlueAuto3Balls extends NextFTCOpMode {
 
     Command ShootFromFar =
             new SequentialGroup(
-                    ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR),
+                    ShooterSubsystem.INSTANCE.ServoAimCommand(RobotMap.SERVO_MOVE_FAR),
                     ShooterSubsystem.INSTANCE.RunFullSpeed(),
                     PrintCommand("Finished 1"),
                     new ParallelDeadlineGroup(
@@ -150,7 +150,7 @@ public class FarBlueAuto3Balls extends NextFTCOpMode {
             new SequentialGroup(
                     new ParallelGroup(
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID)
+                            ShooterSubsystem.INSTANCE.ServoAimCommand(RobotMap.SERVO_MOVE_MID)
                     ),
                     PrintCommand("Finished 1"),
                     new ParallelDeadlineGroup(
@@ -193,7 +193,7 @@ public class FarBlueAuto3Balls extends NextFTCOpMode {
             new SequentialGroup(
                     new ParallelGroup(
                             ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_AUTO_MID)
+                            ShooterSubsystem.INSTANCE.ServoAimCommand(RobotMap.SERVO_MOVE_AUTO_MID)
                     ),
                     PrintCommand("Finished 1"),
                     new ParallelDeadlineGroup(

@@ -190,7 +190,7 @@ public class AutoRed9BallsClose extends NextFTCOpMode {
                         new Delay(1),
                         ShooterSubsystem.INSTANCE.RunFullSpeed()
                 ),
-                ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_AUTO_MID),
+                ShooterSubsystem.INSTANCE.ServoAimCommand(RobotMap.SERVO_MOVE_AUTO_MID),
                 IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
                 IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
                 new Delay(2),

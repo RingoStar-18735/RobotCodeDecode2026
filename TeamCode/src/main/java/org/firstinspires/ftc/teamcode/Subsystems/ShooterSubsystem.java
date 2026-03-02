@@ -23,6 +23,8 @@ public class ShooterSubsystem implements Subsystem {
     public final static ShooterSubsystem INSTANCE = new ShooterSubsystem();
 
     public boolean ReverseWheel = false;
+    public double distance = 0;
+    public String ServoLastPos = "None";
     public boolean ShooterStopped = false;
     private boolean CommandStarted = true;
     private TelemetryManager panels = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -98,9 +100,28 @@ public class ShooterSubsystem implements Subsystem {
         return new SetPower(Shooter, pow);
     }
 
-    public Command ServoAim(double pos) {
+    public Command ServoAimCommand(double pos) {
         return new SetPositions(left_aim.to(1 - pos), right_aim.to(pos));
     }
+    public void ServoAim(double pos) {
+        left_aim.setPosition(1 - pos);
+        right_aim.setPosition(pos);
+    }
+
+//    public Command ServoAutoAim(Pose RobotPose, Pose TargetPose) {
+//        return new LambdaCommand()
+//                .setUpdate(() -> {
+//                    distance = Math.sqrt(Math.pow(TargetPose.getX() - RobotPose.getX(), 2) + Math.pow(TargetPose.getY() - RobotPose.getY(), 2));
+//                    if (distance < 51) {
+//                        ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_CLOSE);
+//                    } else if (distance > 120) {
+//                        ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR);
+//                    }else {
+//                        ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID);
+//                    }
+//                })
+//                .setIsDone(()-> false);
+//    }
 
 
     public double getShooterVelocity(){

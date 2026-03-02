@@ -29,7 +29,7 @@ public class KeyCommands {
                                 new Delay(1),
                                 Printer.INSTANCE.addPrintCommand("Shoot 1"),
                                 ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                ShooterSubsystem.INSTANCE.ServoAim(shootAngle),
+                                ShooterSubsystem.INSTANCE.ServoAimCommand(shootAngle),
                                 Printer.INSTANCE.addPrintCommand("Shoot 2")
                                 ),
                         Printer.INSTANCE.addPrintCommand("Shoot 3"),//good

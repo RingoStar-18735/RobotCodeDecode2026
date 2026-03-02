@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Teleop;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RobotBank;
+import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
@@ -49,8 +50,8 @@ public class ServoTest extends NextFTCOpMode {
 
     @Override
     public void onStartButtonPressed() {
-//        Gamepads.gamepad1().a()
-//                .whenTrue(ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_NEW_MID));
+        Gamepads.gamepad1().a()
+                .whenTrue(ShooterSubsystem.INSTANCE.ServoAimCommand(RobotMap.SERVO_MOVE_MID));
 
 //        Gamepads.gamepad1().b()
 //                .whenTrue(ShooterSubsystem.INSTANCE.RunFullSpeed());
@@ -60,7 +61,7 @@ public class ServoTest extends NextFTCOpMode {
 //                .whenBecomesTrue(IntakeSubSystem.INSTANCE.Transfer(-1));
 
        Gamepads.gamepad1().b()
-               .whenBecomesTrue(ShooterSubsystem.INSTANCE.ServoAim(0));
+               .whenBecomesTrue(ShooterSubsystem.INSTANCE.ServoAimCommand(0));
 //
 //        Gamepads.gamepad1().x()
 //                .whenBecomesTrue(ShooterSubsystem.INSTANCE.ServoAim(0.8));
