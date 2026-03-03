@@ -43,7 +43,7 @@ public class TeleopRingoRed extends NextFTCOpMode {
     Pose RobotPose = new Pose(0, 0, 0);
     double newOffset = 0;
     boolean ServoActivate= false;
-    double ServoPos;
+    double ServoPos = 1;
     boolean turretRobot = false;
     double distance = 0;
     Pose turretRobotDifrance;
@@ -77,16 +77,15 @@ public class TeleopRingoRed extends NextFTCOpMode {
                 .setStart(() -> {
                     telemetry.addLine("SHOOT COMMAND STARTED");
                     telemetry.addData("vel: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
-                    telemetry.addData("Speed: ", RobotMap.SHOOTER_SPEED - 400);
+                    telemetry.addData("Speed: ", ShooterSubsystem.INSTANCE.ShooterSpeed - 400);
                 })
                 .setUpdate(() -> {
-                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= RobotMap.SHOOTER_SPEED - 400) {
+                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 400) {
                         telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
                         IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
                         IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
 
                     } else {
-
                         IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0);
                         IntakeSubSystem.INSTANCE.TransferMotor.setPower(0);
                     }
@@ -99,110 +98,16 @@ public class TeleopRingoRed extends NextFTCOpMode {
     Command shootSequence = new SequentialGroup(
             new ParallelDeadlineGroup(
                     new Delay(2),
-                    ShooterSubsystem.INSTANCE.RunFullSpeed()
+                    ShooterSubsystem.INSTANCE.RunFullSpeed(() ->
+                            Math.sqrt(
+                                    Math.pow(NewTargetPose.getX() - RobotPose.getX(), 2) +
+                                            Math.pow(NewTargetPose.getY() - RobotPose.getY(), 2)
+                            )
+                    )
             ),
-            new InstantCommand(() -> ServoActivate = true),
             Shoot()
     );
 
-//    Command ShootFar = new SequentialGroup(
-//            new ParallelDeadlineGroup(
-//                    new Delay(2),
-//                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-//            ),
-//            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR),
-//            new ParallelDeadlineGroup(
-//                    new Delay(0.3),
-//                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
-//                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
-//            ),
-//            new ParallelDeadlineGroup(
-//                    new Delay(1.5),
-//                    IntakeSubSystem.INSTANCE.IntakePower(0),
-//                    IntakeSubSystem.INSTANCE.Transfer(0)
-//            ),
-//            new ParallelDeadlineGroup(
-//                    new Delay(0.3),
-//                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
-//                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
-//            ),
-//            new ParallelDeadlineGroup(
-//                    new Delay(1.5),
-//                    IntakeSubSystem.INSTANCE.IntakePower(0),
-//                    IntakeSubSystem.INSTANCE.Transfer(0)
-//            ),
-//            new ParallelDeadlineGroup(
-//                    new Delay(0.3),
-//                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
-//                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
-//            )
-//    );
-//
-//    Command ShootMid = new SequentialGroup(
-//            new ParallelDeadlineGroup(
-//                    new Delay(2),
-//                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-//            ),
-//            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID),
-//            new ParallelDeadlineGroup(
-//                    new Delay(0.3),
-//                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
-//                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
-//            ),
-//            new ParallelDeadlineGroup(
-//                    new Delay(1.5),
-//                    IntakeSubSystem.INSTANCE.IntakePower(0),
-//                    IntakeSubSystem.INSTANCE.Transfer(0)
-//            ),
-//            new ParallelDeadlineGroup(
-//                    new Delay(0.3),
-//                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
-//                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
-//            ),
-//            new ParallelDeadlineGroup(
-//                    new Delay(1.5),
-//                    IntakeSubSystem.INSTANCE.IntakePower(0),
-//                    IntakeSubSystem.INSTANCE.Transfer(0)
-//            ),
-//            new ParallelDeadlineGroup(
-//                    new Delay(0.3),
-//                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
-//                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
-//            )
-//    );
-//
-//    Command ShootClose = new SequentialGroup(
-//            new ParallelDeadlineGroup(
-//                    new Delay(2),
-//                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-//            ),
-//            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_CLOSE),
-//            new ParallelDeadlineGroup(
-//                    new Delay(0.3),
-//                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
-//                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
-//            ),
-//            new ParallelDeadlineGroup(
-//                    new Delay(1.5),
-//                    IntakeSubSystem.INSTANCE.IntakePower(0),
-//                    IntakeSubSystem.INSTANCE.Transfer(0)
-//            ),
-//            new ParallelDeadlineGroup(
-//                    new Delay(0.3),
-//                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
-//                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
-//            ),
-//            new ParallelDeadlineGroup(
-//                    new Delay(1.5),
-//                    IntakeSubSystem.INSTANCE.IntakePower(0),
-//                    IntakeSubSystem.INSTANCE.Transfer(0)
-//            ),
-//            new ParallelDeadlineGroup(
-//                    new Delay(0.3),
-//                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
-//                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER)
-//            )
-//    );
 
     @Override
     public void onInit() {
@@ -226,33 +131,49 @@ public class TeleopRingoRed extends NextFTCOpMode {
     public void onUpdate() {
         follower.update();
 
-        telemetry.addData("Pos: ",follower.getPose());
-        telemetry.addData("yaw: ",follower.getPose().getHeading());
-        telemetry.addData("LastAutoPos: ",RobotBank.LastAutoPos);
-        telemetry.addData("turretRobotDifrance: ",turretRobotDifrance);
-        telemetry.addData("Math.toRadians(90): ",Math.toRadians(90));
-        telemetry.addData("getHeading() - Math.toRadians(90): ",follower.getPose().getHeading() - Math.toRadians(90));
-        telemetry.addData("lastPos: ", lastYPos);
-        telemetry.addData("errorDistance: ",errorDistance);
-        telemetry.addData("follower.getPose().getX(): ",follower.getPose().getX());
-        telemetry.addData("אני: ",-ShooterSubsystem.INSTANCE.Shooter.getVelocity());
+//        telemetry.addData("Pos: ",follower.getPose());
+//        telemetry.addData("yaw: ",follower.getPose().getHeading());
+//        telemetry.addData("LastAutoPos: ",RobotBank.LastAutoPos);
+//        telemetry.addData("turretRobotDifrance: ",turretRobotDifrance);
+//        telemetry.addData("Math.toRadians(90): ",Math.toRadians(90));
+//        telemetry.addData("getHeading() - Math.toRadians(90): ",follower.getPose().getHeading() - Math.toRadians(90));
+//        telemetry.addData("lastPos: ", lastYPos);
+//        telemetry.addData("errorDistance: ",errorDistance);
+//        telemetry.addData("follower.getPose().getX(): ",follower.getPose().getX());
+        telemetry.addData("getVelocity: ",-ShooterSubsystem.INSTANCE.Shooter.getVelocity());
         telemetry.addData("מרחק: ",distance);
-        telemetry.addData("סרבו לאסט פוס", ShooterSubsystem.INSTANCE.ServoLastPos);
-        telemetry.addData("RobotPose", RobotPose);
-        telemetry.addData("ServoActivate", ServoActivate);
+//        telemetry.addData("סרבו לאסט פוס", ShooterSubsystem.INSTANCE.ServoLastPos);
+//        telemetry.addData("RobotPose", RobotPose);
+//        telemetry.addData("ServoActivate", ServoActivate);
         distance = Math.sqrt(Math.pow(NewTargetPose.getX() - RobotPose.getX(), 2) + Math.pow(NewTargetPose.getY() - RobotPose.getY(), 2));
 
 
-        if (ServoActivate) {
-            if (distance < 51){
-                ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_CLOSE);
-            } else if (distance > 120) {
-                ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR);
-            } else {
-                ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID);
-            }
-            ServoActivate = false;
-        }
+//        if (ServoActivate) {
+//            if (distance < 51){
+//                ServoPos = RobotMap.SERVO_MOVE_CLOSE;
+////                new ParallelDeadlineGroup(
+////                        new Delay(2),
+////                        ShooterSubsystem.INSTANCE.RunFullSpeedClose()
+////                );
+////                ShooterSubsystem.INSTANCE.StopSpeed();
+//            } else if (distance > 120) {
+//                ServoPos = RobotMap.SERVO_MOVE_FAR;
+////                new ParallelDeadlineGroup(
+////                        new Delay(2),
+////                        ShooterSubsystem.INSTANCE.RunFullSpeedFar()
+////                );
+////                ShooterSubsystem.INSTANCE.StopSpeed();
+//            } else {
+//                ServoPos = RobotMap.SERVO_MOVE_MID;
+////                new ParallelDeadlineGroup(
+////                        new Delay(2),
+////                        ShooterSubsystem.INSTANCE.RunFullSpeedMid()
+////                );
+////                ShooterSubsystem.INSTANCE.StopSpeed();
+//            }
+//            ShooterSubsystem.INSTANCE.ServoAim(ServoPos);
+//            ServoActivate = false;
+//        }
 
         if (hasStartedMatch) {
             RobotPose = follower.getPose();
@@ -270,6 +191,12 @@ public class TeleopRingoRed extends NextFTCOpMode {
 
     @Override
     public void onStartButtonPressed() {
+        ShooterSubsystem.INSTANCE.ServoMoveByField(() ->
+                Math.sqrt(
+                        Math.pow(NewTargetPose.getX() - RobotPose.getX(), 2) +
+                                Math.pow(NewTargetPose.getY() - RobotPose.getY(), 2)
+                )
+        ).schedule();
 
         TurretSubsystem.INSTANCE.setReset(true);
         ShooterSubsystem.INSTANCE.StopSpeed();

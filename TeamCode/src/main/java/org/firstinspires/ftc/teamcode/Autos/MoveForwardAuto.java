@@ -91,17 +91,6 @@ public class MoveForwardAuto extends NextFTCOpMode {
 
     }
 
-    Command Shoot =
-            new ParallelDeadlineGroup(
-                    new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
-                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                    new SequentialGroupFixed(
-                            new Delay(2),
-                            IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                            IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER)
-                    )
-            );
-
     private Command MoveWhilePathing(Command path) {
         return new ParallelDeadlineGroup(
                 new Delay(4),

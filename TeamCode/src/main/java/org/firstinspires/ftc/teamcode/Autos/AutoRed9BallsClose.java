@@ -185,33 +185,33 @@ public class AutoRed9BallsClose extends NextFTCOpMode {
 //        Path10Command = new FollowPath(Path10);
 //        Path11Command = new FollowPath(Path11);
 
-        Command ShootMid = new SequentialGroup(
-                new ParallelDeadlineGroup(
-                        new Delay(1),
-                        ShooterSubsystem.INSTANCE.RunFullSpeed()
-                ),
-                ShooterSubsystem.INSTANCE.ServoAimCommand(RobotMap.SERVO_MOVE_AUTO_MID),
-                IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
-                IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                new Delay(2),
-                IntakeSubSystem.INSTANCE.IntakePower(0),
-                IntakeSubSystem.INSTANCE.Transfer(0),
-                new ParallelDeadlineGroup(
-                        new Delay(1),
-                        ShooterSubsystem.INSTANCE.StopSpeed()
-                )
-        );
+//        Command ShootMid = new SequentialGroup(
+//                new ParallelDeadlineGroup(
+//                        new Delay(1),
+//                        ShooterSubsystem.INSTANCE.RunFullSpeedFar()
+//                ),
+//                ShooterSubsystem.INSTANCE.ServoAimCommand(RobotMap.SERVO_MOVE_AUTO_MID),
+//                IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
+//                IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
+//                new Delay(2),
+//                IntakeSubSystem.INSTANCE.IntakePower(0),
+//                IntakeSubSystem.INSTANCE.Transfer(0),
+//                new ParallelDeadlineGroup(
+//                        new Delay(1),
+//                        ShooterSubsystem.INSTANCE.StopSpeed()
+//                )
+//        );
 
         Auto = new SequentialGroupFixed(
                 Path1Command,
-                ShootMid,
+//                ShootMid,
                 Path2Command,
                 MoveWithoutShooting(Path3Command),
                 Path4Command,
-                ShootMid,
+//                ShootMid,
                 MoveWithoutShooting(Path6Command),
                 Path7Command,
-                ShootMid,
+//                ShootMid,
                 Path8Command
         );
 
@@ -219,16 +219,16 @@ public class AutoRed9BallsClose extends NextFTCOpMode {
 
     }
 
-    Command Shoot =
-            new ParallelDeadlineGroup(
-                    new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
-                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                    new SequentialGroupFixed(
-                            new Delay(2),
-                            IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                            IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER)
-                    )
-            );
+//    Command Shoot =
+//            new ParallelDeadlineGroup(
+//                    new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
+//                    ShooterSubsystem.INSTANCE.RunFullSpeedFar(),
+//                    new SequentialGroupFixed(
+//                            new Delay(2),
+//                            IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
+//                            IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER)
+//                    )
+//            );
 
     private Command MoveWhilePathing(Command path) {
         return new ParallelDeadlineGroup(

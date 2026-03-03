@@ -28,6 +28,7 @@ import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
@@ -49,6 +50,7 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
     public PathChain Path10;
     public PathChain Path11;*/
     boolean hasStarted = false;
+    boolean ServoActivateAuto = false;
 
     Command Path1Command;
     Command Path2Command;
@@ -83,6 +85,41 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
 
     }
 
+    public Command Shoot() {
+        return new LambdaCommand()
+                .setStart(() -> {
+                    telemetry.addLine("SHOOT COMMAND STARTED");
+                    telemetry.addData("vel: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
+                    telemetry.addData("Speed: ", RobotMap.SHOOTER_SPEED_FAR - 400);
+                })
+                .setUpdate(() -> {
+                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= RobotMap.SHOOTER_SPEED_FAR - 400) {
+                        telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
+                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
+                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
+
+                    } else {
+
+                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0);
+                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(0);
+                    }
+                })
+                .setIsDone(()-> false)
+                .requires(IntakeSubSystem.INSTANCE);
+    }
+
+//    Command shootSequence = new SequentialGroup(
+//            new ParallelDeadlineGroup(
+//                    new Delay(6),
+//            new ParallelDeadlineGroup(
+//                    new Delay(2),
+//                    ShooterSubsystem.INSTANCE.RunFullSpeedFar()
+//            ),
+//            new InstantCommand(() -> ServoActivateAuto = true),
+//            Shoot()
+//            )
+//    );
+
     @Override
     public void onInit() {
         RobotMap.TURRET_ROBOT_DIFRANCE = false;
@@ -96,7 +133,7 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
                         new BezierLine(
                                 new Pose(34.000, 136.000),
 
-                                new Pose(58.000, 90.000)
+                                new Pose(58.000, 84.000)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
@@ -104,9 +141,9 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(58.000, 90.000),
+                                new Pose(58.000, 84.000),
 
-                                new Pose(58.000, 60.000)
+                                new Pose(20.000, 84.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -114,9 +151,9 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(58.000, 60.000),
+                                new Pose(20.000, 84.000),
 
-                                new Pose(20.000, 60)
+                                new Pose(58.000, 84.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -124,9 +161,9 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(20.000, 60),
-                                new Pose(53.209, 60.177),
-                                new Pose(58.000, 90.000)
+                                new Pose(58.000, 84.000),
+                                new Pose(74.334, 58.228),
+                                new Pose(15.000, 60.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -134,9 +171,9 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(58.000, 90.000),
+                                new Pose(15.000, 60.000),
 
-                                new Pose(58.000, 86.000)
+                                new Pose(58.000, 84.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -144,33 +181,14 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
 
         Path6 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(58.000, 86.000),
+                                new Pose(58.000, 84.000),
 
-                                new Pose(25.000, 86.000)
+                                new Pose(26.098, 84.128)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
 
-        Path7 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(25.000, 86.000),
-
-                                new Pose(62.000, 90.000)
-                        )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
-
-                .build();
-
-        Path8 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(62.000, 90.000),
-
-                                new Pose(33.000, 85.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-
-                .build();
 
 
         Path1Command = new FollowPath(Path1);
@@ -179,57 +197,25 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
         Path4Command = new FollowPath(Path4);
         Path5Command = new FollowPath(Path5);
         Path6Command = new FollowPath(Path6);
-        Path7Command = new FollowPath(Path7);
-        Path8Command = new FollowPath(Path8);
+//        Path7Command = new FollowPath(Path7);
+//        Path8Command = new FollowPath(Path8);
 //        Path9Command = new FollowPath(Path9);
 //        Path10Command = new FollowPath(Path10);
 //        Path11Command = new FollowPath(Path11);
 
-        Command ShootMid = new SequentialGroup(
-                new ParallelDeadlineGroup(
-                        new Delay(2.5),
-                        ShooterSubsystem.INSTANCE.RunFullSpeed()
-                ),
-                ShooterSubsystem.INSTANCE.ServoAimCommand(RobotMap.SERVO_MOVE_AUTO_MID),
-                IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER),
-                IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                new Delay(2),
-                IntakeSubSystem.INSTANCE.IntakePower(0),
-                IntakeSubSystem.INSTANCE.Transfer(0),
-                new ParallelDeadlineGroup(
-                        new Delay(1),
-                        ShooterSubsystem.INSTANCE.StopSpeed()
-                )
-        );
 
         Auto = new SequentialGroupFixed(
                 Path1Command,
-                ShootMid,
-                Path2Command,
-                MoveWithoutShooting(Path3Command),
-                Path4Command,
-                ShootMid,
+//                shootSequence,
+                MoveWithoutShooting(Path2Command),
+                Path3Command,
+//                shootSequence,
+                MoveWithoutShooting(Path4Command),
                 Path5Command,
-                MoveWithoutShooting(Path6Command),
-                Path7Command,
-                ShootMid,
-                Path8Command
+//                shootSequence,
+                Path6Command
         );
-
-
-
     }
-
-    Command Shoot =
-            new ParallelDeadlineGroup(
-                    new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
-                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                    new SequentialGroupFixed(
-                            new Delay(2),
-                            IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                            IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER)
-                    )
-            );
 
     private Command MoveWhilePathing(Command path) {
         return new ParallelDeadlineGroup(

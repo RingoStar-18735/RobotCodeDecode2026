@@ -38,8 +38,8 @@ public class CheckingCode extends NextFTCOpMode {
         return new ParallelDeadlineGroup(
                 new Delay(3),
                 IntakeSubSystem.INSTANCE.IntakePower(1),
-                IntakeSubSystem.INSTANCE.Transfer(-1),
-                ShooterSubsystem.INSTANCE.RunFullSpeed()
+                IntakeSubSystem.INSTANCE.Transfer(-1)
+//                ShooterSubsystem.INSTANCE.RunFullSpeedFar()
 //                ShooterSubsystem.INSTANCE.ServoAim(0.65), // FAR
 //                ShooterSubsystem.INSTANCE.ServoAim(0.45), // MID
 //                ShooterSubsystem.INSTANCE.ServoAim(0.5) // CLOSE

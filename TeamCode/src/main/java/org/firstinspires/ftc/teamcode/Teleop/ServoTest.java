@@ -8,9 +8,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
 
-import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.groups.SequentialGroup;
-import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.ftc.Gamepads;
@@ -31,10 +28,7 @@ public class ServoTest extends NextFTCOpMode {
     }
 
 
-    Command Shoot = new SequentialGroup(
-            ShooterSubsystem.INSTANCE.RunFullSpeed(),
-            new InstantCommand(ShooterSubsystem.INSTANCE::getShooterVelocity)
-    );
+
 
 
 
