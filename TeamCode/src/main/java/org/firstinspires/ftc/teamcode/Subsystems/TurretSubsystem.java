@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -18,6 +20,7 @@ import dev.nextftc.hardware.impl.MotorEx;
 public class TurretSubsystem implements Subsystem {
 
     public final static TurretSubsystem INSTANCE = new TurretSubsystem();
+    private TelemetryManager telemetryManager;
 
     public boolean isReset = false;
     boolean toFollow = true;
@@ -25,7 +28,7 @@ public class TurretSubsystem implements Subsystem {
 
 
     private DigitalChannel magnet;
-    private MotorEx turretmotor = new MotorEx ("2E");
+    private MotorEx turretmotor = new MotorEx ("1C");
     private PIDController PID;
 
     @Override
@@ -35,6 +38,9 @@ public class TurretSubsystem implements Subsystem {
         PID = new PIDController(RobotMap.TURRET_P , RobotMap.TURRET_I, RobotMap.TURRET_D);
         magnet = ActiveOpMode.hardwareMap().get(DigitalChannel.class , "magnet");
         magnet.setMode(DigitalChannel.Mode.INPUT);
+
+        telemetryManager = PanelsTelemetry.INSTANCE.getTelemetry();
+        telemetryManager.update(ActiveOpMode.telemetry());
 
 
         turretmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -52,13 +58,14 @@ public class TurretSubsystem implements Subsystem {
                     turretmotor.setPower(-RobotMap.RESET_TURRET_POWER);
                 })
                 .setUpdate(() -> {
-                    turretmotor.setPower(-RobotMap.RESET_TURRET_POWER);
+                    if(!isMagnetPressed())                    turretmotor.setPower(0.0);
+                    ResetEncoder();
                 })
                 .setStop(interrupted -> {
-                    turretmotor.setPower(0.0);
-                    new Delay(4).schedule();
                     ResetEncoder();
                     isReset = true;
+                    turretmotor.setPower(0.0);
+                    new Delay(4).schedule();
                 })
                 .setIsDone(()-> !isMagnetPressed()) // Returns if the command has finished
                 .requires(this)
@@ -83,7 +90,7 @@ public class TurretSubsystem implements Subsystem {
     }
 
     public void ResetEncoder(){
-        offset = getAngle();
+        offset = (turretmotor.getCurrentPosition() * RobotMap.TURRET_GEAR_RATIO );
     }
 
 
@@ -101,10 +108,17 @@ public class TurretSubsystem implements Subsystem {
 
 
 
+
         ActiveOpMode.telemetry().addData("magnet state:" , !magnet.getState());
+
         ActiveOpMode.telemetry().addData("turret position:" , getAngle());
-//        ActiveOpMode.telemetry().addData("Turret angle:" , getAngle());
         ActiveOpMode.telemetry().addData("Turret Target:" , PID.getTarget());
+        telemetryManager.debug(getAngle());
+        telemetryManager.debug(PID.getTarget());
+
+        telemetryManager.addData("Angle" , getAngle());
+        telemetryManager.addData("Target" , PID.getTarget());
+
         ActiveOpMode.telemetry().addData("Is Reset:" , isReset);
         magnet.setMode(DigitalChannel.Mode.INPUT);
 
@@ -116,9 +130,11 @@ public class TurretSubsystem implements Subsystem {
         ActiveOpMode.telemetry().addData("MotorPow:" , turretmotor.getPower());
         ActiveOpMode.telemetry().addData("Offset:" , offset);
 
-        if(isReset){
+        if(isReset && !ActiveOpMode.opModeInInit()){
             turretmotor.setPower(PIDPower);
         }
+
+        telemetryManager.update(ActiveOpMode.telemetry());
     }
 
     public double getOffset() {

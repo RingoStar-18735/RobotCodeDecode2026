@@ -14,9 +14,9 @@ public class IntakeSubSystem implements Subsystem {
     public final static IntakeSubSystem INSTANCE = new IntakeSubSystem();
     public IntakeSubSystem() {}
 
-    public MotorEx IntakeMotor = new MotorEx("1E");
+    public MotorEx IntakeMotor = new MotorEx("2C");
 
-    public MotorEx TransferMotor = new MotorEx("0E");
+    public MotorEx TransferMotor = new MotorEx("3C").brakeMode();
 
     private void TransferPower(double pow){
         TransferMotor.setPower(pow);

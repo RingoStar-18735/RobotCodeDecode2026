@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.RobotBank;
 import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.Subsystems.AllianceType;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
+import org.firstinspires.ftc.teamcode.Subsystems.LimelightApril;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -35,8 +36,8 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.driving.DriverControlledCommand;
 
 @Configurable
-@TeleOp(name = "TeleopRingo - BLUE")
-public class TeleopRingoBlue extends NextFTCOpMode {
+@TeleOp(name = "TeleopRingo - BLUETry")
+public class TeleopRingoBlueTry extends NextFTCOpMode {
     Follower follower;
     Pose RobotPose = new Pose(0, 0, 0);
     double distance = 0;
@@ -44,12 +45,13 @@ public class TeleopRingoBlue extends NextFTCOpMode {
     AllianceType allianceType = AllianceType.BLUE;
     Pose NewTargetPose = FieldMap.BLUE_TARGET_POS;
 
-    public TeleopRingoBlue(){
+    public TeleopRingoBlueTry(){
         addComponents(
                 new SubsystemComponent(
                         ShooterSubsystem.INSTANCE,
                         IntakeSubSystem.INSTANCE,
                         TurretSubsystem.INSTANCE,
+                        LimelightApril.INSTANCE,
                         Printer.INSTANCE
                 ),
                 new PedroComponent(Constants::createFollower),
@@ -135,6 +137,7 @@ public class TeleopRingoBlue extends NextFTCOpMode {
         distance = Math.sqrt(Math.pow(NewTargetPose.getX() - RobotPose.getX(), 2) + Math.pow(NewTargetPose.getY() - RobotPose.getY(), 2));
 
 
+
         if (hasStartedMatch) {
             TurretSubsystem.INSTANCE.FollowPoint(NewTargetPose, RobotPose).schedule();
         }
@@ -172,6 +175,12 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                 .whenBecomesTrue(
                         shootSequence
                 );
+
+        Gamepads.gamepad2().y()
+                .whenBecomesTrue(
+                        new InstantCommand(()-> ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID))
+                );
+
 
         Gamepads.gamepad2().a()
                 .whenTrue(

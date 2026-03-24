@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Teleop;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.FieldMap;
@@ -41,20 +40,10 @@ import dev.nextftc.hardware.driving.DriverControlledCommand;
 public class TeleopRingoRed extends NextFTCOpMode {
     Follower follower;
     Pose RobotPose = new Pose(0, 0, 0);
-    double newOffset = 0;
-    boolean ServoActivate= false;
-    double ServoPos = 1;
-    boolean turretRobot = false;
     double distance = 0;
-    Pose turretRobotDifrance;
     List<String> a = new ArrayList<String>();
-    boolean activateFieldCentricCoraction = false;
-    double errorDistance = 0;
-    double lastYPos = 0;
-    double newYPos;
-    Timer timer;
     AllianceType allianceType = AllianceType.BLUE;
-    Pose NewTargetPose = FieldMap.BLUE_TARGET_POS;
+    Pose NewTargetPose = FieldMap.RED_TARGET_POS;
 
     public TeleopRingoRed(){
         addComponents(
@@ -77,10 +66,10 @@ public class TeleopRingoRed extends NextFTCOpMode {
                 .setStart(() -> {
                     telemetry.addLine("SHOOT COMMAND STARTED");
                     telemetry.addData("vel: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
-                    telemetry.addData("Speed: ", ShooterSubsystem.INSTANCE.ShooterSpeed - 400);
+                    telemetry.addData("Speed: ", ShooterSubsystem.INSTANCE.ShooterSpeed - 300);
                 })
                 .setUpdate(() -> {
-                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 400) {
+                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 300) {
                         telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
                         IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
                         IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
@@ -93,7 +82,6 @@ public class TeleopRingoRed extends NextFTCOpMode {
                 .setIsDone(()-> false)
                 .requires(IntakeSubSystem.INSTANCE);
     }
-
 
     Command shootSequence = new SequentialGroup(
             new ParallelDeadlineGroup(
@@ -108,9 +96,10 @@ public class TeleopRingoRed extends NextFTCOpMode {
             Shoot()
     );
 
-
     @Override
     public void onInit() {
+        follower =  Constants.createFollower(hardwareMap);
+        follower.setPose(RobotBank.LastAutoPos);
         new InstantCommand(ShooterSubsystem.INSTANCE.StopSpeed());
         allianceType = RobotBank.Alliance;
         if (RobotBank.Alliance == AllianceType.BLUE) {
@@ -125,15 +114,16 @@ public class TeleopRingoRed extends NextFTCOpMode {
 
     }
 
-
     boolean hasStartedMatch;
     @Override
     public void onUpdate() {
         follower.update();
+        RobotPose = follower.getPose();
 
-//        telemetry.addData("Pos: ",follower.getPose());
+
+        telemetry.addData("Pos: ",follower.getPose());
 //        telemetry.addData("yaw: ",follower.getPose().getHeading());
-//        telemetry.addData("LastAutoPos: ",RobotBank.LastAutoPos);
+        telemetry.addData("LastAutoPos: ",RobotBank.LastAutoPos);
 //        telemetry.addData("turretRobotDifrance: ",turretRobotDifrance);
 //        telemetry.addData("Math.toRadians(90): ",Math.toRadians(90));
 //        telemetry.addData("getHeading() - Math.toRadians(90): ",follower.getPose().getHeading() - Math.toRadians(90));
@@ -143,54 +133,19 @@ public class TeleopRingoRed extends NextFTCOpMode {
         telemetry.addData("getVelocity: ",-ShooterSubsystem.INSTANCE.Shooter.getVelocity());
         telemetry.addData("מרחק: ",distance);
 //        telemetry.addData("סרבו לאסט פוס", ShooterSubsystem.INSTANCE.ServoLastPos);
-//        telemetry.addData("RobotPose", RobotPose);
+        telemetry.addData("RobotPose", RobotPose);
 //        telemetry.addData("ServoActivate", ServoActivate);
         distance = Math.sqrt(Math.pow(NewTargetPose.getX() - RobotPose.getX(), 2) + Math.pow(NewTargetPose.getY() - RobotPose.getY(), 2));
 
 
-//        if (ServoActivate) {
-//            if (distance < 51){
-//                ServoPos = RobotMap.SERVO_MOVE_CLOSE;
-////                new ParallelDeadlineGroup(
-////                        new Delay(2),
-////                        ShooterSubsystem.INSTANCE.RunFullSpeedClose()
-////                );
-////                ShooterSubsystem.INSTANCE.StopSpeed();
-//            } else if (distance > 120) {
-//                ServoPos = RobotMap.SERVO_MOVE_FAR;
-////                new ParallelDeadlineGroup(
-////                        new Delay(2),
-////                        ShooterSubsystem.INSTANCE.RunFullSpeedFar()
-////                );
-////                ShooterSubsystem.INSTANCE.StopSpeed();
-//            } else {
-//                ServoPos = RobotMap.SERVO_MOVE_MID;
-////                new ParallelDeadlineGroup(
-////                        new Delay(2),
-////                        ShooterSubsystem.INSTANCE.RunFullSpeedMid()
-////                );
-////                ShooterSubsystem.INSTANCE.StopSpeed();
-//            }
-//            ShooterSubsystem.INSTANCE.ServoAim(ServoPos);
-//            ServoActivate = false;
-//        }
-
         if (hasStartedMatch) {
-            RobotPose = follower.getPose();
-            if (activateFieldCentricCoraction) {
-                errorDistance = follower.getPose().getY() - lastYPos;
-                newYPos = lastYPos - errorDistance;
-                turretRobotDifrance = new Pose(follower.getPose().getX(), newYPos,follower.getPose().getHeading() - Math.toRadians(90));
-            } else {
-                newYPos = follower.getPose().getY();
-                turretRobotDifrance = new Pose(follower.getPose().getX(), newYPos,follower.getPose().getHeading());
-            }
-            TurretSubsystem.INSTANCE.FollowPoint(NewTargetPose, turretRobotDifrance).schedule();
+            TurretSubsystem.INSTANCE.FollowPoint(NewTargetPose, RobotPose).schedule();
         }
     }
 
     @Override
     public void onStartButtonPressed() {
+        hasStartedMatch = true;
         ShooterSubsystem.INSTANCE.ServoMoveByField(() ->
                 Math.sqrt(
                         Math.pow(NewTargetPose.getX() - RobotPose.getX(), 2) +
@@ -200,28 +155,14 @@ public class TeleopRingoRed extends NextFTCOpMode {
 
         TurretSubsystem.INSTANCE.setReset(true);
         ShooterSubsystem.INSTANCE.StopSpeed();
-        follower =  Constants.createFollower(hardwareMap);
-        follower.setPose(RobotBank.LastAutoPos);
-        hasStartedMatch = true;
+
         DriverControlledCommand driverControlled = new PedroDriverControlled(
+                Gamepads.gamepad1().leftStickY(),
                 Gamepads.gamepad1().leftStickX(),
-                Gamepads.gamepad1().leftStickY().negate(),
                 Gamepads.gamepad1().rightStickX().negate(),
                 false
         );
         driverControlled.schedule();
-
-        Gamepads.gamepad1().rightBumper()
-                .whenTrue(
-                        new InstantCommand(()-> lastYPos = follower.getPose().getY())
-                )
-                .whenTrue(
-                        new InstantCommand(()-> activateFieldCentricCoraction = true)
-                )
-                .whenTrue(
-                        new InstantCommand(()-> follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), Math.toRadians(90))))
-                );
-
 
         Gamepads.gamepad1().leftBumper().toggleOnBecomesTrue()
                 .whenBecomesTrue(
@@ -230,13 +171,10 @@ public class TeleopRingoRed extends NextFTCOpMode {
                         new InstantCommand(()->TurretSubsystem.INSTANCE.setToFollow(true))
                 );
 
-
-
         Gamepads.gamepad2().x()
                 .whenBecomesTrue(
                         shootSequence
                 );
-
 
         Gamepads.gamepad2().a()
                 .whenTrue(

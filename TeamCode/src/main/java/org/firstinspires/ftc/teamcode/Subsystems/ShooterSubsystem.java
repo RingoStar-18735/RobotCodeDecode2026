@@ -44,10 +44,10 @@ public class ShooterSubsystem implements Subsystem {
             Shooter.reverse();
     }
 
-    public final MotorEx Shooter = new MotorEx("3E");
+    public final MotorEx Shooter = new MotorEx("0C");
     public final PIDController PID = new PIDController(RobotMap.SHOOTER_P, RobotMap.SHOOTER_I, RobotMap.SHOOTER_D);
     public final ServoEx left_aim = new ServoEx("00E");
-    public final ServoEx right_aim = new ServoEx("03E");
+    public final ServoEx right_aim = new ServoEx("01E");
 
 
 
@@ -74,11 +74,10 @@ public class ShooterSubsystem implements Subsystem {
                         ServoPos = RobotMap.SERVO_MOVE_MID;
                     }
 
-                    left_aim.setPosition(1 - ServoPos);
-                    right_aim.setPosition(ServoPos);
+                    left_aim.setPosition(ServoPos);
+                    right_aim.setPosition(1 - ServoPos);
                 })
-                .setIsDone(() -> false) // מריץ עד שמבוטל ידנית
-                .requires(this);
+                .setIsDone(() -> false); // מריץ עד שמבוטל ידנית
     }
 
 
@@ -112,19 +111,7 @@ public class ShooterSubsystem implements Subsystem {
 
 
     public Command StopSpeed () {
-        return new LambdaCommand()
-                .setStart(() -> {
-                    ShooterStopped = true;
-                })
-                .setUpdate(() -> {
-
-                })
-                .setStop(interrupted -> {
-                })
-                .setIsDone(()-> CommandStarted) // Returns if the command has finished
-                .requires(this)
-                .setInterruptible(true)
-                .named("RunFullSpeed"); // sets the name of the command; optional
+        return new InstantCommand(()-> ShooterStopped=true);
     }
 
     public Command move(double pow){
