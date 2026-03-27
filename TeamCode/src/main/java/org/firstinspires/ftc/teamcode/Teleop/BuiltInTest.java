@@ -1,32 +1,45 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.SequentialGroupFixed;
+import org.firstinspires.ftc.teamcode.FieldMap;
+import org.firstinspires.ftc.teamcode.RobotMap;
+import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
+import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
+import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
+import dev.nextftc.extensions.pedro.PedroDriverControlled;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
+import dev.nextftc.hardware.driving.DriverControlledCommand;
 
 
 @TeleOp (name = "BitCode")
 public class BuiltInTest extends NextFTCOpMode {
+    Pose NewTargetPose = FieldMap.BLUE_TARGET_POS;
+    Pose RobotPose = new Pose(0, 0, 0);
+
 
     public BuiltInTest(){
         addComponents(
                 new SubsystemComponent(
-                        ShooterSubsystem.INSTANCE,
+                        DriveSubsystem.INSTANCE,
                         IntakeSubSystem.INSTANCE,
-                        TurretSubsystem.INSTANCE
+                        ShooterSubsystem.INSTANCE
                 ),
 
                 new PedroComponent(Constants::createFollower),
@@ -35,50 +48,86 @@ public class BuiltInTest extends NextFTCOpMode {
         );
     }
 
-    /*@Override
-    public void onInit() {
-        AllianceType = RobotBank.Alliance;
-        if (RobotBank.Alliance == AllianceType.BLUE) {
-            NewTargetPose = FieldMap.BLUE_TARGET_POS;
-        } else if (RobotBank.Alliance == AllianceType.RED) {
-            NewTargetPose = FieldMap.RED_TARGET_POS;
-        }
-        ShooterSubsystem.INSTANCE.StopSpeed().schedule();
-        IntakeSubSystem.INSTANCE.IntakeStop().schedule();
-        TurretSubsystem.INSTANCE.setReset(true);
-//        TurretSubsystem.INSTANCE.ResetAngleRight().schedule();
-        TurretSubsystem.INSTANCE.setOffset(RobotBank.Offset);
-    }*/
+    public Command Shoot() {
+        return new LambdaCommand()
+                .setStart(() -> {
+                    telemetry.addLine("SHOOT COMMAND STARTED");
+                    telemetry.addData("vel: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
+                    telemetry.addData("Speed: ", ShooterSubsystem.INSTANCE.ShooterSpeed - 300);
+                })
+                .setUpdate(() -> {
+                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 300) {
+                        telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
+                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
+                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
 
-    public Command BitCommand(){
-        return new SequentialGroupFixed(
-                ShooterSubsystem.INSTANCE.move(0.5),
-                //new Delay(200),
-                ShooterSubsystem.INSTANCE.ServoAimCommand(0.6), // CLOSE
-               // new Delay(200),
-                ShooterSubsystem.INSTANCE.ServoAimCommand(0.45), // MID
-              //  new Delay(200),
-                ShooterSubsystem.INSTANCE.ServoAimCommand(0.65)// FAR
-            //    new Delay(200)
-
-//                IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-//                TurretSubsystem.INSTANCE.ResetAngle()
-        );
+                    } else {
+                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0);
+                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(0);
+                    }
+                })
+                .setIsDone(()-> false)
+                .requires(IntakeSubSystem.INSTANCE);
     }
+
+    Command shootSequence = new SequentialGroup(
+            new ParallelDeadlineGroup(
+                    new Delay(2),
+                    ShooterSubsystem.INSTANCE.RunFullSpeed(() ->
+                            Math.sqrt(
+                                    Math.pow(NewTargetPose.getX() - RobotPose.getX(), 2) +
+                                            Math.pow(NewTargetPose.getY() - RobotPose.getY(), 2)
+                            )
+                    )
+            ),
+            Shoot()
+    );
+
 
     @Override
     public void onStartButtonPressed() {
+        ShooterSubsystem.INSTANCE.ServoMoveByField(() ->
+                Math.sqrt(
+                        Math.pow(NewTargetPose.getX() - RobotPose.getX(), 2) +
+                                Math.pow(NewTargetPose.getY() - RobotPose.getY(), 2)
+                )
+        ).schedule();
 
-//        DriverControlledCommand driverControlled = new PedroDriverControlled(
-//                Gamepads.gamepad1().leftStickY(),
-//                Gamepads.gamepad1().leftStickX(),
-//                Gamepads.gamepad1().rightStickX().negate(),
-//                false
-//        );
-//        driverControlled.schedule();
+        DriverControlledCommand driverControlled = new PedroDriverControlled(
+                Gamepads.gamepad1().leftStickY(),
+                Gamepads.gamepad1().leftStickX(),
+                Gamepads.gamepad1().rightStickX().negate(),
+                false
+        );
+        driverControlled.schedule();
 
-         Gamepads.gamepad1().a()
-                .whenTrue(BitCommand());
+        Gamepads.gamepad1().leftBumper().toggleOnBecomesTrue()
+                .whenBecomesTrue(
+                        new InstantCommand(()-> IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER))
+                )
+                .whenBecomesTrue(
+                        new InstantCommand(()-> IntakeSubSystem.INSTANCE.TransferMotor.setPower(-RobotMap.TRANSMISSION_MOTOR_POWER))
+                )
+                .whenBecomesFalse(
+                        new InstantCommand(()-> IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0))
+                )
+                .whenBecomesFalse(
+                        new InstantCommand(()-> IntakeSubSystem.INSTANCE.TransferMotor.setPower(0))
+                );
+
+        Gamepads.gamepad1().x()
+                .whenBecomesTrue(
+                        shootSequence
+                );
+
+        Gamepads.gamepad1().a()
+                .whenTrue(
+                        new ParallelGroup(
+                                new InstantCommand(()-> shootSequence.cancel()),
+                                ShooterSubsystem.INSTANCE.StopSpeed(),
+                                new InstantCommand(()-> IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0)),
+                                new InstantCommand(()-> IntakeSubSystem.INSTANCE.TransferMotor.setPower(0))
+                        ));
 
     }
 

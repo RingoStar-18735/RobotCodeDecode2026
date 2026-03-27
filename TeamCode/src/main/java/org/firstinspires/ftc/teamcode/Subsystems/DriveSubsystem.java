@@ -10,10 +10,10 @@ public class DriveSubsystem implements Subsystem {
     public static final DriveSubsystem INSTANCE = new DriveSubsystem();
     private DriveSubsystem() {}
 
-    private MotorEx frontLeftMotor = new MotorEx("2E").brakeMode().reversed();
-    private MotorEx frontRightMotor = new MotorEx("0E").brakeMode();
-    private MotorEx backLeftMotor = new MotorEx("3E").brakeMode().reversed();
-    private MotorEx backRightMotor = new MotorEx("1E").brakeMode();
+    public MotorEx frontLeftMotor = new MotorEx("2E").brakeMode();
+    public MotorEx frontRightMotor = new MotorEx("0E").brakeMode();
+    public MotorEx backLeftMotor = new MotorEx("3E").brakeMode()  ;
+    public MotorEx backRightMotor = new MotorEx("1E").brakeMode();
 //    private IMUEx imu = new IMUEx("imu", Direction.UP, Direction.FORWARD).zeroed();
 
 

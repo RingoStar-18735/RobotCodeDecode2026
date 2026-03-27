@@ -68,7 +68,7 @@ public class ShooterSubsystem implements Subsystem {
 
                     if (Distance < 51) {
                         ServoPos = RobotMap.SERVO_MOVE_CLOSE;
-                    } else if (Distance > 120) {
+                    } else if (Distance > 130) {
                         ServoPos = RobotMap.SERVO_MOVE_FAR;
                     } else {
                         ServoPos = RobotMap.SERVO_MOVE_MID;
@@ -87,7 +87,7 @@ public class ShooterSubsystem implements Subsystem {
                     Distance = distanceSupplier.get();
                     if (Distance < 51) {
                         ShooterSpeed = RobotMap.SHOOTER_SPEED_CLOSE;
-                    } else if (Distance > 120) {
+                    } else if (Distance > 130) {
                         ShooterSpeed = RobotMap.SHOOTER_SPEED_FAR;
                     }else {
                         ShooterSpeed = RobotMap.SHOOTER_SPEED_MID;

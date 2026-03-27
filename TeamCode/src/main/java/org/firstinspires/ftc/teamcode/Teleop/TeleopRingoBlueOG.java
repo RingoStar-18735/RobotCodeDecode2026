@@ -5,9 +5,9 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.FieldMap;
 import org.firstinspires.ftc.teamcode.Printer;
-import org.firstinspires.ftc.teamcode.RobotBank;
 import org.firstinspires.ftc.teamcode.Subsystems.AllianceType;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
@@ -68,17 +68,21 @@ public class TeleopRingoBlueOG extends NextFTCOpMode {
     boolean hasStartedMatch;
     @Override
     public void onUpdate() {
-        follower.update();
 
-        telemetry.addData("Pos: ",follower.getPose());
-        telemetry.addData("yaw: ",follower.getPose().getHeading());
-        telemetry.addData("LastAutoPos: ",RobotBank.LastAutoPos);
-        telemetry.addData("turretRobotDifrance: ",turretRobotDifrance);
-        telemetry.addData("Math.toRadians(90): ",Math.toRadians(90));
-        telemetry.addData("getHeading() - Math.toRadians(90): ",follower.getPose().getHeading() + Math.toRadians(90));
-        telemetry.addData("lastPos: ", lastYPos);
-        telemetry.addData("errorDistance: ",errorDistance);
-        telemetry.addData("follower.getPose().getX(): ",follower.getPose().getX());
+        telemetry.addData("fl amper: ",DriveSubsystem.INSTANCE.frontLeftMotor.getMotor().getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("fr amper: ",DriveSubsystem.INSTANCE.frontRightMotor.getMotor().getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("bl amper: ",DriveSubsystem.INSTANCE.backLeftMotor.getMotor().getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("br amper: ",DriveSubsystem.INSTANCE.backRightMotor.getMotor().getCurrent(CurrentUnit.AMPS));
+        telemetry.update();
+//        telemetry.addData("Pos: ",follower.getPose());
+//        telemetry.addData("yaw: ",follower.getPose().getHeading());
+//        telemetry.addData("LastAutoPos: ",RobotBank.LastAutoPos);
+//        telemetry.addData("turretRobotDifrance: ",turretRobotDifrance);
+//        telemetry.addData("Math.toRadians(90): ",Math.toRadians(90));
+//        telemetry.addData("getHeading() - Math.toRadians(90): ",follower.getPose().getHeading() + Math.toRadians(90));
+//        telemetry.addData("lastPos: ", lastYPos);
+//        telemetry.addData("errorDistance: ",errorDistance);
+//        telemetry.addData("follower.getPose().getX(): ",follower.getPose().getX());
 
     }
 
