@@ -67,7 +67,7 @@ public class TeleopRingo extends NextFTCOpMode {
 
     @Override
     public void onInit() {
-        TurretSubsystem.INSTANCE.LimelightScan().schedule();
+      //  TurretSubsystem.INSTANCE.LimelightScan().schedule();
         ShooterSubsystem.INSTANCE.StopSpeed().schedule();
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
     }
@@ -94,10 +94,10 @@ public class TeleopRingo extends NextFTCOpMode {
 
     @Override
     public void onStartButtonPressed() {
-        TurretSubsystem.INSTANCE.startMatch();
+      //  TurretSubsystem.INSTANCE.startMatch();
         hasStartedMatch = true;
         follower =  Constants.createFollower(hardwareMap);
-        follower.setStartingPose(TurretSubsystem.INSTANCE.getNewStartingPosition());
+      //  follower.setStartingPose(TurretSubsystem.INSTANCE.getNewStartingPosition());
 
         DriverControlledCommand driverControlled = new PedroDriverControlled(
                 Gamepads.gamepad1().leftStickX(),

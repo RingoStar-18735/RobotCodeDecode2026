@@ -43,8 +43,8 @@ public class Bit extends NextFTCOpMode {
                 ShooterSubsystem.INSTANCE.ServoAim(0.45), // MID
                 ShooterSubsystem.INSTANCE.ServoAim(0.65), // FAR
                 IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                TurretSubsystem.INSTANCE.ResetAngle(),
-                TurretSubsystem.INSTANCE.LimelightMove()
+                TurretSubsystem.INSTANCE.ResetAngle()
+            //    TurretSubsystem.INSTANCE.LimelightMove()
         );
     }
 
