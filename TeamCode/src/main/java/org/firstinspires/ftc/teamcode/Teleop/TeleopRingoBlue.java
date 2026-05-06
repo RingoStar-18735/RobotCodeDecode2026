@@ -91,7 +91,8 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                             )
                     )
             ),
-            Shoot()
+            IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
+            IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER)
     );
 
     @Override
@@ -127,7 +128,7 @@ public class TeleopRingoBlue extends NextFTCOpMode {
 //        telemetry.addData("lastPos: ", lastYPos);
 //        telemetry.addData("errorDistance: ",errorDistance);
 //        telemetry.addData("follower.getPose().getX(): ",follower.getPose().getX());
-        telemetry.addData("getVelocity: ",-ShooterSubsystem.INSTANCE.Shooter.getVelocity());
+        telemetry.addData("מהירות: ",-ShooterSubsystem.INSTANCE.Shooter.getVelocity());
         telemetry.addData("מרחק: ",distance);
 //        telemetry.addData("סרבו לאסט פוס", ShooterSubsystem.INSTANCE.ServoLastPos);
         telemetry.addData("RobotPose", RobotPose);
