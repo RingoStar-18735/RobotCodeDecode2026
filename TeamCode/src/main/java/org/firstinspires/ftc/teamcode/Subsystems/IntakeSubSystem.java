@@ -16,9 +16,6 @@ public class IntakeSubSystem implements Subsystem {
 
     public MotorEx IntakeMotor = new MotorEx("1E").reversed();
 
-    public CRServoEx CR_left = new CRServoEx("02E");
-    public CRServoEx CR_right = new CRServoEx("03E");
-
 
     private void TransferPower(double pow) {
         TransferMotor.setPower(pow);
