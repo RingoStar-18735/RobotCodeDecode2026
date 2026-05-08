@@ -64,18 +64,19 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                 .setStart(() -> {
                     telemetry.addLine("SHOOT COMMAND STARTED");
                     telemetry.addData("vel: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
-                    telemetry.addData("Speed: ", ShooterSubsystem.INSTANCE.ShooterSpeed - 300);
+                    telemetry.addData("Speed: ", ShooterSubsystem.INSTANCE.ShooterSpeed);
                 })
                 .setUpdate(() -> {
-                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 300) {
+                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed) {
                         telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
                         IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
                         IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
 
-                    } else {
-                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0);
-                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(0);
                     }
+//                    else {
+//                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0);
+//                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(0);
+//                    }
                 })
                 .setIsDone(()-> false)
                 .requires(IntakeSubSystem.INSTANCE);
@@ -91,8 +92,9 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                             )
                     )
             ),
-            IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-            IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER)
+            Shoot()
+//            IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
+//            IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER)
     );
 
     @Override
