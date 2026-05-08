@@ -19,9 +19,9 @@ public class IntakeSubSystem implements Subsystem {
     public CRServoEx CR_left = new CRServoEx("02E");
     public CRServoEx CR_right = new CRServoEx("03E");
 
-    private void TransferPower(double power){
-        CR_left.setPower(power);
-        CR_right.setPower(-power);
+
+    private void TransferPower(double pow) {
+        TransferMotor.setPower(pow);
     }
 
     @Override
