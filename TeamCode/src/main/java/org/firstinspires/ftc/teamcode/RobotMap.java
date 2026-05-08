@@ -14,17 +14,17 @@ public class RobotMap {
     public static  double ROBOT_DISTANCE_Y =-13;//
     public static  double INTAKE_SHOOT_TIME_SECOND =2;
 
-    public static double SHOOTER_P = 0.00018735 * 1.35;
-    public static double SHOOTER_I = 0.00018735 * 0;
-    public static double SHOOTER_D = 0.00018735 * 0.53337603416;
+    public static double SHOOTER_P = 0.00023;
+    public static double SHOOTER_I = 0;
+    public static double SHOOTER_D = 0;
 
 
     public static double SHOOTER_SPEED_CLOSE = 1800;
-    public static double SHOOTER_SPEED_MID = 1800;
-    public static double SHOOTER_SPEED_FAR = 2250;
+    public static double SHOOTER_SPEED_MID = 1600;
+    public static double SHOOTER_SPEED_FAR = 2200;
     public static double SERVO_MOVE_AUTO_MID = 0.45;
     public static double SERVO_MOVE_FAR = 0.15;
-    public static double SERVO_MOVE_MID = 0.3;
+    public static double SERVO_MOVE_MID = 0;
     public static double SERVO_MOVE_CLOSE = 0.4;
     public static double SHOOTER_SPEED_RANGE = 150;
 
@@ -32,9 +32,9 @@ public class RobotMap {
     public static double TRANSMISSION_MOTOR_POWER = 1;
     public static double TRANSMISSION_MOTOR_REVERSE_POWER = 1;
 
-    public static double TURRET_P = 0.01;
+    public static double TURRET_P = 0.06;
     public static double TURRET_I = 0;
-    public static double TURRET_D = 0.02;
+    public static double TURRET_D = 0.2;
 
     public static  double TURRET_GEAR_RATIO = (double) (-147 - 20) / 180 * 180/150;
 
