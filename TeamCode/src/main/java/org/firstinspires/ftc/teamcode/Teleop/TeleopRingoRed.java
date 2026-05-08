@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.RobotBank;
 import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.Subsystems.AllianceType;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
-import org.firstinspires.ftc.teamcode.Subsystems.LimelightApril;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -51,7 +50,6 @@ public class TeleopRingoRed extends NextFTCOpMode {
                         ShooterSubsystem.INSTANCE,
                         IntakeSubSystem.INSTANCE,
                         TurretSubsystem.INSTANCE,
-                        LimelightApril.INSTANCE,
                         Printer.INSTANCE
                 ),
                 new PedroComponent(Constants::createFollower),
@@ -74,10 +72,11 @@ public class TeleopRingoRed extends NextFTCOpMode {
                         IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
                         IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
 
-                    } else {
-                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0);
-                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(0);
                     }
+//                    else {
+//                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0);
+//                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(0);
+//                    }
                 })
                 .setIsDone(()-> false)
                 .requires(IntakeSubSystem.INSTANCE);
