@@ -18,7 +18,7 @@ public class IntakeSubSystem implements Subsystem {
 
     public MotorEx TransferMotor = new MotorEx("3C").brakeMode();
 
-    private void TransferPower(double pow){
+    private void TransferPower(double pow) {
         TransferMotor.setPower(pow);
     }
 
