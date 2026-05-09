@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import com.pedropathing.follower.Follower;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.pedroPathing.PIDController;
 
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -18,49 +20,52 @@ import dev.nextftc.hardware.impl.MotorEx;
 public class TurretSubsystem implements Subsystem {
 
     public final static TurretSubsystem INSTANCE = new TurretSubsystem();
+    private TelemetryManager telemetryManager;
 
     public boolean isReset = false;
-
+    boolean toFollow = true;
     double offset = 0;
 
 
     private DigitalChannel magnet;
-    private MotorEx turretmotor = new MotorEx ("2E");
+    private MotorEx turretmotor = new MotorEx ("1C");
     private PIDController PID;
-    private Pose RobotPose;
 
     @Override
     public void initialize() {
+        toFollow = true;
         isReset = false;
-        RobotPose = new Pose(0,56,90);
         PID = new PIDController(RobotMap.TURRET_P , RobotMap.TURRET_I, RobotMap.TURRET_D);
         magnet = ActiveOpMode.hardwareMap().get(DigitalChannel.class , "magnet");
         magnet.setMode(DigitalChannel.Mode.INPUT);
+
+        telemetryManager = PanelsTelemetry.INSTANCE.getTelemetry();
+        telemetryManager.update(ActiveOpMode.telemetry());
 
 
         turretmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 
-    public TurretSubsystem(){}
-
 
     public boolean isMagnetPressed(){
         return magnet.getState();
     }
 
-    public Command ResetAngle(){
+    public Command ResetAngleRight(){
         return new LambdaCommand()
                 .setStart(() -> {
                     turretmotor.setPower(-RobotMap.RESET_TURRET_POWER);
                 })
                 .setUpdate(() -> {
-                    turretmotor.setPower(-RobotMap.RESET_TURRET_POWER);
+                    if(!isMagnetPressed())                    turretmotor.setPower(0.0);
+                    ResetEncoder();
                 })
                 .setStop(interrupted -> {
-                    turretmotor.setPower(0.0);
-                    isReset = true;
                     ResetEncoder();
+                    isReset = true;
+                    turretmotor.setPower(0.0);
+                    new Delay(4).schedule();
                 })
                 .setIsDone(()-> !isMagnetPressed()) // Returns if the command has finished
                 .requires(this)
@@ -69,14 +74,27 @@ public class TurretSubsystem implements Subsystem {
     }
 
 
-    public void ResetEncoder(){
-        offset = getAngle();
+    public void ResetAngleLeft(){
+        isReset = false;
+        turretmotor.setPower(0.3);
+        if (isMagnetPressed()) {
+            turretmotor.setPower(0);
+            ResetEncoder();
+            isReset = true;
+        }
     }
 
 
+    public void setReset(boolean reset) {
+        isReset = reset;
+    }
+
+    public void ResetEncoder(){
+        offset = (turretmotor.getCurrentPosition() * RobotMap.TURRET_GEAR_RATIO );
+    }
 
 
-//    public Command LimelightMove(){
+    //    public Command LimelightMove(){
 //        return ;
 //    }
     public double getAngle(){
@@ -89,12 +107,21 @@ public class TurretSubsystem implements Subsystem {
 //        ActiveOpMode.telemetry().addData("target Y:" , getTY());
 
 
+
+
         ActiveOpMode.telemetry().addData("magnet state:" , !magnet.getState());
+
         ActiveOpMode.telemetry().addData("turret position:" , getAngle());
-//        ActiveOpMode.telemetry().addData("Turret angle:" , getAngle());
         ActiveOpMode.telemetry().addData("Turret Target:" , PID.getTarget());
+        telemetryManager.debug(getAngle());
+        telemetryManager.debug(PID.getTarget());
+
+        telemetryManager.addData("Angle" , getAngle());
+        telemetryManager.addData("Target" , PID.getTarget());
+
         ActiveOpMode.telemetry().addData("Is Reset:" , isReset);
         magnet.setMode(DigitalChannel.Mode.INPUT);
+
 
 
         double PIDPower = -PID.calculateOutput(getAngle(), ActiveOpMode.getRuntime());
@@ -103,30 +130,95 @@ public class TurretSubsystem implements Subsystem {
         ActiveOpMode.telemetry().addData("MotorPow:" , turretmotor.getPower());
         ActiveOpMode.telemetry().addData("Offset:" , offset);
 
-        if(isReset){
+        if(isReset && !ActiveOpMode.opModeInInit()){
             turretmotor.setPower(PIDPower);
         }
+
+        telemetryManager.update(ActiveOpMode.telemetry());
     }
+
+    public double getOffset() {
+        return offset;
+    }
+
     public Command MoveToAngle(double Normalang){
+        ActiveOpMode.telemetry().addData("Normalang" , Normalang);
+        ActiveOpMode.telemetry().addData("NormalangConverted" , AngleConverter(Normalang));
         return new InstantCommand(
-                ()-> PID.setTarget(AngleConverter(Normalang)));
+                ()-> PID.setTarget(-15));
     }
     public Command MoveToSetAngle(double ang){
         return new InstantCommand(
                 ()-> PID.setTarget(ang));
     }
 
-    public Command FollowPoint(Pose pose, Follower follower){
-        double dist = Math.sqrt(Math.pow(pose.getX() - follower.getPose().getX(), 2) + Math.pow(pose.getY() - follower.getPose().getY(), 2));
-        double ang = Math.atan2(
-                pose.getY() - follower.getPose().getY(),
-                pose.getX() - follower.getPose().getX()
-        );
+    public Command FollowPoint(Pose targetpose, Pose pose) {
+        // Robot pose in field coordinates
+        if(!toFollow) return new InstantCommand(() -> PID.setTarget(180));
 
-        ActiveOpMode.telemetry().addData("Distance: " , dist);
-        ActiveOpMode.telemetry().addData("angle: " , ang);
+        final double rx = pose.getX();
+        final double ry = pose.getY();
+        double heading = pose.getHeading();// Pedro heading is radians
 
-        return  MoveAngle(ang);
+        ActiveOpMode.telemetry().addData("headingBefore" , Math.toDegrees(heading));
+        if (Math.toDegrees(heading) < -180) {
+           heading = heading + Math.toRadians(360);
+        } else if (Math.toDegrees(heading) > 180) {
+            heading = heading - Math.toRadians(360);
+        }
+        ActiveOpMode.telemetry().addData("headingAfter" , Math.toDegrees(heading));
+
+//        else if (Math.toDegrees(heading) > 180) {
+//            heading = heading - 360;
+//        }
+        final double finalHeading = heading;
+
+        // Vector from robot to target in field coordinates
+        final double dx = targetpose.getX() - rx;
+        final double dy = targetpose.getY() - ry;
+
+        // World angle from robot to target
+        final double alpha = Math.atan2(dy, dx); // [-pi, pi]
+
+        // Turret angle relative to robot forward:
+        // gamma = (world angle to target) - (robot world heading)
+        double gamma = finalHeading - alpha; //
+
+        // Wrap to [-pi, pi]
+        gamma = Math.atan2(Math.sin(gamma), Math.cos(gamma));
+
+        // Convert to degrees
+        double gammaDeg = Math.toDegrees(gamma);
+
+        // Clamp to turret mechanical limits
+        gammaDeg = Math.max(RobotMap.MIN_TURRET_ANGLE, Math.min(RobotMap.MAX_TURRET_ANGLE, gammaDeg));
+
+        // Telemetry to verify
+        ActiveOpMode.telemetry().addData("Turret rx,ry", "%.2f, %.2f", rx, ry);
+        ActiveOpMode.telemetry().addData("Turret tx,ty", "%.2f, %.2f", targetpose.getX(), targetpose.getY());
+        ActiveOpMode.telemetry().addData("Turret alpha(deg)", Math.toDegrees(alpha));
+        ActiveOpMode.telemetry().addData("Turret heading(deg)", Math.toDegrees(heading));
+        ActiveOpMode.telemetry().addData("Turret gamma(deg)", gammaDeg);
+
+//        gammaDeg -= 90;
+        final double finalGammaDeg = gammaDeg;
+        double deg = finalGammaDeg;
+
+        if (RobotMap.TURRET_ROBOT_DIFRANCE){
+            deg = finalGammaDeg - 90;
+        }
+        final double finaldeg = deg;
+
+            return new InstantCommand(() -> PID.setTarget(finalGammaDeg));
+
+    }
+
+//    public Command TurretAngle(double ang) {
+//        return
+//    }
+
+    public void setToFollow(boolean toFollow) {
+        this.toFollow = toFollow;
     }
 
     public double AngleConverter(double ang){
@@ -135,8 +227,9 @@ public class TurretSubsystem implements Subsystem {
         return  Math.max(RobotMap.MIN_TURRET_ANGLE, Math.min(RobotMap.MAX_TURRET_ANGLE, angle));
     }
 
-    public void setRobotPose(Pose pos){RobotPose = pos;}
-
+    public void setOffset(double offset) {
+        this.offset = offset;
+    }
 
     public Command MoveAngle(double ang){
         return MoveToAngle(getAngle() + ang);

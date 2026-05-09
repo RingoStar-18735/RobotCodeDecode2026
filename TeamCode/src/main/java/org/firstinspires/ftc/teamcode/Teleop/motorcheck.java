@@ -1,12 +1,25 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
-import dev.nextftc.core.commands.Command;
-import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.powerable.SetPower;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-public class motorcheck {
-    public MotorEx Motor1 = new MotorEx("Motor1");
-    public Command motormove(double pow){
-        return new SetPower(Motor1, pow);
+import dev.nextftc.ftc.NextFTCOpMode;
+import dev.nextftc.hardware.impl.MotorEx;
+
+@TeleOp (name = "MotorCheck")
+public class motorcheck extends NextFTCOpMode {
+    public MotorEx Motor1 = new MotorEx("0C");
+
+    @Override
+    public void onUpdate() {
+        if (Motor1.getVelocity() > 2000) {
+            Motor1.setPower(0);
+        }
+        telemetry.addData("getVelocity", Motor1.getVelocity());
+        telemetry.update();
     }
+    @Override
+    public void onStartButtonPressed() {
+        Motor1.setPower(1);
+    }
+
 }

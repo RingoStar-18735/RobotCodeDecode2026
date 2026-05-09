@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import dev.nextftc.hardware.impl.MotorEx;
 
 @TeleOp
 public class MecanumTeleOp extends LinearOpMode {
@@ -16,6 +18,8 @@ public class MecanumTeleOp extends LinearOpMode {
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("1C");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("3C");
 
+        MotorEx Shooter = new MotorEx("3E");
+
 
         // Reverse the right side motors. This may be wrong for your setup.
         // If your robot moves backwards when commanded to go forwards,
@@ -26,7 +30,7 @@ public class MecanumTeleOp extends LinearOpMode {
 
         waitForStart();
 //        frontRightMotor.setPower(1);
-        sleep(5000);
+        sleep(1000);
 //        frontRightMotor.setPower(0);
 //        frontLeftMotor.setPower(1);
 //        sleep(5000);
@@ -45,6 +49,9 @@ public class MecanumTeleOp extends LinearOpMode {
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
 
+            Shooter.setPower(-1);
+            telemetry.addData("Velocity: ", Shooter.getVelocity());
+            telemetry.update();
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]

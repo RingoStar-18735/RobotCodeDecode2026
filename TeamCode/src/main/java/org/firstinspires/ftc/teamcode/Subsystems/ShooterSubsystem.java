@@ -7,8 +7,9 @@ import com.bylazar.telemetry.TelemetryManager;
 import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.pedroPathing.PIDController;
 
+import java.util.function.Supplier;
+
 import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.CommandManager;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -24,9 +25,13 @@ public class ShooterSubsystem implements Subsystem {
     public final static ShooterSubsystem INSTANCE = new ShooterSubsystem();
 
     public boolean ReverseWheel = false;
+    public double Distance;
+    public Double ServoPos;
+    public double ShooterSpeed = 0;
     public boolean ShooterStopped = false;
     private boolean CommandStarted = true;
     private TelemetryManager panels = PanelsTelemetry.INSTANCE.getTelemetry();
+
 
 
 
@@ -35,14 +40,15 @@ public class ShooterSubsystem implements Subsystem {
 
     @Override
     public void initialize() {
-        if(Shooter.getDirection() != -1)
+        if(Shooter.getDirection() != 1)
             Shooter.reverse();
     }
 
-    private final MotorEx Shooter = new MotorEx("3E");
-    private final PIDController PID = new PIDController(RobotMap.SHOOTER_P, RobotMap.SHOOTER_I, RobotMap.SHOOTER_D);
-    private final ServoEx left_aim = new ServoEx("00E");
-    private final ServoEx right_aim = new ServoEx("01E");
+    public final MotorEx Shooter = new MotorEx("0C");
+    public final PIDController PID = new PIDController(RobotMap.SHOOTER_P, RobotMap.SHOOTER_I, RobotMap.SHOOTER_D);
+    public final ServoEx left_aim = new ServoEx("00E");
+    public final ServoEx right_aim = new ServoEx("01E");
+
 
 
    // public Command RunVelocity(double v){
@@ -56,11 +62,38 @@ public class ShooterSubsystem implements Subsystem {
         );
     }
 
+    public Command ServoMoveByField(Supplier<Double> distanceSupplier) {
+        return new LambdaCommand()
+                .setUpdate(() -> {
+                    Distance = distanceSupplier.get();
 
-    public Command RunFullSpeed () {
+                    if (Distance < 51) {
+                        ServoPos = RobotMap.SERVO_MOVE_CLOSE;
+                    } else if (Distance > 130) {
+                        ServoPos = RobotMap.SERVO_MOVE_FAR;
+                    } else {
+                        ServoPos = RobotMap.SERVO_MOVE_MID;
+                    }
+
+                    left_aim.setPosition(ServoPos);
+                    right_aim.setPosition(1 - ServoPos);
+                })
+                .setIsDone(() -> false); // מריץ עד שמבוטל ידנית
+    }
+
+
+    public Command RunFullSpeed(Supplier<Double> distanceSupplier) {
         return new LambdaCommand()
                 .setStart(() -> {
-                    PID.setTarget(RobotMap.SHOOTER_SPEED);
+                    Distance = distanceSupplier.get();
+                    if (Distance < 51) {
+                        ShooterSpeed = RobotMap.SHOOTER_SPEED_CLOSE;
+                    } else if (Distance > 130) {
+                        ShooterSpeed = RobotMap.SHOOTER_SPEED_FAR;
+                    }else {
+                        ShooterSpeed = RobotMap.SHOOTER_SPEED_MID;
+                    }
+                    PID.setTarget(-ShooterSpeed);
                     CommandStarted = true;
                     ShooterStopped = false;
                 })
@@ -71,7 +104,7 @@ public class ShooterSubsystem implements Subsystem {
                     CommandStarted = false;
 
                 })
-                .setIsDone(()-> Math.abs(RobotMap.SHOOTER_SPEED + getShooterVelocity()) < RobotMap.SHOOTER_SPEED_RANGE) // Returns if the command has finished
+                .setIsDone(()-> Math.abs(ShooterSpeed + getShooterVelocity()) < RobotMap.SHOOTER_SPEED_RANGE) // Returns if the command has finished
                 .requires(this)
                 .setInterruptible(true)
                 .named("RunFullSpeed"); // sets the name of the command; optional
@@ -79,38 +112,46 @@ public class ShooterSubsystem implements Subsystem {
 
 
     public Command StopSpeed () {
-        return new LambdaCommand()
-                .setStart(() -> {
-                    ShooterStopped = true;
-                })
-                .setUpdate(() -> {
-
-                })
-                .setStop(interrupted -> {
-                })
-                .setIsDone(()-> CommandStarted) // Returns if the command has finished
-                .requires(this)
-                .setInterruptible(true)
-                .named("RunFullSpeed"); // sets the name of the command; optional
+        return new InstantCommand(()-> ShooterStopped=true);
     }
 
     public Command move(double pow){
         return new SetPower(Shooter, pow);
     }
 
-    public Command ServoAim(double pos) {
+    public Command ServoAimCommand(double pos) {
         return new SetPositions(left_aim.to(1 - pos), right_aim.to(pos));
     }
 
-    public  double getShooterVelocity(){
+    public void ServoAim(double pos) {
+        left_aim.setPosition(1 - pos);
+        right_aim.setPosition(pos);
+    }
+
+//    public Command ServoAutoAim(Pose RobotPose, Pose TargetPose) {
+//        return new LambdaCommand()
+//                .setUpdate(() -> {
+//                    distance = Math.sqrt(Math.pow(TargetPose.getX() - RobotPose.getX(), 2) + Math.pow(TargetPose.getY() - RobotPose.getY(), 2));
+//                    if (distance < 51) {
+//                        ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_CLOSE);
+//                    } else if (distance > 120) {
+//                        ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR);
+//                    }else {
+//                        ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID);
+//                    }
+//                })
+//                .setIsDone(()-> false);
+//    }
+
+
+    public double getShooterVelocity(){
         return Shooter.getVelocity();
     }
 
 
     @Override
     public void periodic() {
-
-
+        double PIDPower = PID.calculateOutput(-Shooter.getVelocity(), ActiveOpMode.getRuntime());
 
 //        ActiveOpMode.telemetry().addData("Started: ", false);
 //        ActiveOpMode.telemetry().addData("Started: ", false);
@@ -118,17 +159,21 @@ public class ShooterSubsystem implements Subsystem {
         panels.addData("Robot Velocity: ", Shooter.getState().getVelocity());
         panels.addData("Robot Target: ", PID.getTarget());
         panels.addData("SHootActive: ",CommandStarted);
-        CommandStarted = Math.abs(RobotMap.SHOOTER_SPEED + getShooterVelocity()) < RobotMap.SHOOTER_SPEED_RANGE;
+        ActiveOpMode.telemetry().addData("target: ", PID.getTarget());
+        ActiveOpMode.telemetry().addData("target2: ", ShooterSpeed);
+        ActiveOpMode.telemetry().addData("PIDpower: ", PIDPower);
+        ActiveOpMode.telemetry().addData("ShooterDistance: ", Distance);
+        CommandStarted = Math.abs(ShooterSpeed + getShooterVelocity()) < RobotMap.SHOOTER_SPEED_RANGE;
 
-        ActiveOpMode.telemetry().addData("ShooterStatus: ", CommandStarted);
-        ActiveOpMode.telemetry().addData("CommandsRunning: ", CommandManager.INSTANCE.snapshot());
-        ActiveOpMode.telemetry().addData("ShooterSpeed: ", getShooterVelocity());
-        ActiveOpMode.telemetry().addData("ShooterTarget: ", RobotMap.SHOOTER_SPEED);
-        ActiveOpMode.telemetry().addData("ShooterStopped: ", ShooterStopped);
+//        ActiveOpMode.telemetry().addData("ShooterStatus: ", CommandStarted);
+//        ActiveOpMode.telemetry().addData("CommandsRunning: ", CommandManager.INSTANCE.snapshot());
+//        ActiveOpMode.telemetry().addData("ShooterSpeed: ", getShooterVelocity());
+//        ActiveOpMode.telemetry().addData("ShooterTarget: ", RobotMap.SHOOTER_SPEED);
+//        ActiveOpMode.telemetry().addData("ShooterStopped: ", ShooterStopped);
+//        ActiveOpMode.telemetry().addData("ShooterCalculate: ", PID.calculateOutput(-Shooter.getVelocity(), ActiveOpMode.getRuntime()));
 //
 //        ActiveOpMode.telemetry().addData("Shooter Velocity: ", -Shooter.getState().getVelocity());
 //        ActiveOpMode.telemetry().addData("Shooter Target: ", PID.getTarget());
-        double PIDPower = PID.calculateOutput(-Shooter.getVelocity(), ActiveOpMode.getRuntime());
 
 
 

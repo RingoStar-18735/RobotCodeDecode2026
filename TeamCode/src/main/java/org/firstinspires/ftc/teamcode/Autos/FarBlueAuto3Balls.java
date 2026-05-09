@@ -7,7 +7,6 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.RobotMap;
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
@@ -20,7 +19,6 @@ import java.util.List;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
-import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
@@ -85,7 +83,7 @@ public class FarBlueAuto3Balls extends NextFTCOpMode {
 
         Auto = new SequentialGroup(
                 Path1Command,
-                ShootFromFar,
+//                ShootFromFar,
                 Path2Command
         );
     }
@@ -103,134 +101,6 @@ public class FarBlueAuto3Balls extends NextFTCOpMode {
         return new InstantCommand(()->a.add(b));
     }
 
-
-
-    Command ShootFromFar =
-            new SequentialGroup(
-                    ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_FAR),
-                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                    PrintCommand("Finished 1"),
-                    new ParallelDeadlineGroup(
-                            new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
-                            new SequentialGroup(
-                                    IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                    IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                    IntakeSubSystem.INSTANCE.IntakeFullyTransfer()
-                            )
-                    ),
-                    PrintCommand("Finished 2"),
-                    new SequentialGroup(
-                            new ParallelDeadlineGroup(
-                                    new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-                            ),
-                            PrintCommand("Finished 3"),
-                            new ParallelDeadlineGroup(
-                                    new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-                            ),
-                            PrintCommand("Finished 4")
-
-                    ),
-                    new ParallelDeadlineGroup(
-
-                            ShooterSubsystem.INSTANCE.StopSpeed(),
-                            IntakeSubSystem.INSTANCE.IntakeStop()
-                    ),
-                    PrintCommand("Finished 5")
-            );
-
-    Command ShootFromMid =
-            new SequentialGroup(
-                    new ParallelGroup(
-                            ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_MID)
-                    ),
-                    PrintCommand("Finished 1"),
-                    new ParallelDeadlineGroup(
-                            new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
-                            new SequentialGroup(
-                                    IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                    IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                    IntakeSubSystem.INSTANCE.IntakeFullyTransfer()
-                            )
-                    ),
-                    PrintCommand("Finished 2"),
-                    new SequentialGroup(
-                            new ParallelDeadlineGroup(
-                                    new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-                            ),
-                            PrintCommand("Finished 3"),
-
-                            new ParallelDeadlineGroup(
-                                    new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-                            ),
-                            PrintCommand("Finished 4")
-
-                    ),
-                    new ParallelDeadlineGroup(
-                            ShooterSubsystem.INSTANCE.StopSpeed(),
-                            IntakeSubSystem.INSTANCE.IntakeStop()
-                    ),
-                    PrintCommand("Finished 5")
-            );
-
-    Command ShootFromClose =
-            new SequentialGroup(
-                    new ParallelGroup(
-                            ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                            ShooterSubsystem.INSTANCE.ServoAim(RobotMap.SERVO_MOVE_AUTO_MID)
-                    ),
-                    PrintCommand("Finished 1"),
-                    new ParallelDeadlineGroup(
-                            new Delay(RobotMap.INTAKE_SHOOT_TIME_FIRST),
-                            new SequentialGroup(
-                                    IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                    IntakeSubSystem.INSTANCE.IntakeFullyTransfer(),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed(),
-                                    IntakeSubSystem.INSTANCE.IntakeFullyTransfer()
-                            )
-                    ),
-                    PrintCommand("Finished 2"),
-                    new SequentialGroup(
-                            new ParallelDeadlineGroup(
-                                    new Delay(RobotMap.BACK_INTAKE_LAST_BALL),
-                                    //IntakeSubSystem.INSTANCE.Transfer(-RobotMap.TRANSFER_SERVO_POWER),
-                                    //IntakeSubSystem.INSTANCE.IntakePower(-RobotMap.INTAKE_MOTOR_POWER),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-                            ),
-                            PrintCommand("Finished 3"),
-
-                            new ParallelDeadlineGroup(
-                                    new Delay(RobotMap.FORWARD_INTAKE_LAST_BALL),
-                                    IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSFER_SERVO_POWER),
-                                    IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                                    ShooterSubsystem.INSTANCE.RunFullSpeed()
-                            ),
-                            PrintCommand("Finished 4")
-
-                    ),
-                    new ParallelDeadlineGroup(
-                            ShooterSubsystem.INSTANCE.StopSpeed(),
-                            IntakeSubSystem.INSTANCE.IntakeStop()
-                    ),
-                    PrintCommand("Finished 5")
-            );
 
     private Command MoveWhilePathing(Command path){
         return new ParallelDeadlineGroup(
