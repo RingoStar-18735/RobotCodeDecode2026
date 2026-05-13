@@ -40,7 +40,7 @@ public class TurretSubsystem implements Subsystem {
         magnet.setMode(DigitalChannel.Mode.INPUT);
 
         telemetryManager = PanelsTelemetry.INSTANCE.getTelemetry();
-        telemetryManager.update(ActiveOpMode.telemetry());
+//        telemetryManager.update(ActiveOpMode.telemetry());
 
 
         turretmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -109,17 +109,17 @@ public class TurretSubsystem implements Subsystem {
 
 
 
-        ActiveOpMode.telemetry().addData("magnet state:" , !magnet.getState());
-
-        ActiveOpMode.telemetry().addData("turret position:" , getAngle());
-        ActiveOpMode.telemetry().addData("Turret Target:" , PID.getTarget());
+//        ActiveOpMode.telemetry().addData("magnet state:" , !magnet.getState());
+//
+//        ActiveOpMode.telemetry().addData("turret position:" , getAngle());
+//        ActiveOpMode.telemetry().addData("Turret Target:" , PID.getTarget());
         telemetryManager.debug(getAngle());
         telemetryManager.debug(PID.getTarget());
 
-        telemetryManager.addData("Angle" , getAngle());
-        telemetryManager.addData("Target" , PID.getTarget());
-
-        ActiveOpMode.telemetry().addData("Is Reset:" , isReset);
+//        telemetryManager.addData("Angle" , getAngle());
+//        telemetryManager.addData("Target" , PID.getTarget());
+//
+//        ActiveOpMode.telemetry().addData("Is Reset:" , isReset);
         magnet.setMode(DigitalChannel.Mode.INPUT);
 
 
@@ -127,8 +127,8 @@ public class TurretSubsystem implements Subsystem {
         double PIDPower = -PID.calculateOutput(getAngle(), ActiveOpMode.getRuntime());
         ActiveOpMode.telemetry().update();
 //
-        ActiveOpMode.telemetry().addData("MotorPow:" , turretmotor.getPower());
-        ActiveOpMode.telemetry().addData("Offset:" , offset);
+//        ActiveOpMode.telemetry().addData("MotorPow:" , turretmotor.getPower());
+//        ActiveOpMode.telemetry().addData("Offset:" , offset);
 
         if(isReset && !ActiveOpMode.opModeInInit()){
             turretmotor.setPower(PIDPower);
@@ -142,8 +142,8 @@ public class TurretSubsystem implements Subsystem {
     }
 
     public Command MoveToAngle(double Normalang){
-        ActiveOpMode.telemetry().addData("Normalang" , Normalang);
-        ActiveOpMode.telemetry().addData("NormalangConverted" , AngleConverter(Normalang));
+//        ActiveOpMode.telemetry().addData("Normalang" , Normalang);
+//        ActiveOpMode.telemetry().addData("NormalangConverted" , AngleConverter(Normalang));
         return new InstantCommand(
                 ()-> PID.setTarget(-15));
     }
@@ -160,13 +160,13 @@ public class TurretSubsystem implements Subsystem {
         final double ry = pose.getY();
         double heading = pose.getHeading();// Pedro heading is radians
 
-        ActiveOpMode.telemetry().addData("headingBefore" , Math.toDegrees(heading));
+//        ActiveOpMode.telemetry().addData("headingBefore" , Math.toDegrees(heading));
         if (Math.toDegrees(heading) < -180) {
            heading = heading + Math.toRadians(360);
         } else if (Math.toDegrees(heading) > 180) {
             heading = heading - Math.toRadians(360);
         }
-        ActiveOpMode.telemetry().addData("headingAfter" , Math.toDegrees(heading));
+//        ActiveOpMode.telemetry().addData("headingAfter" , Math.toDegrees(heading));
 
 //        else if (Math.toDegrees(heading) > 180) {
 //            heading = heading - 360;
@@ -194,11 +194,11 @@ public class TurretSubsystem implements Subsystem {
         gammaDeg = Math.max(RobotMap.MIN_TURRET_ANGLE, Math.min(RobotMap.MAX_TURRET_ANGLE, gammaDeg));
 
         // Telemetry to verify
-        ActiveOpMode.telemetry().addData("Turret rx,ry", "%.2f, %.2f", rx, ry);
-        ActiveOpMode.telemetry().addData("Turret tx,ty", "%.2f, %.2f", targetpose.getX(), targetpose.getY());
-        ActiveOpMode.telemetry().addData("Turret alpha(deg)", Math.toDegrees(alpha));
-        ActiveOpMode.telemetry().addData("Turret heading(deg)", Math.toDegrees(heading));
-        ActiveOpMode.telemetry().addData("Turret gamma(deg)", gammaDeg);
+//        ActiveOpMode.telemetry().addData("Turret rx,ry", "%.2f, %.2f", rx, ry);
+//        ActiveOpMode.telemetry().addData("Turret tx,ty", "%.2f, %.2f", targetpose.getX(), targetpose.getY());
+//        ActiveOpMode.telemetry().addData("Turret alpha(deg)", Math.toDegrees(alpha));
+//        ActiveOpMode.telemetry().addData("Turret heading(deg)", Math.toDegrees(heading));
+//        ActiveOpMode.telemetry().addData("Turret gamma(deg)", gammaDeg);
 
 //        gammaDeg -= 90;
         final double finalGammaDeg = gammaDeg;

@@ -160,13 +160,15 @@ public class ShooterSubsystem implements Subsystem {
         telemetryManager.debug(getShooterVelocity());
         telemetryManager.debug(PID.getTarget());
 
+        telemetryManager.addData("Angle" , getShooterVelocity());
+        telemetryManager.addData("Target" , PID.getTarget());
 
-        telemetryManager.addData("ShooterTarget: ", PID.getTarget());
-        telemetryManager.addData("ShooterVelocity: ", getShooterVelocity());
-        ActiveOpMode.telemetry().addData("target: ", PID.getTarget());
-        ActiveOpMode.telemetry().addData("target2: ", ShooterSpeed);
+        telemetryManager.update(ActiveOpMode.telemetry());
+
+//        ActiveOpMode.telemetry().addData("target: ", PID.getTarget());
+//        ActiveOpMode.telemetry().addData("target2: ", ShooterSpeed);
         ActiveOpMode.telemetry().addData("PIDpower: ", PIDPower);
-        ActiveOpMode.telemetry().addData("ShooterDistance: ", Distance);
+//        ActiveOpMode.telemetry().addData("ShooterDistance: ", Distance);
         CommandStarted = Math.abs(ShooterSpeed + getShooterVelocity()) < RobotMap.SHOOTER_SPEED_RANGE;
 
 //        ActiveOpMode.telemetry().addData("ShooterStatus: ", CommandStarted);

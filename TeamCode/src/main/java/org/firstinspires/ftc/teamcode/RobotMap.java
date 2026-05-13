@@ -14,9 +14,9 @@ public class RobotMap {
     public static  double ROBOT_DISTANCE_Y =-13;//
     public static  double INTAKE_SHOOT_TIME_SECOND =2;
 
-    public static double SHOOTER_P = 0.00023;
+    public static double SHOOTER_P = 0.00024;
     public static double SHOOTER_I = 0;
-    public static double SHOOTER_D = 0;
+    public static double SHOOTER_D = 0.075;
 
     public static double SHOOTER_SPEED_CLOSE = 1800;
     public static double SHOOTER_SPEED_MID = 1600;
