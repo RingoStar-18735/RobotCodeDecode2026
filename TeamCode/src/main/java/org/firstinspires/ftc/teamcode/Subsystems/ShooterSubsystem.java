@@ -31,8 +31,7 @@ public class ShooterSubsystem implements Subsystem {
     public boolean ShooterStopped = false;
     private boolean CommandStarted = true;
     private TelemetryManager panels = PanelsTelemetry.INSTANCE.getTelemetry();
-
-
+    private TelemetryManager telemetryManager;
 
 
     public ShooterSubsystem() {
@@ -42,6 +41,8 @@ public class ShooterSubsystem implements Subsystem {
     public void initialize() {
         if(Shooter.getDirection() != 1)
             Shooter.reverse();
+        telemetryManager = PanelsTelemetry.INSTANCE.getTelemetry();
+        telemetryManager.update(ActiveOpMode.telemetry());
     }
 
     public final MotorEx Shooter = new MotorEx("0C");
@@ -156,9 +157,12 @@ public class ShooterSubsystem implements Subsystem {
 //        ActiveOpMode.telemetry().addData("Started: ", false);
 //        ActiveOpMode.telemetry().addData("Started: ", false);
 //
-        panels.addData("Robot Velocity: ", Shooter.getState().getVelocity());
-        panels.addData("Robot Target: ", PID.getTarget());
-        panels.addData("SHootActive: ",CommandStarted);
+        telemetryManager.debug(getShooterVelocity());
+        telemetryManager.debug(PID.getTarget());
+
+
+        telemetryManager.addData("ShooterTarget: ", PID.getTarget());
+        telemetryManager.addData("ShooterVelocity: ", getShooterVelocity());
         ActiveOpMode.telemetry().addData("target: ", PID.getTarget());
         ActiveOpMode.telemetry().addData("target2: ", ShooterSpeed);
         ActiveOpMode.telemetry().addData("PIDpower: ", PIDPower);
