@@ -28,6 +28,7 @@ public class ServoLaunchTest extends NextFTCOpMode {
         //----------------------------SERVO----------------------------
         Gamepads.gamepad2().a()
                 .whenBecomesTrue(ShooterSubsystem.INSTANCE.ServoAimCommand(0));
+
         Gamepads.gamepad2().b()
                 .whenBecomesTrue(ShooterSubsystem.INSTANCE.ServoAimCommand(0.2));
 

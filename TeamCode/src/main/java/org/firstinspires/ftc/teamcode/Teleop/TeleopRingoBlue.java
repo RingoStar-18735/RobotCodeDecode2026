@@ -67,16 +67,16 @@ public class TeleopRingoBlue extends NextFTCOpMode {
 //                    telemetry.addData("Speed: ", ShooterSubsystem.INSTANCE.ShooterSpeed);
                 })
                 .setUpdate(() -> {
-                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed) {
-//                        telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
+                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 300) {
+                        telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
                         IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
                         IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
 
                     }
-//                    else {
-//                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0);
-//                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(0);
-//                    }
+                    else {
+                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0);
+                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(0);
+                    }
                 })
                 .setIsDone(()-> false)
                 .requires(IntakeSubSystem.INSTANCE);
