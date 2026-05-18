@@ -35,7 +35,7 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.driving.DriverControlledCommand;
 
 @Configurable
-@TeleOp(name = "TeleopRingo - BLUE")
+@TeleOp(name = "ATeleopRingo - BLUE")
 public class TeleopRingoBlue extends NextFTCOpMode {
     Follower follower;
     Pose RobotPose = new Pose(0, 0, 0);
@@ -62,13 +62,13 @@ public class TeleopRingoBlue extends NextFTCOpMode {
     public Command Shoot() {
         return new LambdaCommand()
                 .setStart(() -> {
-                    telemetry.addLine("SHOOT COMMAND STARTED");
-                    telemetry.addData("vel: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
-                    telemetry.addData("Speed: ", ShooterSubsystem.INSTANCE.ShooterSpeed);
+//                    telemetry.addLine("SHOOT COMMAND STARTED");
+//                    telemetry.addData("vel: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
+//                    telemetry.addData("Speed: ", ShooterSubsystem.INSTANCE.ShooterSpeed);
                 })
                 .setUpdate(() -> {
                     if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed) {
-                        telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
+//                        telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
                         IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
                         IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
 
@@ -121,19 +121,19 @@ public class TeleopRingoBlue extends NextFTCOpMode {
         follower.update();
         RobotPose = follower.getPose();
 
-        telemetry.addData("Pos: ",follower.getPose());
+//        telemetry.addData("Pos: ",follower.getPose());
 //        telemetry.addData("yaw: ",follower.getPose().getHeading());
-        telemetry.addData("LastAutoPos: ",RobotBank.LastAutoPos);
+//        telemetry.addData("LastAutoPos: ",RobotBank.LastAutoPos);
 //        telemetry.addData("turretRobotDifrance: ",turretRobotDifrance);
 //        telemetry.addData("Math.toRadians(90): ",Math.toRadians(90));
 //        telemetry.addData("getHeading() - Math.toRadians(90): ",follower.getPose().getHeading() - Math.toRadians(90));
 //        telemetry.addData("lastPos: ", lastYPos);
 //        telemetry.addData("errorDistance: ",errorDistance);
 //        telemetry.addData("follower.getPose().getX(): ",follower.getPose().getX());
-        telemetry.addData("מהירות: ",-ShooterSubsystem.INSTANCE.Shooter.getVelocity());
-        telemetry.addData("מרחק: ",distance);
-//        telemetry.addData("סרבו לאסט פוס", ShooterSubsystem.INSTANCE.ServoLastPos);
-        telemetry.addData("RobotPose", RobotPose);
+//        telemetry.addData("מהירות: ",-ShooterSubsystem.INSTANCE.Shooter.getVelocity());
+//        telemetry.addData("מרחק: ",distance);
+////        telemetry.addData("סרבו לאסט פוס", ShooterSubsystem.INSTANCE.ServoLastPos);
+//        telemetry.addData("RobotPose", RobotPose);
 //        telemetry.addData("ServoActivate", ServoActivate);
         distance = Math.sqrt(Math.pow(NewTargetPose.getX() - RobotPose.getX(), 2) + Math.pow(NewTargetPose.getY() - RobotPose.getY(), 2));
 

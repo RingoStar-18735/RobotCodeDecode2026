@@ -31,8 +31,7 @@ public class ShooterSubsystem implements Subsystem {
     public boolean ShooterStopped = false;
     private boolean CommandStarted = true;
     private TelemetryManager panels = PanelsTelemetry.INSTANCE.getTelemetry();
-
-
+    private TelemetryManager telemetryManager;
 
 
     public ShooterSubsystem() {
@@ -42,6 +41,8 @@ public class ShooterSubsystem implements Subsystem {
     public void initialize() {
         if(Shooter.getDirection() != 1)
             Shooter.reverse();
+        telemetryManager = PanelsTelemetry.INSTANCE.getTelemetry();
+        telemetryManager.update(ActiveOpMode.telemetry());
     }
 
     public final MotorEx Shooter = new MotorEx("0C");
@@ -155,13 +156,18 @@ public class ShooterSubsystem implements Subsystem {
 //        ActiveOpMode.telemetry().addData("Started: ", false);
 //        ActiveOpMode.telemetry().addData("Started: ", false);
 //
-        panels.addData("Robot Velocity: ", Shooter.getState().getVelocity());
-        panels.addData("Robot Target: ", PID.getTarget());
-        panels.addData("SHootActive: ",CommandStarted);
-        ActiveOpMode.telemetry().addData("target: ", PID.getTarget());
-        ActiveOpMode.telemetry().addData("target2: ", ShooterSpeed);
+        telemetryManager.debug(getShooterVelocity());
+        telemetryManager.debug(PID.getTarget());
+
+        telemetryManager.addData("Angle" , getShooterVelocity());
+        telemetryManager.addData("Target" , PID.getTarget());
+
+        telemetryManager.update(ActiveOpMode.telemetry());
+
+//        ActiveOpMode.telemetry().addData("target: ", PID.getTarget());
+//        ActiveOpMode.telemetry().addData("target2: ", ShooterSpeed);
         ActiveOpMode.telemetry().addData("PIDpower: ", PIDPower);
-        ActiveOpMode.telemetry().addData("ShooterDistance: ", Distance);
+//        ActiveOpMode.telemetry().addData("ShooterDistance: ", Distance);
         CommandStarted = Math.abs(ShooterSpeed + getShooterVelocity()) < RobotMap.SHOOTER_SPEED_RANGE;
 
 //        ActiveOpMode.telemetry().addData("ShooterStatus: ", CommandStarted);
