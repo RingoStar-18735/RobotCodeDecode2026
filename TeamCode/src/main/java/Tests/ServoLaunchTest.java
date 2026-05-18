@@ -2,9 +2,7 @@ package Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Subsystems.TurretSubsystem;
-import org.firstinspires.ftc.teamcode.TeleOp_Hellen.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.TeleOp_Hellen.IntakeTransportSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.TeleOp_Hellen.Launch;
 import org.firstinspires.ftc.teamcode.TeleOp_Hellen.ServoSubsystem;
 
@@ -18,8 +16,7 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 public class ServoLaunchTest extends NextFTCOpMode {
     public ServoLaunchTest() {
         addComponents(
-                new SubsystemComponent(ServoSubsystem.INSTANCE,
-                        Launch.INSTANCE),
+                new SubsystemComponent(ServoSubsystem.INSTANCE, ShooterSubsystem.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
         );
@@ -29,17 +26,16 @@ public class ServoLaunchTest extends NextFTCOpMode {
     public void onStartButtonPressed() {
 
         //----------------------------SERVO----------------------------
+        Gamepads.gamepad2().a()
+                .whenBecomesTrue(ShooterSubsystem.INSTANCE.ServoAimCommand(0));
         Gamepads.gamepad2().b()
-                .whenBecomesTrue(ServoSubsystem.INSTANCE.ServoMovement(0));
+                .whenBecomesTrue(ShooterSubsystem.INSTANCE.ServoAimCommand(0.2));
 
-        Gamepads.gamepad2().dpadUp()
-                .whenBecomesTrue(ServoSubsystem.INSTANCE.ServoMovement(0.2));
+        Gamepads.gamepad2().x()
+                .whenBecomesTrue(ShooterSubsystem.INSTANCE.ServoAimCommand(0.4));
 
-        Gamepads.gamepad2().dpadRight()
-                .whenBecomesTrue(ServoSubsystem.INSTANCE.ServoMovement(0.4));
-
-        Gamepads.gamepad2().dpadDown()
-                .whenBecomesTrue(ServoSubsystem.INSTANCE.ServoMovement(0.6));
+        Gamepads.gamepad2().y()
+                .whenBecomesTrue(ShooterSubsystem.INSTANCE.ServoAimCommand(0.8));
 
         //Gamepads.gamepad2().dpadLeft()
         //        .whenBecomesTrue(ServoSubsystem.INSTANCE.ServoMovement(0.8));

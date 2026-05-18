@@ -176,6 +176,7 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                         shootSequence
                 );
 
+
         Gamepads.gamepad2().a()
                 .whenTrue(
                         new ParallelGroup(

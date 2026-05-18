@@ -276,7 +276,7 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
                                 Math.pow(FieldMap.BLUE_TARGET_POS.getY() - follower.getPose().getY(), 2)
                 )
         ).schedule();
-//        Auto.schedule();
+        Auto.schedule();
         RobotBank.Offset = TurretSubsystem.INSTANCE.getAngle();
         RobotBank.LastAutoPos = follower.getPose();
         RobotBank.LastAutoTurretAngle = TurretSubsystem.INSTANCE.getAngle();

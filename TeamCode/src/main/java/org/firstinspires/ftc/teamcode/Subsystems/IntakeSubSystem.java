@@ -25,7 +25,7 @@ public class IntakeSubSystem implements Subsystem {
     @Override
     public void periodic() {
 //        ActiveOpMode.telemetry().addData("IntakeMotor Power:" , IntakeMotor.getPower());
-//        ActiveOpMode.telemetry().addData("Transition Power:" , TransferMotor.getPower());
+//        ActiveOpMode.telemetry().addData("Transition Power:" , TrnsferMotor.getPower());
 
     }
 
