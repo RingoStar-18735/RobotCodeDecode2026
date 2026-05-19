@@ -40,6 +40,7 @@ public class TeleopRingoBlue extends NextFTCOpMode {
     Follower follower;
     Pose RobotPose = new Pose(0, 0, 0);
     double distance = 0;
+    double shooterVelError = 0;
     List<String> a = new ArrayList<String>();
     AllianceType allianceType = AllianceType.BLUE;
     Pose NewTargetPose = FieldMap.BLUE_TARGET_POS;
@@ -67,11 +68,10 @@ public class TeleopRingoBlue extends NextFTCOpMode {
 //                    telemetry.addData("Speed: ", ShooterSubsystem.INSTANCE.ShooterSpeed);
                 })
                 .setUpdate(() -> {
-                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 300) {
+                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 600) {
                         telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
                         IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
                         IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
-
                     }
                     else {
                         IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0);
@@ -81,6 +81,46 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                 .setIsDone(()-> false)
                 .requires(IntakeSubSystem.INSTANCE);
     }
+
+    public Command Shooter() {
+        return new LambdaCommand()
+                .setStart(() -> {
+                    shooterVelError = 0;
+                })
+                .setUpdate(() -> {
+                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 100 && shooterVelError == 0) {
+                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
+                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
+                        shooterVelError = 100;
+                    } else if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 300 && shooterVelError == 100) {
+                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
+                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
+                        shooterVelError = 200;
+                    } else if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 600 && shooterVelError == 200) {
+                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
+                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
+                        shooterVelError = 0;
+                    } else {
+                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0);
+                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(0);
+                    }
+                })
+                .setIsDone(()-> false)
+                .requires(IntakeSubSystem.INSTANCE);
+    }
+
+//    public void ShooterVoid() {
+//        if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 300) {
+//            IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
+//            IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
+//        }
+//    }
+
+//    public Command Shooter() {
+//        return new InstantCommand()
+//    }
+
+
 
     Command shootSequence = new SequentialGroup(
             new ParallelDeadlineGroup(
@@ -172,6 +212,9 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                 );
 
         Gamepads.gamepad2().x()
+                .whenBecomesTrue(
+                        new InstantCommand(()-> shooterVelError = 0)
+                )
                 .whenBecomesTrue(
                         shootSequence
                 );
