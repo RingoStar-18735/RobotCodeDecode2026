@@ -79,17 +79,15 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
     public Command Shoot() {
         return new LambdaCommand()
                 .setStart(() -> {
-                    telemetry.addLine("SHOOT COMMAND STARTED");
-                    telemetry.addData("vel: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
-                    telemetry.addData("Speed: ", ShooterSubsystem.INSTANCE.ShooterSpeed);
+
                 })
                 .setUpdate(() -> {
-                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 400) {
+                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 700) {
                         telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
                         IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
                         IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
-
-                    } else {
+                    }
+                    else {
                         IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0);
                         IntakeSubSystem.INSTANCE.TransferMotor.setPower(0);
                     }
@@ -109,7 +107,7 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
                     )
             ),
             new ParallelDeadlineGroup(
-                    new Delay(3),
+                    new Delay(5),
                     Shoot()
             )
     );

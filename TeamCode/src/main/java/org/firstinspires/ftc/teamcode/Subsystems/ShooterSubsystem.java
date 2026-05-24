@@ -25,6 +25,7 @@ public class ShooterSubsystem implements Subsystem {
     public final static ShooterSubsystem INSTANCE = new ShooterSubsystem();
 
     public boolean ReverseWheel = false;
+    public double SpinUpStartTime = 0;
     public double Distance = 0;
     public Double ServoPos = 0.0;
     public double ShooterSpeed = 0;
@@ -70,7 +71,7 @@ public class ShooterSubsystem implements Subsystem {
 
                     if (Distance < 51) {
                         ServoPos = RobotMap.SERVO_MOVE_CLOSE;
-                    } else if (Distance > 130) {
+                    } else if (Distance > 115) {
                         ServoPos = RobotMap.SERVO_MOVE_FAR;
                     } else {
                         ServoPos = RobotMap.SERVO_MOVE_MID;
@@ -89,12 +90,13 @@ public class ShooterSubsystem implements Subsystem {
                     Distance = distanceSupplier.get();
                     if (Distance < 51) {
                         ShooterSpeed = RobotMap.SHOOTER_SPEED_CLOSE;
-                    } else if (Distance > 130) {
+                    } else if (Distance > 115) {
                         ShooterSpeed = RobotMap.SHOOTER_SPEED_FAR;
                     }else {
                         ShooterSpeed = RobotMap.SHOOTER_SPEED_MID;
                     }
                     PID.setTarget(-ShooterSpeed);
+                    SpinUpStartTime = ActiveOpMode.getRuntime();
                     CommandStarted = true;
                     ShooterStopped = false;
                 })
@@ -152,7 +154,7 @@ public class ShooterSubsystem implements Subsystem {
 
     @Override
     public void periodic() {
-        double PIDPower = PID.calculateOutput(-Shooter.getVelocity(), ActiveOpMode.getRuntime());
+        double PIDPower = -Math.abs(PID.calculateOutput(-Shooter.getVelocity(), ActiveOpMode.getRuntime()));
 
 //        ActiveOpMode.telemetry().addData("Started: ", false);
 //        ActiveOpMode.telemetry().addData("Started: ", false);
@@ -162,6 +164,7 @@ public class ShooterSubsystem implements Subsystem {
 
         telemetryManager.addData("Angle" , getShooterVelocity());
         telemetryManager.addData("Target" , PID.getTarget());
+        telemetryManager.addData("PIDPower" , PIDPower);
 
         telemetryManager.update(ActiveOpMode.telemetry());
 
@@ -185,17 +188,24 @@ public class ShooterSubsystem implements Subsystem {
 
 //        double proportional = SHOOTER_P * (PID.getTarget() - Shooter.getVelocity());
 
+        double CurrentTime = ActiveOpMode.getRuntime();
+        boolean SpinUpBoost =
+                !ShooterStopped &&
+                        PID.getTarget() != 0 &&
+                        CurrentTime - SpinUpStartTime < 0.8;
 
         if (ReverseWheel){
             Shooter.setPower(-0.2);
         } else if (ShooterStopped){
-            Shooter.setPower(0);
-        } else {
+            Shooter.setPower(-0);
+        }
+        else if (SpinUpBoost) {
+            Shooter.setPower(-1);
+        }
+         else {
             Shooter.setPower(PIDPower);
         }
 
-
         panels.update();
-
     }
 }
