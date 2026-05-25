@@ -117,8 +117,8 @@ public class TurretSubsystem implements Subsystem {
         telemetryManager.debug(PID.getTarget());
 
 //        telemetryManager.addData("Angle" , getAngle());
-//        telemetryManager.addData("Target" , PID.getTarget());
-//
+        telemetryManager.addData("TurretTarget" , PID.getTarget());
+
 //        ActiveOpMode.telemetry().addData("Is Reset:" , isReset);
         magnet.setMode(DigitalChannel.Mode.INPUT);
 
