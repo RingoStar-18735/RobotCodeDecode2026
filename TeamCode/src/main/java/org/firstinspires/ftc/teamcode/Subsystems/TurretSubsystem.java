@@ -154,17 +154,17 @@ public class TurretSubsystem implements Subsystem {
 
     public Command FollowPoint(Pose targetpose, Pose pose) {
         // Robot pose in field coordinates
-        if(!toFollow) return new InstantCommand(() -> PID.setTarget(180));
+        if(!toFollow) return new InstantCommand(() -> PID.setTarget(0));
 
         final double rx = pose.getX();
         final double ry = pose.getY();
         double heading = pose.getHeading();// Pedro heading is radians
 
 //        ActiveOpMode.telemetry().addData("headingBefore" , Math.toDegrees(heading));
-        if (Math.toDegrees(heading) < -180) {
-           heading = heading + Math.toRadians(360);
-        } else if (Math.toDegrees(heading) > 180) {
-            heading = heading - Math.toRadians(360);
+        if (Math.toDegrees(heading) < -75 ) { // -180
+           heading = heading + Math.toRadians(360); //360
+        } else if (Math.toDegrees(heading) > 130) { // 180
+            heading = heading - Math.toRadians(360); // 360
         }
 //        ActiveOpMode.telemetry().addData("headingAfter" , Math.toDegrees(heading));
 
@@ -194,11 +194,11 @@ public class TurretSubsystem implements Subsystem {
         gammaDeg = Math.max(RobotMap.MIN_TURRET_ANGLE, Math.min(RobotMap.MAX_TURRET_ANGLE, gammaDeg));
 
         // Telemetry to verify
-//        ActiveOpMode.telemetry().addData("Turret rx,ry", "%.2f, %.2f", rx, ry);
-//        ActiveOpMode.telemetry().addData("Turret tx,ty", "%.2f, %.2f", targetpose.getX(), targetpose.getY());
-//        ActiveOpMode.telemetry().addData("Turret alpha(deg)", Math.toDegrees(alpha));
-//        ActiveOpMode.telemetry().addData("Turret heading(deg)", Math.toDegrees(heading));
-//        ActiveOpMode.telemetry().addData("Turret gamma(deg)", gammaDeg);
+        //ActiveOpMode.telemetry().addData("Turret rx,ry", "%.2f, %.2f", rx, ry);
+        //ActiveOpMode.telemetry().addData("Turret tx,ty", "%.2f, %.2f", targetpose.getX(), targetpose.getY());
+        ActiveOpMode.telemetry().addData("Turret alpha(deg)", Math.toDegrees(alpha));
+        ActiveOpMode.telemetry().addData("Turret heading(deg)", Math.toDegrees(heading));
+        ActiveOpMode.telemetry().addData("Turret gamma(deg)", gammaDeg);
 
 //        gammaDeg -= 90;
         final double finalGammaDeg = gammaDeg;
