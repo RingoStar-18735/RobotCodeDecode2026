@@ -58,7 +58,7 @@ public class TurretSubsystem implements Subsystem {
                     turretmotor.setPower(-RobotMap.RESET_TURRET_POWER);
                 })
                 .setUpdate(() -> {
-                    if(!isMagnetPressed())                    turretmotor.setPower(0.0);
+                    if(!isMagnetPressed()) turretmotor.setPower(0.0);
                     ResetEncoder();
                 })
                 .setStop(interrupted -> {
@@ -134,7 +134,7 @@ public class TurretSubsystem implements Subsystem {
             turretmotor.setPower(PIDPower);
         }
 
-        telemetryManager.update(ActiveOpMode.telemetry());
+//        telemetryManager.update(ActiveOpMode.telemetry());
     }
 
     public double getOffset() {
@@ -158,20 +158,9 @@ public class TurretSubsystem implements Subsystem {
 
         final double rx = pose.getX();
         final double ry = pose.getY();
-        double heading = pose.getHeading();// Pedro heading is radians
+        double heading = pose.getHeading() + 180; // Pedro heading is radians
 
-//        ActiveOpMode.telemetry().addData("headingBefore" , Math.toDegrees(heading));
-        if (Math.toDegrees(heading) < -75 ) { // -180
-           heading = heading + Math.toRadians(360); //360
-        } else if (Math.toDegrees(heading) > 130) { // 180
-            heading = heading - Math.toRadians(360); // 360
-        }
-//        ActiveOpMode.telemetry().addData("headingAfter" , Math.toDegrees(heading));
-
-//        else if (Math.toDegrees(heading) > 180) {
-//            heading = heading - 360;
-//        }
-        final double finalHeading = heading;
+        ActiveOpMode.telemetry().addData("headingBefore" , Math.toDegrees(heading));
 
         // Vector from robot to target in field coordinates
         final double dx = targetpose.getX() - rx;
@@ -182,10 +171,12 @@ public class TurretSubsystem implements Subsystem {
 
         // Turret angle relative to robot forward:
         // gamma = (world angle to target) - (robot world heading)
-        double gamma = finalHeading - alpha; //
-
+        double gamma = heading - alpha; //
+        ActiveOpMode.telemetry().addData("gamma Pre" , Math.toDegrees(gamma));
+        double gammaPre = gamma;
         // Wrap to [-pi, pi]
         gamma = Math.atan2(Math.sin(gamma), Math.cos(gamma));
+        ActiveOpMode.telemetry().addData("gamma After" , Math.toDegrees(gamma));
 
         // Convert to degrees
         double gammaDeg = Math.toDegrees(gamma);
@@ -196,12 +187,12 @@ public class TurretSubsystem implements Subsystem {
         // Telemetry to verify
         //ActiveOpMode.telemetry().addData("Turret rx,ry", "%.2f, %.2f", rx, ry);
         //ActiveOpMode.telemetry().addData("Turret tx,ty", "%.2f, %.2f", targetpose.getX(), targetpose.getY());
-        ActiveOpMode.telemetry().addData("Turret alpha(deg)", Math.toDegrees(alpha));
-        ActiveOpMode.telemetry().addData("Turret heading(deg)", Math.toDegrees(heading));
-        ActiveOpMode.telemetry().addData("Turret gamma(deg)", gammaDeg);
+        ActiveOpMode.telemetry().addData("Turret alpha angle to target Field (deg)", Math.toDegrees(alpha));
+        ActiveOpMode.telemetry().addData("Robot heading(deg)", Math.toDegrees(heading));
+        ActiveOpMode.telemetry().addData("Turret gamma(deg) angle aim", gammaDeg);
 
 //        gammaDeg -= 90;
-        final double finalGammaDeg = gammaDeg;
+        double finalGammaDeg = gammaDeg;
         double deg = finalGammaDeg;
 
         if (RobotMap.TURRET_ROBOT_DIFRANCE){

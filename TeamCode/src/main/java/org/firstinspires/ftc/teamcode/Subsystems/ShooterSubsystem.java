@@ -122,7 +122,7 @@ public class ShooterSubsystem implements Subsystem {
         return new SetPower(Shooter, pow);
     }
 
-    public Command ServoAimCommand(double pos) {
+    public Command ServoAimCommand(double pos) {            
         return new SetPositions(left_aim.to(1 - pos), right_aim.to(pos));
     }
 
@@ -166,7 +166,6 @@ public class ShooterSubsystem implements Subsystem {
         telemetryManager.addData("Target" , PID.getTarget());
         telemetryManager.addData("PIDPower" , PIDPower);
 
-        telemetryManager.update(ActiveOpMode.telemetry());
 
 //        ActiveOpMode.telemetry().addData("target: ", PID.getTarget());
 //        ActiveOpMode.telemetry().addData("target2: ", ShooterSpeed);
