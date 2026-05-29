@@ -35,7 +35,7 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.driving.DriverControlledCommand;
 
 @Configurable
-@TeleOp(name = "ATeleopRingo - BLUE")
+@TeleOp(name = "A TeleopRingo - BLUE")
 public class TeleopRingoBlue extends NextFTCOpMode {
     Follower follower;
     Pose RobotPose = new Pose(0, 0, 0);
@@ -172,9 +172,12 @@ public class TeleopRingoBlue extends NextFTCOpMode {
 //        telemetry.addData("follower.getPose().getX(): ",follower.getPose().getX());
 //        telemetry.addData("מהירות: ",-ShooterSubsystem.INSTANCE.Shooter.getVelocity());
 //        telemetry.addData("מרחק: ",distance);
-////        telemetry.addData("סרבו לאסט פוס", ShooterSubsystem.INSTANCE.ServoLastPos);
+//        telemetry.addData("סרבו לאסט פוס", ShooterSubsystem.INSTANCE.ServoLastPos);
 //        telemetry.addData("RobotPose", RobotPose);
 //        telemetry.addData("ServoActivate", ServoActivate);
+        telemetry.addData("Angle" , ShooterSubsystem.INSTANCE.getShooterVelocity());
+
+
         distance = Math.sqrt(Math.pow(NewTargetPose.getX() - RobotPose.getX(), 2) + Math.pow(NewTargetPose.getY() - RobotPose.getY(), 2));
 
 
