@@ -196,24 +196,16 @@ public class ShooterSubsystem implements Subsystem {
 
 //        double proportional = SHOOTER_P * (PID.getTarget() - Shooter.getVelocity());
 
-        double CurrentTime = ActiveOpMode.getRuntime();
-        boolean SpinUpBoost =
-                !ShooterStopped &&
-                        PIDF.getGoal().getVelocity() != 0 &&
-                        CurrentTime - SpinUpStartTime < 0.8;
+
 
         if (ReverseWheel){
             Shooter.setPower(0.2);
         } else if (ShooterStopped){
             Shooter.setPower(0);
         }
-        else if (SpinUpBoost) {
-            Shooter.setPower(1);
-        }
          else {
             Shooter.setPower(PIDPower);
         }
-
         panels.update();
     }
 }
