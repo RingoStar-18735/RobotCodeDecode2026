@@ -158,7 +158,7 @@ public class TurretSubsystem implements Subsystem {
 
         final double rx = pose.getX();
         final double ry = pose.getY();
-        double heading = pose.getHeading() + 180; // Pedro heading is radians
+        double heading = pose.getHeading(); // Pedro heading is radians
 
         ActiveOpMode.telemetry().addData("headingBefore" , Math.toDegrees(heading));
 
@@ -204,9 +204,6 @@ public class TurretSubsystem implements Subsystem {
 
     }
 
-//    public Command TurretAngle(double ang) {
-//        return
-//    }
 
     public void setToFollow(boolean toFollow) {
         this.toFollow = toFollow;

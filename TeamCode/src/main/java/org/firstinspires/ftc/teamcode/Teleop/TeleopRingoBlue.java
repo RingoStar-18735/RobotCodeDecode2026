@@ -68,14 +68,17 @@ public class TeleopRingoBlue extends NextFTCOpMode {
 //                    telemetry.addData("Speed: ", ShooterSubsystem.INSTANCE.ShooterSpeed);
                 })
                 .setUpdate(() -> {
-                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 700) {
+                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 500) {
                         telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
-                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
-                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
+                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0.6);
+                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(1);
                     }
                     else {
-                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0);
-                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(0);
+                        new ParallelDeadlineGroup(
+                                new Delay(1),
+                                new InstantCommand(()-> IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0)),
+                                new InstantCommand(()-> IntakeSubSystem.INSTANCE.TransferMotor.setPower(0))
+                        );
                     }
                 })
                 .setIsDone(()-> false)
@@ -96,7 +99,7 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                         IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
                         IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
                         shooterVelError = 200;
-                    } else if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 600 && shooterVelError == 200) {
+                    } else if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed + 6000 && shooterVelError == 200) {
                         IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
                         IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
                         shooterVelError = 0;
