@@ -21,7 +21,7 @@ public class RobotMap {
     public static double F_Passive = 0;
 
     public static double SHOOTER_SPEED_CLOSE = 2000;
-    public static double SHOOTER_SPEED_MID = 1950;
+    public static double SHOOTER_SPEED_MID = 2050  ;
     public static double SHOOTER_SPEED_FAR = 2600;
 
     public static double SERVO_MOVE_AUTO_MID = 0.45;
