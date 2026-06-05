@@ -123,6 +123,11 @@ public class ShooterSubsystem implements Subsystem {
     }
 
 
+    public Command RunLittleSpeed(double pow){
+        return new SetPower(Shooter, pow);
+    }
+
+
     public Command StopSpeed () {
         return new InstantCommand(()-> ShooterStopped=true);
     }

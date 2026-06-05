@@ -143,7 +143,7 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
                     )
             ),
             new ParallelDeadlineGroup(
-                    new Delay(4),
+                    new Delay(2),
                     Shoot()
             )
 //            ShooterSubsystem.INSTANCE.StopSpeed()
@@ -164,61 +164,104 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
                         new BezierLine(
                                 new Pose(34.000, 136.000),
 
-                                new Pose(58.000, 86.000)
+                                new Pose(58.000, 84.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(58.000, 86.000),
-
-                                new Pose(25, 86.000)
+                        new BezierCurve(
+                                new Pose(58, 84),
+                                new Pose(54.000, 40.000),
+                                new Pose(-33, 65.000),
+                                new Pose(60, 85.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
 
         Path3 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(25, 86.000),
-
-                                new Pose(58.000, 86.000)
+                        new BezierCurve(
+                                new Pose(60, 85.000),
+                                new Pose(-10, 78.000),
+                                new Pose(20.000, 95.000),
+                                new Pose(58, 84)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
+
+
 
         Path4 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(58.000, 86.000),
-                                new Pose(74.334, 58),
-                                new Pose(20, 60.000)
-                        )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
-
-                .build();
-
-        Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(20, 60.000),
+                                new Pose(58.000, 84.000),
 
-                                new Pose(58.000, 86.000)
+                                new Pose(40, 70.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
-
-        Path6 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(58.000, 86.000),
-
-                                new Pose(26.098, 86.000)
-                        )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
-
-                .build();
+//        Path1 = follower.pathBuilder().addPath(
+//                        new BezierLine(
+//                                new Pose(34.000, 136.000),
+//
+//                                new Pose(58.000, 86.000)
+//                        )
+//                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+//
+//                .build();
+//
+//        Path2 = follower.pathBuilder().addPath(
+//                        new BezierLine(
+//                                new Pose(58.000, 86.000),
+//
+//                                new Pose(25, 86.000)
+//                        )
+//                ).setConstantHeadingInterpolation(Math.toRadians(180))
+//
+//                .build();
+//
+//        Path3 = follower.pathBuilder().addPath(
+//                        new BezierLine(
+//                                new Pose(25, 86.000),
+//
+//                                new Pose(58.000, 86.000)
+//                        )
+//                ).setConstantHeadingInterpolation(Math.toRadians(180))
+//
+//                .build();
+//
+//        Path4 = follower.pathBuilder().addPath(
+//                        new BezierCurve(
+//                                new Pose(58.000, 86.000),
+//                                new Pose(74.334, 58),
+//                                new Pose(20, 60.000)
+//                        )
+//                ).setConstantHeadingInterpolation(Math.toRadians(180))
+//
+//                .build();
+//
+//        Path5 = follower.pathBuilder().addPath(
+//                        new BezierLine(
+//                                new Pose(20, 60.000),
+//
+//                                new Pose(58.000, 86.000)
+//                        )
+//                ).setConstantHeadingInterpolation(Math.toRadians(180))
+//
+//                .build();
+//
+//        Path6 = follower.pathBuilder().addPath(
+//                        new BezierLine(
+//                                new Pose(58.000, 86.000),
+//
+//                                new Pose(26.098, 86.000)
+//                        )
+//                ).setConstantHeadingInterpolation(Math.toRadians(180))
+//
+//                .build();
 
 
 
@@ -226,8 +269,8 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
         Path2Command = new FollowPath(Path2);
         Path3Command = new FollowPath(Path3);
         Path4Command = new FollowPath(Path4);
-        Path5Command = new FollowPath(Path5);
-        Path6Command = new FollowPath(Path6);
+//        Path5Command = new FollowPath(Path5);
+//        Path6Command = new FollowPath(Path6);
 //        Path7Command = new FollowPath(Path7);
 //        Path8Command = new FollowPath(Path8);
 //        Path9Command = new FollowPath(Path9);
@@ -238,16 +281,26 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
         Auto = new SequentialGroup(
                 Path1Command,
                 shootSequence,
-                ShooterSubsystem.INSTANCE.StopSpeed(),
-                MoveWithoutShooting(Path2Command),
+                Path2Command,
+                shootSequence,
                 Path3Command,
                 shootSequence,
-                ShooterSubsystem.INSTANCE.StopSpeed(),
-                MoveWithoutShooting(Path4Command),
-                Path5Command,
-                shootSequence,
-                ShooterSubsystem.INSTANCE.StopSpeed(),
-                Path6Command
+                Path4Command
+
+
+
+//                Path1Command,
+//                shootSequence,
+//                ShooterSubsystem.INSTANCE.StopSpeed(),
+//                MoveWithoutShooting(Path2Command),
+//                Path3Command,
+//                shootSequence,
+//                ShooterSubsystem.INSTANCE.StopSpeed(),
+//                MoveWithoutShooting(Path4Command),
+//                Path5Command,
+//                shootSequence,
+//                ShooterSubsystem.INSTANCE.StopSpeed(),
+//                Path6Command
         );
     }
 

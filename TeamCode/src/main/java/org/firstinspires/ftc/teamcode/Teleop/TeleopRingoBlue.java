@@ -211,6 +211,7 @@ public class TeleopRingoBlue extends NextFTCOpMode {
     @Override
     public void onStartButtonPressed() {
         hasStartedMatch = true;
+
         ShooterSubsystem.INSTANCE.ServoMoveByField(() ->
                 Math.sqrt(
                         Math.pow(NewTargetPose.getX() - RobotPose.getX(), 2) +
@@ -228,6 +229,10 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                 false
         );
         driverControlled.schedule();
+
+        if (hasStartedMatch) {
+            ShooterSubsystem.INSTANCE.RunVelocity(100);
+        }
 
         Gamepads.gamepad1().leftBumper().toggleOnBecomesTrue()
                 .whenBecomesTrue(
@@ -256,6 +261,9 @@ public class TeleopRingoBlue extends NextFTCOpMode {
 
 
         Gamepads.gamepad2().leftBumper().toggleOnBecomesTrue()
+//                .whenBecomesTrue(
+//                        new InstantCommand(()-> ShooterSubsystem.INSTANCE.RunVelocity(100))
+//                )
                 .whenBecomesTrue(
                         new InstantCommand(()-> IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER))
                 )
