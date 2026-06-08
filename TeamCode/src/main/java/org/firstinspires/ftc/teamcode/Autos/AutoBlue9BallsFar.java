@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
 
+import static org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem.ShooterSpeed;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -27,6 +29,7 @@ import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -79,23 +82,27 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
     public Command Shoot() {
         return new LambdaCommand()
                 .setStart(() -> {
-
+                    telemetry.addLine("SHOOT COMMAND STARTED");
+                    telemetry.addData("vel: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
+                    telemetry.addData("Speed: ", ShooterSpeed);
                 })
                 .setUpdate(() -> {
-                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 700) {
+                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSpeed - 500) {
                         telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
-                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
-                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
+                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(1);
+                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(1);
                     }
                     else {
-                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0);
-                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(0);
+                        new SequentialGroup(
+                                new InstantCommand(()-> IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0)),
+                                new InstantCommand(()-> IntakeSubSystem.INSTANCE.TransferMotor.setPower(0)),
+                                new Delay(1)
+                        );
                     }
                 })
                 .setIsDone(()-> false)
                 .requires(IntakeSubSystem.INSTANCE);
     }
-
     Command shootSequence = new SequentialGroup(
             new ParallelDeadlineGroup(
                     new Delay(2),
@@ -107,9 +114,10 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
                     )
             ),
             new ParallelDeadlineGroup(
-                    new Delay(5),
+                    new Delay(4),
                     Shoot()
             )
+//            ShooterSubsystem.INSTANCE.StopSpeed()
     );
 
 
