@@ -192,9 +192,27 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
 
                 .build();
 
-
-
         Path4 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(58, 84),
+
+                                new Pose(12, 60)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(140))
+
+                .build();
+
+        Path5 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(12, 60),
+
+                                new Pose(58, 84)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(140), Math.toRadians(180))
+
+                .build();
+
+        Path6 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(58.000, 84.000),
 
@@ -269,8 +287,8 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
         Path2Command = new FollowPath(Path2);
         Path3Command = new FollowPath(Path3);
         Path4Command = new FollowPath(Path4);
-//        Path5Command = new FollowPath(Path5);
-//        Path6Command = new FollowPath(Path6);
+        Path5Command = new FollowPath(Path5);
+        Path6Command = new FollowPath(Path6);
 //        Path7Command = new FollowPath(Path7);
 //        Path8Command = new FollowPath(Path8);
 //        Path9Command = new FollowPath(Path9);
@@ -281,11 +299,16 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
         Auto = new SequentialGroup(
                 Path1Command,
                 shootSequence,
-                Path2Command,
+                MoveWithoutShooting(Path2Command),
                 shootSequence,
-                Path3Command,
+                MoveWithoutShooting(Path3Command),
                 shootSequence,
-                Path4Command
+                MoveWithoutShooting(Path4Command),
+                shootSequence,
+                MoveWithoutShooting(Path5Command),
+                shootSequence,
+                Path6Command
+
 
 
 
