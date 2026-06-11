@@ -163,7 +163,7 @@ public class TeleopRingoBlue extends NextFTCOpMode {
     public void onInit() {
         follower =  Constants.createFollower(hardwareMap);
         follower.setPose(RobotBank.LastAutoPos);
-        new InstantCommand(ShooterSubsystem.INSTANCE.StopSpeed());
+        new InstantCommand(()-> ShooterSubsystem.INSTANCE.Shooter.setPower(0));
         allianceType = RobotBank.Alliance;
         if (RobotBank.Alliance == AllianceType.BLUE) {
             NewTargetPose = FieldMap.BLUE_TARGET_POS;
@@ -239,6 +239,11 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                         new InstantCommand(()->TurretSubsystem.INSTANCE.setToFollow(false))
                 ).whenBecomesFalse(
                         new InstantCommand(()->TurretSubsystem.INSTANCE.setToFollow(true))
+                );
+
+        Gamepads.gamepad1().rightBumper().toggleOnBecomesTrue()
+                .whenBecomesTrue(
+                        new InstantCommand(()->TurretSubsystem.INSTANCE.setToReset(true))
                 );
 
         Gamepads.gamepad2().x()

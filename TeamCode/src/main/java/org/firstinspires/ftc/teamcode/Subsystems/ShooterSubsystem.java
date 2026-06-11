@@ -206,7 +206,7 @@ public class ShooterSubsystem implements Subsystem {
         if (ReverseWheel){
             Shooter.setPower(0.2);
         } else if (ShooterStopped){
-            Shooter.setPower(0);
+            Shooter.setPower(0.2);
         }
          else {
             Shooter.setPower(PIDPower);

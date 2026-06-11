@@ -24,6 +24,7 @@ public class TurretSubsystem implements Subsystem {
 
     public boolean isReset = false;
     boolean toFollow = true;
+    boolean toReset = false;
     double offset = 0;
 
 
@@ -154,7 +155,6 @@ public class TurretSubsystem implements Subsystem {
 
     public Command FollowPoint(Pose targetpose, Pose pose) {
         // Robot pose in field coordinates
-        if(!toFollow) return new InstantCommand(() -> PID.setTarget(0));
 
         final double rx = pose.getX();
         final double ry = pose.getY();
@@ -167,7 +167,17 @@ public class TurretSubsystem implements Subsystem {
         final double dy = targetpose.getY() - ry;
 
         // World angle from robot to target
-        final double alpha = Math.atan2(dy, dx); // [-pi, pi]
+        double a = Math.atan2(dy, dx); // [-pi, pi]
+
+        if(!toFollow && !toReset) {
+            return new InstantCommand(() -> PID.setTarget(0));
+        }
+//        else if (!toFollow && toReset) {
+//            a = heading;
+//            toFollow = true;
+//            toReset = false;
+//        }
+        final double alpha = a;
 
         // Turret angle relative to robot forward:
         // gamma = (world angle to target) - (robot world heading)
@@ -207,6 +217,10 @@ public class TurretSubsystem implements Subsystem {
 
     public void setToFollow(boolean toFollow) {
         this.toFollow = toFollow;
+    }
+
+    public void setToReset(boolean toReset) {
+        this.toReset = toReset;
     }
 
     public double AngleConverter(double ang){
