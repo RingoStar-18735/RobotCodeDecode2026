@@ -155,7 +155,7 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
         RobotMap.TURRET_ROBOT_DIFRANCE = false;
         RobotBank.Alliance = AllianceType.BLUE;
         TurretSubsystem.INSTANCE.ResetAngleRight().schedule();
-        ShooterSubsystem.INSTANCE.Shooter.setPower(0);
+        ShooterSubsystem.INSTANCE.Shooter.setPower(0.2); // 0
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(34, 136, Math.toRadians(180)));

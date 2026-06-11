@@ -17,16 +17,16 @@ public class RobotMap {
     public static double SHOOTER_P = 0.0004; // 0.0002
     public static double SHOOTER_I = 0; // 0
     public static double SHOOTER_D = 0.9 ; // 0.88
-    public static double F_Active = 0.00045; // 0.0004
+    public static double F_Active = 0.0005; // 0.00045
     public static double F_Passive = 0; // 0
 
-    public static double SHOOTER_SPEED_CLOSE = 2000;
-    public static double SHOOTER_SPEED_MID = 2050  ;
-    public static double SHOOTER_SPEED_FAR = 2600;
+    public static double SHOOTER_SPEED_CLOSE = 1450; // 2000 1450
+    public static double SHOOTER_SPEED_MID = 1450  ; // 2050 1450
+    public static double SHOOTER_SPEED_FAR = 1500; // 2600 2300
 
     public static double SERVO_MOVE_AUTO_MID = 0.45;
-    public static double SERVO_MOVE_FAR = 0.1; // 0.15
-    public static double SERVO_MOVE_MID = 0.26; // 0.26
+    public static double SERVO_MOVE_FAR = 0.25; // 0.15
+    public static double SERVO_MOVE_MID = 0.278; // 0.26
     public static double SERVO_MOVE_CLOSE = 0; // 0
     public static double SHOOTER_SPEED_RANGE = 150;
 
@@ -34,7 +34,7 @@ public class RobotMap {
     public static double TRANSMISSION_MOTOR_POWER = 1;
     public static double TRANSMISSION_MOTOR_REVERSE_POWER = 1;
 
-    public static double TURRET_P = 0.075; // 0.06
+    public static double TURRET_P = 0.07; // 0.06 // 0.075
     public static double TURRET_I = 0;
     public static double TURRET_D = 0.15; // 0.2
 
