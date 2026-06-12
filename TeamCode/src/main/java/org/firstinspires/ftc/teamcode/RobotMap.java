@@ -14,19 +14,19 @@ public class RobotMap {
     public static  double ROBOT_DISTANCE_Y =-13;//
     public static  double INTAKE_SHOOT_TIME_SECOND =2;
 
-    public static double SHOOTER_P = 0.033; // 0.0002 // 0.0004
+    public static double SHOOTER_P = 0.033; // 0.9
     public static double SHOOTER_I = 0; // 0
-    public static double SHOOTER_D = 0.005 ; // 0.88
-    public static double F_Active = 0.00044; // 0.0004
+    public static double SHOOTER_D = 0.005 ; // 0.9 og autoworks
+    public static double F_Active = 0.00044; // 0.0005 og autoworks
     public static double F_Passive = 0; // 0
 
-    public static double SHOOTER_SPEED_CLOSE = 2000 / 1.14;
-    public static double SHOOTER_SPEED_MID = 2000 / 1.14;
-    public static double SHOOTER_SPEED_FAR = 2100 / 1.14;
+    public static double SHOOTER_SPEED_CLOSE = 2000 / 1.14; //1450 og autoworks
+    public static double SHOOTER_SPEED_MID = 2000 / 1.14; //1450 og autoworks
+    public static double SHOOTER_SPEED_FAR = 2100 / 1.14; //1700 og autoworks
 
     public static double SERVO_MOVE_AUTO_MID = 0.45;
-    public static double SERVO_MOVE_FAR = 0.33; // 0.15 // 0.3
-    public static double SERVO_MOVE_MID = 0.45; // 0.26 // 0.4
+    public static double SERVO_MOVE_FAR = 0.33; //  0.25 og autoworks
+    public static double SERVO_MOVE_MID = 0.45; // 0.278 og autoworksg  
     public static double SERVO_MOVE_CLOSE = 0; // 0
     public static double SHOOTER_SPEED_RANGE = 150;
 
