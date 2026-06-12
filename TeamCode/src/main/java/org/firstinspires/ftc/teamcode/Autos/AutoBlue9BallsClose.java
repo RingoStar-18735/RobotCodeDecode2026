@@ -116,7 +116,7 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
                     telemetry.addData("Speed: ", ShooterSubsystem.INSTANCE.ShooterSpeed);
                 })
                 .setUpdate(() -> {
-                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 500) {
+                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 300) {
                         telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
                         IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0.6);
                         IntakeSubSystem.INSTANCE.TransferMotor.setPower(1);
