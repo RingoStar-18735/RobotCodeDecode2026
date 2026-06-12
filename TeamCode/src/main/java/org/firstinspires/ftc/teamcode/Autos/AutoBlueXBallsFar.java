@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
 
-import static org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem.ShooterSpeed;
-
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -29,7 +27,6 @@ import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
-import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -39,7 +36,7 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Autonomous
-public class AutoBlue9BallsFar extends NextFTCOpMode {
+public class AutoBlueXBallsFar extends NextFTCOpMode {
     public PathChain Path1;
     public PathChain Path2;
     public PathChain Path3;
@@ -62,7 +59,7 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
     List<String> a = new ArrayList<String>();
 
 
-    public AutoBlue9BallsFar(){
+    public AutoBlueXBallsFar(){
 
         addComponents(
                 new SubsystemComponent(
@@ -82,27 +79,23 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
     public Command Shoot() {
         return new LambdaCommand()
                 .setStart(() -> {
-                    telemetry.addLine("SHOOT COMMAND STARTED");
-                    telemetry.addData("vel: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
-                    telemetry.addData("Speed: ", ShooterSpeed);
+
                 })
                 .setUpdate(() -> {
-                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSpeed - 500) {
+                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 700) {
                         telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
-                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(1);
-                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(1);
+                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
+                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
                     }
                     else {
-                        new SequentialGroup(
-                                new InstantCommand(()-> IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0)),
-                                new InstantCommand(()-> IntakeSubSystem.INSTANCE.TransferMotor.setPower(0)),
-                                new Delay(1)
-                        );
+                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0);
+                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(0);
                     }
                 })
                 .setIsDone(()-> false)
                 .requires(IntakeSubSystem.INSTANCE);
     }
+
     Command shootSequence = new SequentialGroup(
             new ParallelDeadlineGroup(
                     new Delay(2),
@@ -114,10 +107,9 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
                     )
             ),
             new ParallelDeadlineGroup(
-                    new Delay(4),
+                    new Delay(5),
                     Shoot()
             )
-//            ShooterSubsystem.INSTANCE.StopSpeed()
     );
 
 
@@ -131,75 +123,58 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(57, 8, Math.toRadians(180)));
         telemetry.addData("pos: ", follower.getPose());
-        Path7 = follower.pathBuilder().addPath(
+        Path1 = follower.pathBuilder()
+                .addPath(
                         new BezierLine(
                                 new Pose(57.000, 8.000),
-
-                                new Pose(60.000, 15.000)
+                                new Pose(57.000, 22.000)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
-
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
-        Path1 = follower.pathBuilder().addPath(
+        Path2 = follower.pathBuilder()
+                .addPath(
                         new BezierCurve(
-                                new Pose(60.000, 15.000),
-                                new Pose(60.123, 34.476),
-                                new Pose(49.931, 37.920),
-                                new Pose(20.000, 36.000)
+                                new Pose(57.000, 22.000),
+                                new Pose(14.748, 57.354),
+                                new Pose(1.375, 22.000),
+                                new Pose(58.000, 21.000)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
-
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
-        Path2 = follower.pathBuilder().addPath(
+        Path3 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Pose(58.000, 21.000),
+                                new Pose(-40.000, 10.000),
+                                new Pose(57.000, 15.000)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
+
+        Path4 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Pose(57.000, 15.000),
+                                new Pose(-40.000, 30.000),
+                                new Pose(57.000, 21.000)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
+
+        Path5 = follower.pathBuilder()
+                .addPath(
                         new BezierLine(
-                                new Pose(20.000, 36.000),
-
-                                new Pose(60.000, 15.000)
+                                new Pose(57.000, 21.000),
+                                new Pose(41.963, 21.265)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
-
-                .build();
-
-        Path3 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(60.000, 15.000),
-                                new Pose(55.516, 24.472),
-                                new Pose(12.000, 32.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(240))
-
-                .build();
-
-        Path4 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(12.000, 32.000),
-
-                                new Pose(12.000, 13.000)
-                        )
-                ).setConstantHeadingInterpolation(Math.toRadians(240))
-
-                .build();
-
-        Path5 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(12.000, 13.000),
-                                new Pose(53.687, 20.329),
-                                new Pose(60.000, 15.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(240), Math.toRadians(180))
-
-                .build();
-
-        Path6 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(60.000, 15.000),
-                                new Pose(41.720, 46.018),
-                                new Pose(20.601, 56.339)
-                        )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
-
+                )
+                .setTangentHeadingInterpolation()
                 .build();
 
 
@@ -208,24 +183,20 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
         Path3Command = new FollowPath(Path3);
         Path4Command = new FollowPath(Path4);
         Path5Command = new FollowPath(Path5);
-        Path6Command = new FollowPath(Path6);
-        Path7Command = new FollowPath(Path7);
+//        Path6Command = new FollowPath(Path6);
+//        Path7Command = new FollowPath(Path7);
 
 
         Auto = new SequentialGroup(
-                Path7Command,
+                Path1Command,
                 shootSequence,
-                ShooterSubsystem.INSTANCE.StopSpeed(),
-                MoveWithoutShooting(Path1Command),
-                Path2Command,
+                MoveWithoutShooting(Path2Command),
                 shootSequence,
-                ShooterSubsystem.INSTANCE.StopSpeed(),
-                Path3Command,
+                MoveWithoutShooting(Path3Command),
+                shootSequence,
                 MoveWithoutShooting(Path4Command),
-                Path5Command,
                 shootSequence,
-                ShooterSubsystem.INSTANCE.StopSpeed(),
-                Path6Command
+                Path5Command
         );
     }
 

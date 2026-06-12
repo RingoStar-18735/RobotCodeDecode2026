@@ -98,6 +98,9 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                         IntakeSubSystem.INSTANCE.IntakeMotor.setPower(1);
                         IntakeSubSystem.INSTANCE.TransferMotor.setPower(1);
                         telemetry.addData("איסוף: ", IntakeSubSystem.INSTANCE.IntakeMotor.getPower());
+                    } else {
+                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0);
+                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(0);
                     }
                 })
                 .setIsDone(()-> false)
@@ -173,7 +176,7 @@ public class TeleopRingoBlue extends NextFTCOpMode {
         TurretSubsystem.INSTANCE.setOffset(RobotBank.Offset);
         new InstantCommand(()-> IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0));
         new InstantCommand(()-> IntakeSubSystem.INSTANCE.TransferMotor.setPower(0));
-        new InstantCommand(ShooterSubsystem.INSTANCE.StopSpeed());
+        ShooterSubsystem.INSTANCE.Shooter.setPower(0);
 
     }
 

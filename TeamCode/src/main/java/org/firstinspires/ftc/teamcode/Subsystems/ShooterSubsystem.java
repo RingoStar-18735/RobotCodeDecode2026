@@ -15,6 +15,7 @@ import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
+import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.positionable.SetPositions;
@@ -29,7 +30,7 @@ public class ShooterSubsystem implements Subsystem {
     public double SpinUpStartTime = 0;
     public double Distance = 0;
     public Double ServoPos = 0.0;
-    public double ShooterSpeed = 0;
+    public static  double ShooterSpeed = 0;
     public boolean ShooterStopped = false;
     private boolean CommandStarted = true;
     private TelemetryManager panels = PanelsTelemetry.INSTANCE.getTelemetry();

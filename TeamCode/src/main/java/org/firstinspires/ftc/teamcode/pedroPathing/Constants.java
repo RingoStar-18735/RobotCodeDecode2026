@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.RobotMap;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(10)
+            .mass(15)
             .forwardZeroPowerAcceleration(-52.79)
             .lateralZeroPowerAcceleration(-78.47)
             .useSecondaryTranslationalPIDF(true)

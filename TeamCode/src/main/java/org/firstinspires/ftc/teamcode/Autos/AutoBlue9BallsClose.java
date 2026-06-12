@@ -235,7 +235,7 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
                         new BezierLine(
                                 new Pose(58.000, 86.000),
 
-                                new Pose(25, 86.000)
+                                new Pose(28, 86.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -243,7 +243,7 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(25, 86.000),
+                                new Pose(28, 86.000),
 
                                 new Pose(58.000, 86.000)
                         )
@@ -338,8 +338,8 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
         return new SequentialGroup(
                 new ParallelGroup(
                         path,
-                        IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
-                        IntakeSubSystem.INSTANCE.Transfer(RobotMap.INTAKE_REVERSED_POWER)
+                        IntakeSubSystem.INSTANCE.IntakePower(0.6),
+                        IntakeSubSystem.INSTANCE.Transfer(-1)
                 ),
                 new Delay(2),
                 IntakeSubSystem.INSTANCE.IntakePower(0.2)
