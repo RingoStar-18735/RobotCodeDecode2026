@@ -11,7 +11,7 @@ public class motorcheck extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
-        if (Motor1.getVelocity() > 2000) {
+        if (Motor1.getVelocity() > 1800) {
             Motor1.setPower(0);
         }
         telemetry.addData("getVelocity", Motor1.getVelocity());

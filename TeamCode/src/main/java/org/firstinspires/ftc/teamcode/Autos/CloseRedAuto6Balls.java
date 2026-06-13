@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.Autos;
 
 
@@ -179,3 +180,4 @@ public class CloseRedAuto6Balls extends NextFTCOpMode {
         Auto.schedule();
     }
 }
+*/
