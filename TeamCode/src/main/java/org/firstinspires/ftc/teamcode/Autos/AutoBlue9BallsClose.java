@@ -173,10 +173,10 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
         Path2 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(58.000, 84.000),
-                                new Pose(-60.000, 90.834),
+                                new Pose(-55.000, 90.834),
                                 new Pose(134.105, 68.485),
                                 new Pose(-75.000, 90.000),
-                                new Pose(51.594, 52.763),
+                                new Pose(55.240, 52.242),
                                 new Pose(59.000, 85.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
@@ -186,11 +186,11 @@ public class AutoBlue9BallsClose extends NextFTCOpMode {
         Path3 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(59.000, 85.000),
-                                new Pose(75.776, 37.758),
+                                new Pose(69.266, 37.237),
                                 new Pose(-110.000, 60.887),
                                 new Pose(175.000, 65.574),
                                 new Pose(-72.000, 84.000),
-                                new Pose(30.467, 58.850),
+                                new Pose(32.550, 55.204),
                                 new Pose(58.000, 84.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
