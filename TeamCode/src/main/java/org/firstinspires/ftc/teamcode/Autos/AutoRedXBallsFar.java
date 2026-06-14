@@ -220,7 +220,7 @@ public class AutoRedXBallsFar extends NextFTCOpMode {
 
                 MoveWithoutShooting(Path4Command),
                 new ParallelDeadlineGroup(
-                        new Delay(2),
+                        new Delay(1),
                         Shoot()
                 ),
 

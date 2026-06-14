@@ -17,7 +17,7 @@ public class RobotMap {
     public static double SHOOTER_P = 0.033; // 0.9
     public static double SHOOTER_I = 0; // 0
     public static double SHOOTER_D = 0.005 ; // 0.9 og autoworks
-    public static double F_Active = 0.00044; // 0.0005 og autoworks
+    public static double F_Active = 0.000442; // 0.0005 og autoworks
     public static double F_Passive = 0; // 0
 
     public static double SHOOTER_SPEED_CLOSE = 2000 / 1.14; //1450 og autoworks
@@ -25,7 +25,7 @@ public class RobotMap {
     public static double SHOOTER_SPEED_FAR = 2100 / 1.14; //1700 og autoworks
 
     public static double SERVO_MOVE_AUTO_MID = 0.45;
-    public static double SERVO_MOVE_FAR = 0.33; //  0.25 og autoworks
+    public static double SERVO_MOVE_FAR = 0.5; //  0.25 og autoworks // 0.4
     public static double SERVO_MOVE_MID = 0.45; // 0.278 og autoworksg  
     public static double SERVO_MOVE_CLOSE = 0; // 0
     public static double SHOOTER_SPEED_RANGE = 150;
@@ -34,7 +34,7 @@ public class RobotMap {
     public static double TRANSMISSION_MOTOR_POWER = 1;
     public static double TRANSMISSION_MOTOR_REVERSE_POWER = -1;
 
-    public static double TURRET_P = 0.02; // 0.06
+    public static double TURRET_P = 0.03; // 0.06
     public static double TURRET_I = 0;
     public static double TURRET_D = 0.18; // 0.2
 

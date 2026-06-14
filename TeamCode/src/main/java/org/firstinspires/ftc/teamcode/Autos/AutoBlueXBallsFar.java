@@ -82,7 +82,7 @@ public class AutoBlueXBallsFar extends NextFTCOpMode {
 
                 })
                 .setUpdate(() -> {
-                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 500) {
+                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 300) {
                         telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
                         IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER);
                         IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
@@ -127,7 +127,7 @@ public class AutoBlueXBallsFar extends NextFTCOpMode {
                         new BezierLine(
                                 new Pose(56.000, 8.000),
 
-                                new Pose(56.000, 15.000)
+                                new Pose(61.385, 20.208)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(125))
 
@@ -135,11 +135,11 @@ public class AutoBlueXBallsFar extends NextFTCOpMode {
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(56.000, 15.000),
-                                new Pose(64.260, 45.665),
+                                new Pose(61.385, 20.208),
+                                new Pose(61.917, 42.279),
                                 new Pose(2.083, 39.320),
                                 new Pose(-10.000, 34.816),
-                                new Pose(55.000, 16.000)
+                                new Pose(53.740, 12.479)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -147,12 +147,12 @@ public class AutoBlueXBallsFar extends NextFTCOpMode {
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(55.000, 16.000),
+                                new Pose(53.740, 12.479),
                                 new Pose(18.443, 76.611),
-                                new Pose(9.687, 56.410),
-                                new Pose(-30.000, -20.000),
-                                new Pose(62.518, 13.829),
-                                new Pose(56.000, 16.000)
+                                new Pose(10.208, 37.401),
+                                new Pose(-30.000, -30.000),
+                                new Pose(67.183, 33.071),
+                                new Pose(62.756, 13.280)
                         )
                 ).setTangentHeadingInterpolation()
 
@@ -160,10 +160,10 @@ public class AutoBlueXBallsFar extends NextFTCOpMode {
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(56.000, 16.000),
-                                new Pose(-5.000, 14.286),
-                                new Pose(-5.000, 7.172),
-                                new Pose(56.246, 10.156)
+                                new Pose(62.756, 13.280),
+                                new Pose(-0.000, 30.691),
+                                new Pose(0.000, -8.000),
+                                new Pose(56.042, 13.917)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -171,13 +171,15 @@ public class AutoBlueXBallsFar extends NextFTCOpMode {
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(56.246, 10.156),
+                                new Pose(56.042, 13.917),
 
-                                new Pose(12.832, 9.407)
+                                new Pose(14.200, 9.407)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
+
+
 
 
         Path1Command = new FollowPath(Path1);
@@ -190,8 +192,13 @@ public class AutoBlueXBallsFar extends NextFTCOpMode {
 
 
         Auto = new SequentialGroup(
+//                new InstantCommand(()-> ShooterSubsystem.INSTANCE.left_aim.setPosition(RobotMap.SERVO_MOVE_FAR)),
+//                new InstantCommand(()-> ShooterSubsystem.INSTANCE.right_aim.setPosition(1 - RobotMap.SERVO_MOVE_FAR)),
+
+                Path1Command,
+
                 new ParallelDeadlineGroup(
-                        new Delay(2),
+                        new Delay(5),
                         ShooterSubsystem.INSTANCE.RunFullSpeed(() ->
                                 Math.sqrt(
                                         Math.pow(FieldMap.BLUE_TARGET_POS.getX() - follower.getPose().getX(), 2) +
@@ -200,27 +207,26 @@ public class AutoBlueXBallsFar extends NextFTCOpMode {
                         )
                 ),
 
-                Path1Command,
                 new ParallelDeadlineGroup(
-                        new Delay(2),
+                        new Delay(3),
                         Shoot()
                 ),
 
                 MoveWithoutShooting(Path2Command),
                 new ParallelDeadlineGroup(
-                        new Delay(2),
+                        new Delay(3),
                         Shoot()
                 ),
 
                 MoveWithoutShooting(Path3Command),
                 new ParallelDeadlineGroup(
-                        new Delay(2),
+                        new Delay(4),
                         Shoot()
                 ),
 
                 MoveWithoutShooting(Path4Command),
                 new ParallelDeadlineGroup(
-                        new Delay(2),
+                        new Delay(1),
                         Shoot()
                 ),
 
