@@ -195,10 +195,10 @@ public class TurretSubsystem implements Subsystem {
         double finalGammaDeg = gammaDeg;
         double deg = finalGammaDeg;
 
-        if (RobotMap.TURRET_ROBOT_DIFRANCE){
-            deg = finalGammaDeg - 90;
-        }
-        final double finaldeg = deg;
+//        if (RobotMap.TURRET_ROBOT_DIFRANCE){
+//            deg = finalGammaDeg - 90;
+//        }
+//        final double finaldeg = deg;
 
             return new InstantCommand(() -> PID.setTarget(finalGammaDeg));
 

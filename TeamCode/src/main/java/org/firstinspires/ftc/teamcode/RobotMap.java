@@ -34,9 +34,9 @@ public class RobotMap {
     public static double TRANSMISSION_MOTOR_POWER = 1;
     public static double TRANSMISSION_MOTOR_REVERSE_POWER = 1;
 
-    public static double TURRET_P = 0.06; // 0.06
+    public static double TURRET_P = 0.02; // 0.06
     public static double TURRET_I = 0;
-    public static double TURRET_D = 0.2; // 0.2
+    public static double TURRET_D = 0.18; // 0.2
 
     public static  double TURRET_GEAR_RATIO = (double) (-147 - 20) / 180 * 180/150;
     public static double TURRET_RADIUS = 0.394 * 16.977;
