@@ -263,7 +263,7 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                         new InstantCommand(()-> IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER))
                 )
                 .whenBecomesTrue(
-                        new InstantCommand(()-> IntakeSubSystem.INSTANCE.TransferMotor.setPower(-RobotMap.TRANSMISSION_MOTOR_POWER))
+                        new InstantCommand(()-> IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_REVERSE_POWER))
                 )
                 .whenBecomesFalse(
                         new InstantCommand(()-> IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0))

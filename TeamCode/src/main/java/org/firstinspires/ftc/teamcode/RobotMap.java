@@ -32,7 +32,7 @@ public class RobotMap {
 
     public static double INTAKE_MOTOR_POWER = 1;
     public static double TRANSMISSION_MOTOR_POWER = 1;
-    public static double TRANSMISSION_MOTOR_REVERSE_POWER = 1;
+    public static double TRANSMISSION_MOTOR_REVERSE_POWER = -1;
 
     public static double TURRET_P = 0.02; // 0.06
     public static double TURRET_I = 0;
@@ -49,7 +49,7 @@ public class RobotMap {
     public static int LIMELIGHT_HZ = 100;
 
     public static double INTAKE_REVERSED_TIME = 1;
-    public static double INTAKE_REVERSED_POWER = -0.5;
+    public static double INTAKE_REVERSED_POWER = -1;
 
     public static int BLUE_PIPELINE = 0;
     public static double SHOOT_TIME = 0.5;
