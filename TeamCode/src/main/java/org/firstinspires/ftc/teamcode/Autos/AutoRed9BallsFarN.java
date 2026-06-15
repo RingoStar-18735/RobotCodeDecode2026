@@ -107,9 +107,17 @@ public class AutoRed9BallsFarN extends NextFTCOpMode {
     Command shootSequence = new SequentialGroup(
             new ParallelDeadlineGroup(
                     new Delay(2),
-                    new InstantCommand(()-> ShooterSubsystem.INSTANCE.RunVelocity(RobotMap.SHOOTER_SPEED_FAR_AUTO)), // PIDF.setGoal(new KineticState(RobotMap.SHOOTER_SPEED_FAR_AUTO))
-                    Shoot()
+                    ShooterSubsystem.INSTANCE.RunFullSpeed(() ->
+                            Math.sqrt(
+                                    Math.pow(FieldMap.RED_TARGET_POS.getX() - follower.getPose().getX(), 2) +
+                                            Math.pow(FieldMap.RED_TARGET_POS.getY() - follower.getPose().getY(), 2)
+                            )
                     )
+            ),
+            new ParallelDeadlineGroup(
+                    new Delay(2),
+                    Shoot()
+            )
 //            ShooterSubsystem.INSTANCE.StopSpeed()
     );
 
@@ -189,18 +197,17 @@ public class AutoRed9BallsFarN extends NextFTCOpMode {
 
 
         Auto = new SequentialGroup(
-                new InstantCommand(()-> ShooterSubsystem.INSTANCE.left_aim.setPosition((RobotMap.SERVO_MOVE_FAR_AUTO))),
-                new InstantCommand(()-> ShooterSubsystem.INSTANCE.right_aim.setPosition(1 - RobotMap.SERVO_MOVE_FAR_AUTO)),
                 Path1Command,
                 new Delay(0.3),
                 shootSequence,
                 ShooterSubsystem.INSTANCE.StopSpeed(),
                 MoveWithoutShooting(Path2Command),
-                shootSequence,
                 MoveWithoutShooting(Path3Command),
                 shootSequence,
+                ShooterSubsystem.INSTANCE.StopSpeed(),
                 MoveWithoutShooting(Path4Command),
                 shootSequence,
+                ShooterSubsystem.INSTANCE.StopSpeed(),
                 MoveWithoutShooting(Path5Command)
 
 //                Path1Command,
