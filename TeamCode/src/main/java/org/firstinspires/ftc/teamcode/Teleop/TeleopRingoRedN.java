@@ -35,17 +35,17 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.driving.DriverControlledCommand;
 
 @Configurable
-@TeleOp(name = "z")
-public class TeleopRingoRed extends NextFTCOpMode {
+@TeleOp(name = "A Teleop Ringo - RED")
+public class TeleopRingoRedN extends NextFTCOpMode {
     Follower follower;
     Pose RobotPose = new Pose(0, 0, 0);
     double distance = 0;
     double shooterVelError = 0;
     List<String> a = new ArrayList<String>();
-    AllianceType allianceType = AllianceType.BLUE;
-    Pose NewTargetPose = FieldMap.BLUE_TARGET_POS;
+    AllianceType allianceType = AllianceType.RED;
+    Pose NewTargetPose = FieldMap.RED_TARGET_POS;
 
-    public TeleopRingoRed(){
+    public TeleopRingoRedN(){
         addComponents(
                 new SubsystemComponent(
                         ShooterSubsystem.INSTANCE,
@@ -79,6 +79,28 @@ public class TeleopRingoRed extends NextFTCOpMode {
                                 new InstantCommand(()-> IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0)),
                                 new InstantCommand(()-> IntakeSubSystem.INSTANCE.TransferMotor.setPower(0))
                         );
+                    }
+                })
+                .setIsDone(()-> false)
+                .requires(IntakeSubSystem.INSTANCE);
+    }
+
+    public Command Shoots() {
+        return new LambdaCommand()
+                .setStart(() -> {
+//                    telemetry.addLine("SHOOT COMMAND STARTED");
+//                    telemetry.addData("vel: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
+//                    telemetry.addData("Speed: ", ShooterSubsystem.INSTANCE.ShooterSpeed);
+                })
+                .setUpdate(() -> {
+                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSubsystem.INSTANCE.ShooterSpeed - 400) {
+                        telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
+                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(1);
+                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(1);
+                        telemetry.addData("איסוף: ", IntakeSubSystem.INSTANCE.IntakeMotor.getPower());
+                    } else {
+                        IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0);
+                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(0);
                     }
                 })
                 .setIsDone(()-> false)
@@ -135,7 +157,7 @@ public class TeleopRingoRed extends NextFTCOpMode {
                             )
                     )
             ),
-            Shoot()
+            Shoots()
 //            IntakeSubSystem.INSTANCE.IntakePower(RobotMap.INTAKE_MOTOR_POWER),
 //            IntakeSubSystem.INSTANCE.Transfer(RobotMap.TRANSMISSION_MOTOR_POWER)
     );
@@ -144,7 +166,7 @@ public class TeleopRingoRed extends NextFTCOpMode {
     public void onInit() {
         follower =  Constants.createFollower(hardwareMap);
         follower.setPose(RobotBank.LastAutoPos);
-        new InstantCommand(ShooterSubsystem.INSTANCE.StopSpeed());
+        new InstantCommand(()-> ShooterSubsystem.INSTANCE.Shooter.setPower(0));
         allianceType = RobotBank.Alliance;
         if (RobotBank.Alliance == AllianceType.BLUE) {
             NewTargetPose = FieldMap.BLUE_TARGET_POS;
@@ -154,7 +176,7 @@ public class TeleopRingoRed extends NextFTCOpMode {
         TurretSubsystem.INSTANCE.setOffset(RobotBank.Offset);
         new InstantCommand(()-> IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0));
         new InstantCommand(()-> IntakeSubSystem.INSTANCE.TransferMotor.setPower(0));
-        new InstantCommand(ShooterSubsystem.INSTANCE.StopSpeed());
+        ShooterSubsystem.INSTANCE.Shooter.setPower(0);
 
     }
 
@@ -241,7 +263,7 @@ public class TeleopRingoRed extends NextFTCOpMode {
                         new InstantCommand(()-> IntakeSubSystem.INSTANCE.IntakeMotor.setPower(RobotMap.INTAKE_MOTOR_POWER))
                 )
                 .whenBecomesTrue(
-                        new InstantCommand(()-> IntakeSubSystem.INSTANCE.TransferMotor.setPower(-RobotMap.TRANSMISSION_MOTOR_POWER))
+                        new InstantCommand(()-> IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_REVERSE_POWER))
                 )
                 .whenBecomesFalse(
                         new InstantCommand(()-> IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0))

@@ -66,7 +66,7 @@ public class MoveForwardAuto extends NextFTCOpMode {
         RobotMap.TURRET_ROBOT_DIFRANCE = false;
         RobotBank.Alliance = AllianceType.BLUE          ;
         TurretSubsystem.INSTANCE.ResetAngleRight().schedule();
-        ShooterSubsystem.INSTANCE.StopSpeed().schedule();
+        ShooterSubsystem.INSTANCE.Shooter.setPower(0);
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(56, 8, Math.toRadians(180)));

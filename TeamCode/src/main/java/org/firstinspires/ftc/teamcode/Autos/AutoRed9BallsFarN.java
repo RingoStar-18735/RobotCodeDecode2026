@@ -39,8 +39,9 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Autonomous
-public class AutoBlue9BallsFar extends NextFTCOpMode {
+public class AutoRed9BallsFarN extends NextFTCOpMode {
     public PathChain Path1;
+
     public PathChain Path2;
     public PathChain Path3;
     public PathChain Path4;
@@ -62,7 +63,7 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
     List<String> a = new ArrayList<String>();
 
 
-    public AutoBlue9BallsFar(){
+    public AutoRed9BallsFarN(){
 
         addComponents(
                 new SubsystemComponent(
@@ -87,7 +88,7 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
                     telemetry.addData("Speed: ", ShooterSpeed);
                 })
                 .setUpdate(() -> {
-                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= ShooterSpeed - 500) {
+                    if (Math.abs(ShooterSubsystem.INSTANCE.Shooter.getVelocity()) >= RobotMap.SHOOTER_SPEED_FAR_AUTO - 500) {
                         telemetry.addData("אני2: ", -ShooterSubsystem.INSTANCE.Shooter.getVelocity());
                         IntakeSubSystem.INSTANCE.IntakeMotor.setPower(1);
                         IntakeSubSystem.INSTANCE.TransferMotor.setPower(1);
@@ -106,17 +107,9 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
     Command shootSequence = new SequentialGroup(
             new ParallelDeadlineGroup(
                     new Delay(2),
-                    ShooterSubsystem.INSTANCE.RunFullSpeed(() ->
-                            Math.sqrt(
-                                    Math.pow(FieldMap.BLUE_TARGET_POS.getX() - follower.getPose().getX(), 2) +
-                                            Math.pow(FieldMap.BLUE_TARGET_POS.getY() - follower.getPose().getY(), 2)
-                            )
-                    )
-            ),
-            new ParallelDeadlineGroup(
-                    new Delay(2),
+                    new InstantCommand(()-> ShooterSubsystem.INSTANCE.RunVelocity(RobotMap.SHOOTER_SPEED_FAR_AUTO)), // PIDF.setGoal(new KineticState(RobotMap.SHOOTER_SPEED_FAR_AUTO))
                     Shoot()
-            )
+                    )
 //            ShooterSubsystem.INSTANCE.StopSpeed()
     );
 
@@ -124,52 +117,52 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
     @Override
     public void onInit() {
         RobotMap.TURRET_ROBOT_DIFRANCE = false;
-        RobotBank.Alliance = AllianceType.BLUE;
+        RobotBank.Alliance = AllianceType.RED;
         TurretSubsystem.INSTANCE.ResetAngleRight().schedule();
         ShooterSubsystem.INSTANCE.Shooter.setPower(0);
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(57, 8, Math.toRadians(180)));
+        follower.setStartingPose(new Pose(88, 8, Math.toRadians(90)));
         telemetry.addData("pos: ", follower.getPose());
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(57.000, 8.000),
+                                new Pose(56.000, 8.000).mirror(),
 
-                                new Pose(56, 22.031)
+                                new Pose(57, 22.031).mirror()
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
+                ).setConstantHeadingInterpolation(Math.toRadians(90))
 
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(56, 22.031),
-                                new Pose(60.123, 34.476),
-                                new Pose(49.931, 37.920),
-                                new Pose(20.000, 36.000)
+                                new Pose(57, 22.031).mirror(),
+                                new Pose(60.123, 34.476).mirror(),
+                                new Pose(49.931, 37.920).mirror(),
+                                new Pose(20.000, 36.000).mirror()
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
+                ).setConstantHeadingInterpolation(Math.toRadians(0))
 
                 .build();
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(20.000, 36.000),
+                                new Pose(20.000, 36.000).mirror(),
 
-                                new Pose(56, 22.031)
+                                new Pose(57, 22.031).mirror()
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(0),Math.toRadians(90))
 
                 .build();
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(56, 22.031),
-                                new Pose(11.910, 91.182),
-                                new Pose(0.463, 18.802),
-                                new Pose(10.222, -5.000),
-                                new Pose(76.363, 7.813),
-                                new Pose(56, 18.427)
+                                new Pose(61.302, 22.031).mirror(),
+                                new Pose(11.910, 91.182).mirror(),
+                                new Pose(-0.579, 17.240).mirror(),
+                                new Pose(10.222, -5.000).mirror(),
+                                new Pose(34.700, 10.156).mirror(),
+                                new Pose(62.344, 18.427).mirror()
                         )
                 ).setTangentHeadingInterpolation()
 
@@ -177,11 +170,11 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(56, 18.427),
+                                new Pose(57, 18.427).mirror(),
 
-                                new Pose(20, 15.000)
+                                new Pose(20, 15.000).mirror()
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(90),Math.toRadians(0))
 
                 .build();
 
@@ -196,18 +189,32 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
 
 
         Auto = new SequentialGroup(
+                new InstantCommand(()-> ShooterSubsystem.INSTANCE.left_aim.setPosition((RobotMap.SERVO_MOVE_FAR_AUTO))),
+                new InstantCommand(()-> ShooterSubsystem.INSTANCE.right_aim.setPosition(1 - RobotMap.SERVO_MOVE_FAR_AUTO)),
                 Path1Command,
                 new Delay(0.3),
                 shootSequence,
                 ShooterSubsystem.INSTANCE.StopSpeed(),
                 MoveWithoutShooting(Path2Command),
+                shootSequence,
                 MoveWithoutShooting(Path3Command),
                 shootSequence,
-                ShooterSubsystem.INSTANCE.StopSpeed(),
                 MoveWithoutShooting(Path4Command),
                 shootSequence,
-                ShooterSubsystem.INSTANCE.StopSpeed(),
                 MoveWithoutShooting(Path5Command)
+
+//                Path1Command,
+//                new Delay(0.3),
+//                shootSequence,
+//                ShooterSubsystem.INSTANCE.StopSpeed(),
+//                MoveWithoutShooting(Path2Command),
+//                MoveWithoutShooting(Path3Command),
+//                shootSequence,
+//                ShooterSubsystem.INSTANCE.StopSpeed(),
+//                MoveWithoutShooting(Path4Command),
+//                shootSequence,
+//                ShooterSubsystem.INSTANCE.StopSpeed(),
+//                MoveWithoutShooting(Path5Command)
         );
     }
 
@@ -223,13 +230,12 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
                 new Delay(2),
                 IntakeSubSystem.INSTANCE.IntakePower(0.2)
         );
-
     }
 
     @Override
     public void onUpdate() {
         follower.update();
-        distance = Math.sqrt(Math.pow(FieldMap.BLUE_TARGET_POS.getX() - follower.getPose().getX(), 2) + Math.pow(FieldMap.BLUE_TARGET_POS.getY() - follower.getPose().getY(), 2));
+        distance = Math.sqrt(Math.pow(FieldMap.RED_TARGET_POS.getX() - follower.getPose().getX(), 2) + Math.pow(FieldMap.RED_TARGET_POS.getY() - follower.getPose().getY(), 2));
         if (hasStarted){
             if (RobotBank.Alliance == AllianceType.BLUE) {
                 TurretSubsystem.INSTANCE.FollowPoint(FieldMap.BLUE_TARGET_POS, follower.getPose()).schedule();
@@ -249,12 +255,12 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
     @Override
     public void onStartButtonPressed() {
         hasStarted = true;
-        ShooterSubsystem.INSTANCE.ServoMoveByField(() ->
-                Math.sqrt(
-                        Math.pow(FieldMap.BLUE_TARGET_POS.getX() - follower.getPose().getX(), 2) +
-                                Math.pow(FieldMap.BLUE_TARGET_POS.getY() - follower.getPose().getY(), 2)
-                )
-        ).schedule();
+//        ShooterSubsystem.INSTANCE.ServoMoveByField(() ->
+//                Math.sqrt(
+//                        Math.pow(FieldMap.RED_TARGET_POS.getX() - follower.getPose().getX(), 2) +
+//                                Math.pow(FieldMap.RED_TARGET_POS.getY() - follower.getPose().getY(), 2)
+//                )
+//        ).schedule();
         Auto.schedule();
         RobotBank.Offset = TurretSubsystem.INSTANCE.getAngle();
         RobotBank.LastAutoPos = follower.getPose();

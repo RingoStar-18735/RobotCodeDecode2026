@@ -23,10 +23,11 @@ public class RobotMap {
     public static double SHOOTER_SPEED_CLOSE = 2000 / 1.14; //1450 og autoworks
     public static double SHOOTER_SPEED_MID = 2000 / 1.14; //1450 og autoworks
     public static double SHOOTER_SPEED_FAR = 2100 / 1.14; //1700 og autoworks
+    public static double SHOOTER_SPEED_FAR_AUTO = 2000; //1700 og autoworks
 
-    public static double SERVO_MOVE_AUTO_MID = 0.45;
-    public static double SERVO_MOVE_FAR = 0.5; //  0.25 og autoworks // 0.4
-    public static double SERVO_MOVE_MID = 0.45; // 0.278 og autoworksg  
+    public static double SERVO_MOVE_FAR_AUTO = 0.37; // 0.4 // 0.38
+    public static double SERVO_MOVE_FAR = 0.333; //  0.25 og autoworks // 0.4
+    public static double SERVO_MOVE_MID = 0.41; // 0.278 og autoworksg
     public static double SERVO_MOVE_CLOSE = 0; // 0
     public static double SHOOTER_SPEED_RANGE = 150;
 

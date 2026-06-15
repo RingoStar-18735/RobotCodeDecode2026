@@ -55,7 +55,7 @@ public class FarBlueAuto3Balls extends NextFTCOpMode {
 
     @Override
     public void onInit() {
-        ShooterSubsystem.INSTANCE.StopSpeed().schedule();
+        ShooterSubsystem.INSTANCE.Shooter.setPower(0);
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(56, 8, -90));

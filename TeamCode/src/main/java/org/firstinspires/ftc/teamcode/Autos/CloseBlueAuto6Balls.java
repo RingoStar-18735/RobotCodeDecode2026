@@ -63,7 +63,7 @@ public class CloseBlueAuto6Balls extends NextFTCOpMode {
 
     @Override
     public void onInit() {
-        ShooterSubsystem.INSTANCE.StopSpeed().schedule();
+        ShooterSubsystem.INSTANCE.Shooter.setPower(0);
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(28.681751824817518, 131.68175182481747, 144));

@@ -70,7 +70,7 @@ public class newAutoBlueFar extends NextFTCOpMode {
 
     @Override
     public void onInit() {
-        ShooterSubsystem.INSTANCE.StopSpeed().schedule();
+        ShooterSubsystem.INSTANCE.Shooter.setPower(0);
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(34, 136, 135));

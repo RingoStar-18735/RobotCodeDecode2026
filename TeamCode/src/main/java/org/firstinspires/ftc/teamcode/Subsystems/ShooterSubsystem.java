@@ -15,7 +15,6 @@ import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
-import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.positionable.SetPositions;
@@ -58,7 +57,7 @@ public class ShooterSubsystem implements Subsystem {
     public final MotorEx Shooter = new MotorEx("0C");
 //    public final PIDController PID = new PIDController(RobotMap.SHOOTER_P, RobotMap.SHOOTER_I, RobotMap.SHOOTER_D);
     public final ServoEx left_aim = new ServoEx("00E");
-    private ControlSystem PIDF;
+    public ControlSystem PIDF;
     public final ServoEx right_aim = new ServoEx("01E");
 
 
@@ -86,7 +85,6 @@ public class ShooterSubsystem implements Subsystem {
                     } else {
                         ServoPos = RobotMap.SERVO_MOVE_MID;
                     }
-
                     left_aim.setPosition(ServoPos);
                     right_aim.setPosition(1 - ServoPos);
                 })
@@ -170,11 +168,11 @@ public class ShooterSubsystem implements Subsystem {
 //        ActiveOpMode.telemetry().addData("Started: ", false);
 //
         telemetryManager.debug(getShooterVelocity());
-//        telemetryManager.debug(PID.getTarget());
+        telemetryManager.debug(PIDF.getGoal());
 
-        telemetryManager.addData("Angle" , getShooterVelocity());
-//        telemetryManager.addData("Target" , PID.getTarget());
-        telemetryManager.addData("PIDPower" , PIDPower);
+        telemetryManager.addData("Shooter Velocity" , getShooterVelocity());
+        telemetryManager.addData("Shooter Target" , ShooterSpeed);
+//        telemetryManager.addData("PIDPower" , PIDPower);
 
 
 //        ActiveOpMode.telemetry().addData("target(-): ", PID.getTarget());

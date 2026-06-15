@@ -113,11 +113,11 @@ public class TurretSubsystem implements Subsystem {
 //
 //        ActiveOpMode.telemetry().addData("turret position:" , getAngle());
 //        ActiveOpMode.telemetry().addData("Turret Target:" , PID.getTarget());
-        telemetryManager.debug(getAngle());
-        telemetryManager.debug(PID.getTarget());
+//        telemetryManager.debug(getAngle());
+//        telemetryManager.debug(PID.getTarget());
 
 //        telemetryManager.addData("Angle" , getAngle());
-        telemetryManager.addData("TurretTarget" , PID.getTarget());
+//        telemetryManager.addData("TurretTarget" , PID.getTarget());
 
 //        ActiveOpMode.telemetry().addData("Is Reset:" , isReset);
         magnet.setMode(DigitalChannel.Mode.INPUT);
