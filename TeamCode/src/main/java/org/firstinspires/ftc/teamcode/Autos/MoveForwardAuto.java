@@ -64,7 +64,7 @@ public class MoveForwardAuto extends NextFTCOpMode {
     @Override
     public void onInit() {
         RobotMap.TURRET_ROBOT_DIFRANCE = false;
-        RobotBank.Alliance = AllianceType.BLUE          ;
+        RobotBank.Alliance = AllianceType.BLUE;
         TurretSubsystem.INSTANCE.ResetAngleRight().schedule();
         ShooterSubsystem.INSTANCE.Shooter.setPower(0);
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
@@ -72,9 +72,9 @@ public class MoveForwardAuto extends NextFTCOpMode {
         follower.setStartingPose(new Pose(56, 8, Math.toRadians(180)));
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(56.000, 8.000),
+                                new Pose(56, 8.000),
 
-                                new Pose(56.000, 36.000)
+                                new Pose(12, 9)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 

@@ -143,7 +143,7 @@ public class AutoBlue9BallsCloseGateYogev extends NextFTCOpMode {
                     )
             ),
             new ParallelDeadlineGroup(
-                    new Delay(2),
+                    new Delay(1.6),
                     Shoot()
             )
 //            ShooterSubsystem.INSTANCE.StopSpeed()
@@ -224,7 +224,7 @@ public class AutoBlue9BallsCloseGateYogev extends NextFTCOpMode {
                                 new Pose(56.000, 83.000),
                                 new Pose(22.832, 86.222),
                                 new Pose(-10.000, 83.000),
-                                new Pose(63.339, 75.605),
+                                new Pose(61.500, 72.600),
                                 new Pose(20.000, 75.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
@@ -246,10 +246,10 @@ public class AutoBlue9BallsCloseGateYogev extends NextFTCOpMode {
         Path4 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(56.000, 83.000),
-                                new Pose(63.832, 54.977),
+                                new Pose(52.000, 51.500),
                                 new Pose(17.065, 52.569),
                                 new Pose(-10.000, 57.771),
-                                new Pose(57.626, 66.088),
+                                new Pose(58.000, 69.000),
                                 new Pose(20.000, 68.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))

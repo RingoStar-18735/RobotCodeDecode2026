@@ -158,7 +158,7 @@ public class AutoRed9BallsCloseGateHellen extends NextFTCOpMode {
         ShooterSubsystem.INSTANCE.Shooter.setPower(0);
         IntakeSubSystem.INSTANCE.IntakeStop().schedule();
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(34, 135, Math.toRadians(0)));
+        follower.setStartingPose(new Pose(109, 135, Math.toRadians(0)));
         telemetry.addData("pos: ", follower.getPose());
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(

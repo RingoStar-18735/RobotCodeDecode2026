@@ -162,22 +162,22 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
 
                 .build();
 
+//        Path4 = follower.pathBuilder().addPath(
+//                        new BezierCurve(
+//                                new Pose(56, 22.031),
+//                                new Pose(11.910, 91.182),
+//                                new Pose(0.463, 18.802),
+//                                new Pose(10.222, -5.000),
+//                                new Pose(76.363, 7.813),
+//                                new Pose(56, 18.427)
+//                        )
+//                ).setTangentHeadingInterpolation()
+//
+//                .build();
+
         Path4 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(56, 22.031),
-                                new Pose(11.910, 91.182),
-                                new Pose(0.463, 18.802),
-                                new Pose(10.222, -5.000),
-                                new Pose(76.363, 7.813),
-                                new Pose(56, 18.427)
-                        )
-                ).setTangentHeadingInterpolation()
-
-                .build();
-
-        Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(56, 18.427),
+                                new Pose(56, 22.031),
 
                                 new Pose(20, 15.000)
                         )
@@ -190,7 +190,7 @@ public class AutoBlue9BallsFar extends NextFTCOpMode {
         Path2Command = new FollowPath(Path2);
         Path3Command = new FollowPath(Path3);
         Path4Command = new FollowPath(Path4);
-        Path5Command = new FollowPath(Path5);
+//        Path5Command = new FollowPath(Path5);
 //        Path6Command = new FollowPath(Path6);
 //        Path7Command = new FollowPath(Path7);
 

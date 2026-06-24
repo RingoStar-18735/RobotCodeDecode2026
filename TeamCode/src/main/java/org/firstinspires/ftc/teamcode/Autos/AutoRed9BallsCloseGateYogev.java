@@ -143,7 +143,7 @@ public class AutoRed9BallsCloseGateYogev extends NextFTCOpMode {
                     )
             ),
             new ParallelDeadlineGroup(
-                    new Delay(2),
+                    new Delay(1.6),
                     Shoot()
             )
 //            ShooterSubsystem.INSTANCE.StopSpeed()
@@ -224,7 +224,7 @@ public class AutoRed9BallsCloseGateYogev extends NextFTCOpMode {
                                 new Pose(88.000, 83.000),
                                 new Pose(121.000, 86.000),
                                 new Pose(154.000, 83.000),
-                                new Pose(81.000, 75.000),
+                                new Pose(82.500, 72.600),
                                 new Pose(124.000, 75.000)
                         )
                 )

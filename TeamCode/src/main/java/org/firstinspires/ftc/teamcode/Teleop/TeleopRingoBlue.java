@@ -74,11 +74,11 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                         IntakeSubSystem.INSTANCE.TransferMotor.setPower(1);
                     }
                     else {
-                        new ParallelDeadlineGroup(
-                                new Delay(1),
-                                new InstantCommand(()-> IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0)),
-                                new InstantCommand(()-> IntakeSubSystem.INSTANCE.TransferMotor.setPower(0))
-                        );
+//                        new ParallelDeadlineGroup(
+//                                new Delay(1),
+//                                new InstantCommand(()-> IntakeSubSystem.INSTANCE.IntakeMotor.setPower(0)),
+//                                new InstantCommand(()-> IntakeSubSystem.INSTANCE.TransferMotor.setPower(0))
+//                        );
                     }
                 })
                 .setIsDone(()-> false)
@@ -246,6 +246,14 @@ public class TeleopRingoBlue extends NextFTCOpMode {
                 .whenBecomesTrue(
                         shootSequence
                 );
+
+//        Gamepads.gamepad2().b()
+//                .whenBecomesTrue(
+//                        IntakeSubSystem.INSTANCE.I(1)
+//                )
+//                .whenBecomesTrue(
+//                        IntakeSubSystem.INSTANCE.TransferMotor.setPower(RobotMap.TRANSMISSION_MOTOR_POWER);
+//                );
 
 
         Gamepads.gamepad2().a()
