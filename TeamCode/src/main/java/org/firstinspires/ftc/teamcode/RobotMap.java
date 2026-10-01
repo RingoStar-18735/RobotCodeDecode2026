@@ -35,13 +35,18 @@ public class RobotMap {
     public static double TRANSMISSION_MOTOR_POWER = 1;
     public static double TRANSMISSION_MOTOR_REVERSE_POWER = -1;
 
-    public static double TURRET_P = 0.03; // 0.06
+    public static double TURRET_P = 0.01; // 0.03
     public static double TURRET_I = 0;
-    public static double TURRET_D = 0.18; // 0.2
+    public static double TURRET_D = 0.001; // 0.18
 
-    public static  double TURRET_GEAR_RATIO = (double) (-147 - 20) / 180 * 180/150;
+    public static double LIMELIGHT_P = 0.1;
+    public static double LIMELIGHT_I = 0;
+    public static double LIMELIGHT_D = 0;
+
+    public static  double  TURRET_GEAR_RATIO_ = (double) (-147 - 20) / 180 * 180/150;
+    public static  double  TURRET_GEAR_RATIO =360*( 1/ ((((1+((double) 46 /17))) * (1+((double) 46 /11))) * 28));
     public static double TURRET_RADIUS = 0.394 * 16.977;
-    public static boolean TURRET_ROBOT_DIFRANCE = false;
+    public static boolean TURRET_ROBOT_DIFFERANCE = false;
     public static double RESET_TURRET_POWER = 0.25;
 
     public static double MAX_TURRET_ANGLE = 200; // 25/5 -> 170 // looking at the back // 130

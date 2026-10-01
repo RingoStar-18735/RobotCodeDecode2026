@@ -152,7 +152,7 @@ public class AutoBlue9BallsCloseGateYogev extends NextFTCOpMode {
 
     @Override
     public void onInit() {
-        RobotMap.TURRET_ROBOT_DIFRANCE = false;
+        RobotMap.TURRET_ROBOT_DIFFERANCE = false;
         RobotBank.Alliance = AllianceType.BLUE;
         TurretSubsystem.INSTANCE.ResetAngleRight().schedule();
         ShooterSubsystem.INSTANCE.Shooter.setPower(0);

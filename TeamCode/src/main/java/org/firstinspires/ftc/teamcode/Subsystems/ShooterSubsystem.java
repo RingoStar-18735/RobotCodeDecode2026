@@ -32,7 +32,7 @@ public class ShooterSubsystem implements Subsystem {
     public static  double ShooterSpeed = 0;
     public boolean ShooterStopped = false;
     private boolean CommandStarted = true;
-    private TelemetryManager panels = PanelsTelemetry.INSTANCE.getTelemetry();
+    private final TelemetryManager panels = PanelsTelemetry.INSTANCE.getTelemetry();
     private TelemetryManager telemetryManager;
 
 

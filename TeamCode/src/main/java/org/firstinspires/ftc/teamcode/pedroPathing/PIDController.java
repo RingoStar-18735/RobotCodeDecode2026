@@ -24,6 +24,12 @@ public class PIDController {
         this.previousError = 0.0;
     }
 
+    public void setErrorTarget(double target) { // מעביר את הTARGET לכוח מנוע
+        this.target = target;
+        this.integral = 0.0;
+        this.previousError = 0.0;
+    }
+
     public double getTarget() {
         return target;
     }

@@ -35,8 +35,12 @@ public class amit2ndproj extends LinearOpMode {
         while(opModeIsActive())
         {
             telemetry.addData("Distance: ", colorSensor.getDistance(DistanceUnit.CM));
-            if(colorSensor.getDistance(DistanceUnit.CM) <= 10) hasTouched = true;
-            if(!hasTouched) DrivePower(0.4);
+            telemetry.addData("hasTouched: ", hasTouched);
+//            if(colorSensor.getDistance(DistanceUnit.CM) <= 10) hasTouched = true;
+//            if(!hasTouched) DrivePower(0.2);
+//            else DrivePower(0);
+            double P = 0.5;
+            DrivePower(colorSensor.getDistance(DistanceUnit.METER) * P);
             telemetry.update();
         }
     }

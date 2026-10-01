@@ -35,5 +35,4 @@ public class ServoTest extends NextFTCOpMode {
         Gamepads.gamepad1().dpadDown()
                 .whenBecomesTrue(ShooterSubsystem.INSTANCE.ServoAimCommand(0.45));
     }
-
 }
